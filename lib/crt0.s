@@ -252,6 +252,7 @@ sounds_data:
 
 .if(FT_DPCM_ENABLE)
 	.incbin "../resource/rec_01.dmc"
+	.incbin "../resource/jeesus.dmc"
 	.endif
 
 .segment "VECTORS"

@@ -5,6 +5,7 @@
 #include "resource/test2_blank.h"
 #include "resource/open_name.h"
 #include "resource/qr.h"
+#include "resource/jeesus.h"
 
 //#define debug
 #ifdef debug
@@ -19,9 +20,14 @@ void reset(void) ;
 //static unsigned char bank;
 
 static unsigned char quarto;
+//static unsigned char checking;
 
 static unsigned char i;
 static unsigned char j;
+
+static unsigned char k;
+static unsigned char l;
+
 static unsigned char x;
 static unsigned char y;
 static unsigned char x_index;
@@ -128,7 +134,10 @@ static unsigned char isHit[2];
 //static unsigned char dk_x_l_index;
 //static unsigned char dk_y_u_index;
 //static unsigned char dk_chr_index1;
-static unsigned char stage_stat[4][4];
+static unsigned char stage_stat[4][4][3];
+#define _KOMA_TYPE		0
+#define _CHOOSE_KOMA	1
+#define _SEL_BW			2
 
 static unsigned char update_list[6+8+8+1];
 static unsigned char update_koma[(3+3)*4+1];
@@ -178,6 +187,21 @@ const unsigned char* bg_palettes[]={
 	palette3,
 	palette4
 };
+
+
+const unsigned char palette5[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x0f,0x0f,0x0f,0x21,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f };
+const unsigned char palette6[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x0f,0x24,0x0f,0x21,0x0f,0x21,0x0f,0x0f,0x0f,0x0f };
+const unsigned char palette7[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x30,0x24,0x0f,0x21,0x30,0x21,0x0f,0x0f,0x0f,0x0f };
+const unsigned char palette8[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x24,0x0f,0x0f,0x21,0x21,0x0f,0x0f,0x0f,0x0f };
+const unsigned char* bg_palettes2[]={
+	palette5,
+	palette6,
+	palette7,
+	palette8
+};
+
+const unsigned char palette_jeesus[16]={ 0x0f,0x05,0x30,0x26,0x0f,0x05,0x30,0x36,0x0f,0x16,0x30,0x36,0x0f,0x26,0x30,0x30 };
+
 /*
 const unsigned char meta_bar1[]={
 	0xDD,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,
@@ -216,6 +240,27 @@ const unsigned char meta_quarto[]={
 	8*6,	0,	'!'-0x20,	1,
 	128
 };
+const unsigned char meta_p1win[]={
+	8*0,	0,	'P'-0x20,	1,
+	8*1,	0,	'1'-0x20,	1,
+	8*2,	0,	' '-0x20,	1,
+	8*3,	0,	'W'-0x20,	1,
+	8*4,	0,	'I'-0x20,	1,
+	8*5,	0,	'N'-0x20,	1,
+	8*6,	0,	'!'-0x20,	1,
+	128
+};
+const unsigned char meta_p2win[]={
+	8*0,	0,	'P'-0x20,	1,
+	8*1,	0,	'2'-0x20,	1,
+	8*2,	0,	' '-0x20,	1,
+	8*3,	0,	'W'-0x20,	1,
+	8*4,	0,	'I'-0x20,	1,
+	8*5,	0,	'N'-0x20,	1,
+	8*6,	0,	'!'-0x20,	1,
+	128
+};
+
 const unsigned char meta_pos1[]={
 	0,	0,	0xCF,	1,
 	128
@@ -1186,6 +1231,7 @@ void putStageKomaColor(unsigned char color)
 			if( i == 1 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00010000:0b00100000 ; tmp3 = 0b11001111 ;}
 			if( i == 2 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000100:0b00001000 ; tmp3 = 0b11110011 ;}
 			if( i == 3 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000001:0b00000010 ; tmp3 = 0b11111100 ;}
+			if( color==0x00 ){ tmp2 = 0x00 ;}
 			tmp = tmp & tmp3;
 			tmp = tmp | tmp2;
 			update_koma_color[3] = tmp ;
@@ -1196,6 +1242,7 @@ void putStageKomaColor(unsigned char color)
 			if( i == 1 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000001:0b00000010 ; tmp3 = 0b11111100 ;}
 			if( i == 2 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b01000000:0b10000000 ; tmp3 = 0b00111111 ;}
 			if( i == 3 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00010000:0b00100000 ; tmp3 = 0b11001111 ;}
+			if( color==0x00 ){ tmp2 = 0x00 ;}
 			tmp = tmp & tmp3;
 			tmp = tmp | tmp2;
 			update_koma_color[3] = tmp ;
@@ -1226,7 +1273,7 @@ unsigned char checkPutPos(unsigned char posx, unsigned char posy)
 	if( j == 0 ){
 		return 1;
 	}
-	if( stage_stat[x_index][y_index] != 0 ){
+	if( stage_stat[x_index][y_index][_KOMA_TYPE] != 0 ){
 		return 1 ;
 	}
 	return 0 ;
@@ -1323,6 +1370,8 @@ void putKoma(unsigned char posx, unsigned char posy, unsigned char color, unsign
 			update_koma[7*i+j+3] = meta[4*(4*i+j)+2] ;
 
 			// 頭被り補正処理.
+			//if( checking != 0 ){continue ;}
+
 			if( x_index != 0 && y_index != 0){
 				if( j == 0 ){
 					if( ChooseKoma >= 4 && ChooseKoma <= 7 ){
@@ -1380,14 +1429,14 @@ void initQuartoFlg()
 }
 void bitCalc(unsigned char x, unsigned char y)
 {
-	calc = stage_stat[x][y] ; if( calc & 0b10000000 ){ q_black++ ;}
-	calc = stage_stat[x][y] ; if( calc & 0b01000000 ){ q_high++ ;}
-	calc = stage_stat[x][y] ; if( calc & 0b00100000 ){ q_square++ ;}
-	calc = stage_stat[x][y] ; if( calc & 0b00010000 ){ q_plane++ ;}
-	calc = stage_stat[x][y] ; if( calc & 0b00001000 ){ q_white++ ;}
-	calc = stage_stat[x][y] ; if( calc & 0b00000100 ){ q_low++ ;}
-	calc = stage_stat[x][y] ; if( calc & 0b00000010 ){ q_circle++ ;}
-	calc = stage_stat[x][y] ; if( calc & 0b00000001 ){ q_dot++ ;}
+	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b10000000 ){ q_black++ ;}
+	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b01000000 ){ q_high++ ;}
+	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00100000 ){ q_square++ ;}
+	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00010000 ){ q_plane++ ;}
+	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00001000 ){ q_white++ ;}
+	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00000100 ){ q_low++ ;}
+	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00000010 ){ q_circle++ ;}
+	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00000001 ){ q_dot++ ;}
 }
 unsigned char checkQuarto()
 {
@@ -1491,6 +1540,64 @@ void printTimer()
 	put_update_debug(29,whichTurn!=0?23:6, 1, timer==0?"0":timer==1?"1":timer==2?"2":timer==3?"3":timer==4?"4":timer==5?"5":" " );
 }
 */
+/*
+void offStageDraw()
+{
+	for( k = 1; k < 4; k++ ){
+		for( l = 1; l < 4; l++ ){
+			if( stage_stat[k][l][_KOMA_TYPE] != 0 ){
+				ChooseKoma = stage_stat[k][l][_CHOOSE_KOMA] ;
+				selBW = stage_stat[k][l][_SEL_BW] ;
+				x = (k*32)-(l*32)+115+16 ;
+				y = (l*16)+(k*16)+71-16 ;
+				putKoma( x/8, y/8, selBW==0?0xAA:0x55, (unsigned char*)koma_list[0][0][ChooseKoma] ) ;
+			}
+		}
+	}
+}
+*/
+void animeKomaTurnOff()
+{
+	bank_bg(0);
+	pal_bg((char*)bg_palettes[bgpl]);
+	
+}
+void animeKomaTurn(unsigned char speed)
+{
+//	checking = 1 ;
+//	pal_bg((char*)bg_palettes2[0]);
+//	offStageDraw();
+
+//	for( i = 0; i < 5; i++){
+	
+	if( frame % 4 == 0 ){
+		bank_bg(0);
+		pal_bg((char*)bg_palettes2[0]);
+	}
+	if( frame % 4 == 1 ){
+		bank_bg(1);
+		pal_bg((char*)bg_palettes2[1]);
+		//delay(1) ;
+	}
+	if( frame % 4 == 2 ){
+		pal_bg((char*)bg_palettes2[2]);
+		//delay(2) ;
+	}
+	if( frame % 4 == 3 ){
+		pal_bg((char*)bg_palettes2[3]);
+		//delay(1) ;
+	}
+	delay(speed) ;
+
+//	checking = 0 ;
+//	offStageDraw() ;
+
+}
+void initMsg()
+{
+	put_update_debug(1,23, 14, (const char*)msgBlank );
+	put_update_debug(1,6, 14, (const char*)msgBlank );
+}
 void printMsg(unsigned char action)
 {
 	if( action == 0 ){
@@ -1498,14 +1605,19 @@ void printMsg(unsigned char action)
 		put_update_debug(1,6, 14, whichTurn==0?"P2:SELECT NEXT":(const char*)msgBlank );
 
 	}else if( action == 1 ){
-		put_update_debug(1,23, 14, whichTurn==0?"P1:PLAYING    ":(const char*)msgBlank );
-		put_update_debug(1,6, 14, whichTurn!=0?"P2:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(1,23, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(1,6, 14, whichTurn==0?"P2:PLAYING    ":(const char*)msgBlank );
 
 	}else if( action == 2 ){
 		put_update_debug(1,23, 14, whichTurn!=0?"P1:WIN!       ":(const char*)msgBlank );
 		put_update_debug(1,6, 14, whichTurn==0?"P2:WIN!       ":(const char*)msgBlank );
 	}
 
+}
+void initLife()
+{
+	put_update_debug(26,23, 3, "   " );
+	put_update_debug(26,6, 3,  "   " );
 }
 void printLife()
 {
@@ -1514,12 +1626,38 @@ void printLife()
 }
 void loseAnime()
 {
+	oam_clear() ;
+	ppu_off() ;
+	delay(60) ;
+
+	bank_bg(1);
+	vram_adr(NAMETABLE_A);//set VRAM address
+	vram_unrle((unsigned char*)jeesus);
+	pal_bg(palette_jeesus);
+	ppu_on_all();//enable rendering
+
+	music_play(3) ;
+	delay(90);
 	music_stop() ;
-	delay(30);
-	
+	bank_bg(0);
+
 	reset() ;
 
 }
+void procSayQuarto(){
+	initMsg() ;
+	initLife() ;
+
+	music_play(2) ;
+	for( i=0 ; i< 20; i++ ){
+		animeKomaTurn(2) ;
+		frame++ ;
+	}
+	animeKomaTurnOff() ;
+	delay(20) ;
+	music_stop() ;
+}
+
 void procChooseKoma(void)
 {
 	printCursor() ;
@@ -1607,11 +1745,9 @@ void procChooseKoma(void)
 			ppu_wait_frame();	// wait for next TV frame
 			
 			sfx_play(5,1);
-			
-			printMsg(1);
-			//autoPrintBar() ;
 
 			whichTurn = whichTurn == 0? 1:0 ;
+			printMsg(1);
 			
 			return ;
 			
@@ -1632,18 +1768,22 @@ void procChooseKoma(void)
 		}
 
 		if(pad&PAD_START){
+			procSayQuarto() ;
+
 			if( checkQuarto() == 1 ){
 				quarto = 1 ;
 				return ;
 			}else{
 				sfx_play(3,1);
+				music_play(1) ;
 				err[whichTurn]++ ;
-				printLife() ;
 				if( err[whichTurn] == 3 ){
 					loseAnime() ;
 				}
-
+				
 			}
+			printLife() ;
+			printMsg(0) ;
 			for( ; pad&PAD_START ;pad=pad_poll(0) ){
 				delay(1) ;
 			}
@@ -1718,7 +1858,9 @@ void procMooveKoma(void)
 			put_update_debug(1,10, 1, itoa(x_index, &strbuf[0], 10 ));
 			put_update_debug(4,10, 1, itoa(y_index, &strbuf[0], 10 ));
 			*/
-			stage_stat[x_index][y_index] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
+			stage_stat[x_index][y_index][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
+			stage_stat[x_index][y_index][_CHOOSE_KOMA] = ChooseKoma ;
+			stage_stat[x_index][y_index][_SEL_BW] = selBW ;
 			oam_clear() ;
 			
 			//putStageKomaColor( x/8, y/8, selBW==0?0xAA:0x55 ) ;
@@ -1753,17 +1895,21 @@ void procMooveKoma(void)
 			return ;
 		}
 		if(pad&PAD_START){
+			procSayQuarto() ;
+
 			if( checkQuarto() == 1 ){
 				quarto = 1 ;
 				return ;
 			}else{
-				sfx_play(3,0);
+				sfx_play(3,1);
+				music_play(1) ;
 				err[whichTurn]++ ;
-				printLife() ;
 				if( err[whichTurn] == 3 ){
 					loseAnime() ;
 				}
 			}
+			printLife() ;
+			printMsg(1) ;
 			for( ; pad&PAD_START ;pad=pad_poll(0) ){
 				delay(1) ;
 			}
@@ -1784,6 +1930,8 @@ void procMooveKoma(void)
 void procCheckQuarto(){
 	if( quarto != 0 ){
 		music_stop() ;
+		initLife() ;
+		initMsg() ;
 		oam_clear() ;
 		delay(40) ;
 		bgFlash(8) ;
@@ -1791,7 +1939,7 @@ void procCheckQuarto(){
 		music_play(0) ;
 
 		//initBar();
-		printMsg(2) ;
+		//printMsg(2) ;
 
 		tmp = rand8() ;
 		tmp2 = rand8() ;
@@ -1801,15 +1949,32 @@ void procCheckQuarto(){
 			x-=4 ;
 			spr = 0 ;
 			spr = oam_meta_spr( x + tmp, 80, spr, meta_quarto) ;
-			spr = oam_meta_spr( x + tmp2, 100, spr, meta_quarto) ;
+			spr = oam_meta_spr( x + tmp2, 100, spr, whichTurn!=0?meta_p1win:meta_p2win) ;
 			spr = oam_meta_spr( x + tmp3, 120, spr, meta_quarto) ;
-			spr = oam_meta_spr( x + tmp4, 140, spr, meta_quarto) ;
+			spr = oam_meta_spr( x + tmp4, 140, spr, whichTurn!=0?meta_p1win:meta_p2win) ;
 			cycleSprColor() ;
-			delay(2);
+			//delay(2);
+
+			animeKomaTurn(4) ;
 			frame++ ;
 
 			pad=pad_poll(0);
 			if( pad&PAD_START ){
+				for( i=0 ; i< 5; i++ ){
+					animeKomaTurn(4) ;
+					frame++ ;
+				}
+				music_play(2) ;
+				for( i=0 ; i< 10; i++ ){
+					animeKomaTurn(2) ;
+					frame++ ;
+				}
+				for( i=0 ; i< 20; i++ ){
+					animeKomaTurn(1) ;
+					frame++ ;
+				}
+				music_stop() ;
+				animeKomaTurnOff() ;
 				reset() ;
 			}
 			continue ;
@@ -1851,12 +2016,6 @@ void initVal(){
 
 // ========================================================================================
 // ========================================================================================
-void voiceQuarto()
-{
-	music_play(2) ;
-	delay(60) ;
-	music_stop() ;
-}
 void reset(void)
 {
 	initVal() ;
@@ -1867,15 +2026,13 @@ void reset(void)
 	oam_clear() ;
 	ppu_off() ;
 	vram_adr(NAMETABLE_A);//set VRAM address
-	vram_unrle((unsigned char*)test2_blank);	
+	vram_unrle((unsigned char*)test2_blank);
 	ppu_on_all();//enable rendering
 	
 	music_stop();
 
 	//scroll(0,0) ;
 	delay(30) ;
-
-	voiceQuarto() ;
 
 /*
 	delay(30) ;
@@ -1910,7 +2067,7 @@ void reset(void)
 
 	}
 
-	memfill( stage_stat, 0x00, 16 );
+	memfill( stage_stat, 0x00, 48 );
 	memfill( koma_exist, 0x01, 16 );
 /*
 	for( i = 0; i < 8; i++ ){
@@ -1959,7 +2116,6 @@ void main(void)
 	delay(20) ;
 
 	bgUp() ;
-
 	delay(20) ;
 	tmp = 0 ;
 	while(1)
@@ -1998,7 +2154,13 @@ void main(void)
 		}
 	}
 
+	ppu_off() ;
 	delay(10) ;
+
+	music_play(2) ;
+	delay(60) ;
+	music_stop() ;
+
 #endif
 /*
 	//sfx_play(2,0);
