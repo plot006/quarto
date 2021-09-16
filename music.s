@@ -60,9 +60,9 @@ pentup_music_data:
 	.byte $00+.lobyte(FT_DPCM_PTR),$00,$00	;22
 	.byte $00+.lobyte(FT_DPCM_PTR),$00,$00	;23
 	.byte $00+.lobyte(FT_DPCM_PTR),$00,$00	;24
-	.byte $00+.lobyte(FT_DPCM_PTR),$91,$0f	;25
+	.byte $2d+.lobyte(FT_DPCM_PTR),$a2,$0f	;25
 	.byte $00+.lobyte(FT_DPCM_PTR),$00,$00	;26
-	.byte $25+.lobyte(FT_DPCM_PTR),$9f,$0f	;27
+	.byte $00+.lobyte(FT_DPCM_PTR),$b3,$0f	;27
 	.byte $00+.lobyte(FT_DPCM_PTR),$00,$00	;28
 	.byte $00+.lobyte(FT_DPCM_PTR),$00,$00	;29
 	.byte $00+.lobyte(FT_DPCM_PTR),$00,$00	;30
@@ -261,9 +261,9 @@ pentup_music_data:
 	.byte $8e,$28,$00,$87,$28,$00,$87,$2c,$00,$87,$2c,$00,$87,$30,$00,$87
 	.byte $30,$00
 @ref47:
-	.byte $83,$2c,$89,$31,$2c,$89,$28,$00,$87,$28,$00,$87,$2c,$85
-@ref48:
-	.byte $2d,$00,$85,$30,$00,$af
+	.byte $83,$2c,$89,$31,$2c,$89,$28,$00,$87,$28,$00,$8d,$8a,$36
+	.byte $ff,$09
+	.word @ref42
 	.byte $fd
 	.word @song1ch2loop
 
@@ -325,7 +325,7 @@ pentup_music_data:
 @song2ch4:
 @song2ch4loop:
 @ref59:
-	.byte $32,$f9,$83
+	.byte $36,$f9,$83
 	.byte $fd
 	.word @song2ch4loop
 
@@ -362,6 +362,6 @@ pentup_music_data:
 @song3ch4:
 @song3ch4loop:
 @ref64:
-	.byte $36,$f9,$83
+	.byte $32,$f9,$83
 	.byte $fd
 	.word @song3ch4loop
