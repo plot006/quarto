@@ -5,12 +5,14 @@
 #include "resource/test2_blank.h"
 #include "resource/open_name.h"
 #include "resource/qr.h"
+#include "resource/menu.h"
 #include "resource/jeesus.h"
+
+#include <stdlib.h>
+static unsigned char strbuf[16];
 
 //#define debug
 #ifdef debug
-#include <stdlib.h>
-static unsigned char strbuf[32];
 #endif
 
 void reset(void) ;
@@ -34,7 +36,7 @@ static unsigned char x_index;
 static unsigned char y_index;
 
 static unsigned char timer;
-static unsigned char setCount;
+static unsigned char timerSetCount;
 
 static unsigned char set_posh;
 static unsigned char set_posl;
@@ -66,6 +68,7 @@ static unsigned char set_posx;
 static unsigned char set_posy;
 
 static unsigned char moving;
+static unsigned char p1only;
 
 static unsigned char koma_pos[2];
 static unsigned char koma_x[2];
@@ -76,6 +79,8 @@ static unsigned char koma_exist[2][8];
 static unsigned char bgpl;
 static unsigned char game_music;
 static unsigned char reach;
+static unsigned char autoChoose;
+static unsigned char isForceFin;
 
 static unsigned char attr_stat[40];
 const unsigned char attr_pos[4][4][4] ={
@@ -148,7 +153,7 @@ static unsigned char update_list[6+8+8+1];
 static unsigned char update_koma[(3+3)*4+1];
 static unsigned char update_koma_color[3+1+1];
 
-static unsigned char update_debug[3+32+1];
+static unsigned char update_debug[3+16+1];
 static unsigned char dbgcnt;
 
 
@@ -235,6 +240,7 @@ const unsigned char meta_mask_long[]={
 	128
 };
 */
+
 const unsigned char meta_quarto[]={
 	8*0,	0,	'Q'-0x20,	1,
 	8*1,	0,	'U'-0x20,	1,
@@ -245,6 +251,7 @@ const unsigned char meta_quarto[]={
 	8*6,	0,	'!'-0x20,	1,
 	128
 };
+
 const unsigned char meta_p1win[]={
 	8*0,	0,	'P'-0x20,	1,
 	8*1,	0,	'1'-0x20,	1,
@@ -265,6 +272,10 @@ const unsigned char meta_p2win[]={
 	8*6,	0,	'!'-0x20,	1,
 	128
 };
+const unsigned char meta_right_cursor[]={
+	0,	0,	0x1E,	1,
+	128
+};
 
 const unsigned char meta_pos1[]={
 	0,	0,	0xCF,	1,
@@ -272,6 +283,11 @@ const unsigned char meta_pos1[]={
 };
 const unsigned char meta_pos2[]={
 	0,	0,	0xCF,	2,
+	128
+};
+
+const unsigned char meta_pos1_reverse[]={
+	0,	0,	0xCF,	0x81,
 	128
 };
 
@@ -1018,6 +1034,10 @@ unsigned char checkForceBreak(void)
 	if(pad&PAD_START || pad&PAD_SELECT || pad&PAD_A || pad&PAD_B ){
 		return 1 ;
 	}
+	pad = pad_poll(1);
+	if(pad&PAD_START || pad&PAD_SELECT || pad&PAD_A || pad&PAD_B ){
+		return 1 ;
+	}
 	return 0 ;
 }
 /*
@@ -1317,7 +1337,7 @@ void putStockKoma(unsigned char posx, unsigned char posy, unsigned char color, u
 		putKomaColor( posx, posy, color) ;
 	}
 }
-/*
+
 void printBar(unsigned int adr, unsigned char action )
 {
 	update_debug[0]=MSB(adr)|NT_UPD_HORZ;
@@ -1337,22 +1357,20 @@ void printBar(unsigned int adr, unsigned char action )
 	}
 	ppu_wait_frame();
 }
-*/
+
 
 void initBar()
 {
-	put_update_debug(1,24, 13, "             " );
-	put_update_debug(1,5, 13, "             " );
-//	printBar( NTADR_A(0,4), 0 );
-//	printBar( NTADR_A(0,25), 0 );
+	printBar( NTADR_A(0,4), 0 );
+	printBar( NTADR_A(0,25), 0 );
 }
-/*
+
 void autoPrintBar()
 {
-	//printBar( NTADR_A(0,4), whichTurn==0?0:1 );
-	//printBar( NTADR_A(0,25), whichTurn==0?1:0 );
+	printBar( NTADR_A(0,4), whichTurn==0?1:0 );
+	printBar( NTADR_A(0,25), whichTurn==0?0:1 );
 }
-*/
+
 void putKoma(unsigned char posx, unsigned char posy, unsigned char color, unsigned char* meta)
 {
 	putStageKomaColor( color ) ;
@@ -1400,7 +1418,12 @@ void putKoma(unsigned char posx, unsigned char posy, unsigned char color, unsign
 void printCursor()
 {
 	spr = 0 ;
-	spr = oam_meta_spr( ChooseKoma*32+8, 30+(selBW*170), spr, selBW==0 ? cursor : cursor2  ) ;
+//	spr = oam_meta_spr( ChooseKoma*32+8, 30+(selBW*170), spr, selBW==0 ? cursor : cursor2  ) ;
+//	spr = oam_meta_spr( ChooseKoma*32+8, selBW==0? 30 : 30+170, spr, selBW==0 ? meta_pos1 : meta_pos2  ) ;
+	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 28-frame%6 : 200+frame%6, spr, selBW==0 ? meta_pos1_reverse : meta_pos2  ) ;
+	//if( frame&2 ){ oam_hide_rest(spr) ; return ; }
+//	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 0-frame%6 : 202+frame%6, spr, selBW==0 ? meta_pos1 : meta_pos2  ) ;
+
 }
 /*
 unsigned char isPadNull()
@@ -1555,12 +1578,19 @@ void stageAnime(unsigned char action)
 	}
 }
 */
-/*
+void printTimerInit()
+{
+	put_update_debug(28,23, 3, "   " );
+	put_update_debug(28,6,  3, "   " );
+}
 void printTimer()
 {
-	put_update_debug(29,whichTurn!=0?23:6, 1, timer==0?"0":timer==1?"1":timer==2?"2":timer==3?"3":timer==4?"4":timer==5?"5":" " );
+	printTimerInit() ;
+	if( timerSetCount != 0 ){
+		put_update_debug(28,whichTurn!=0?23:6, 3, itoa(timer, &strbuf[0], 10 ) );
+	}
 }
-*/
+
 /*
 void offStageDraw()
 {
@@ -1616,34 +1646,41 @@ void animeKomaTurn(unsigned char speed)
 }
 void initMsg()
 {
-	put_update_debug(1,23, 14, (const char*)msgBlank );
-	put_update_debug(1,6, 14, (const char*)msgBlank );
+	initBar() ;
+	//printTimerInit() ;
+	put_update_debug(1,24, 14, (const char*)msgBlank );
+	put_update_debug(1,5, 14, (const char*)msgBlank );
 }
 void printMsg(unsigned char action)
 {
 	if( action == 0 ){
-		put_update_debug(1,23, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
-		put_update_debug(1,6, 14, whichTurn==0?"P2:SELECT NEXT":(const char*)msgBlank );
+		put_update_debug(1,24, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
+		put_update_debug(1,5, 14, whichTurn==0?"P2:SELECT NEXT":(const char*)msgBlank );
 
 	}else if( action == 1 ){
-		put_update_debug(1,23, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
-		put_update_debug(1,6, 14, whichTurn==0?"P2:PLAYING    ":(const char*)msgBlank );
-
-	}else if( action == 2 ){
-		put_update_debug(1,23, 14, whichTurn!=0?"P1:WIN!       ":(const char*)msgBlank );
-		put_update_debug(1,6, 14, whichTurn==0?"P2:WIN!       ":(const char*)msgBlank );
+		put_update_debug(1,24, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(1,5, 14, whichTurn==0?"P2:PLAYING    ":(const char*)msgBlank );
+		printTimer() ;
 	}
+/*
+	else if( action == 2 ){
+		put_update_debug(1,24, 14, whichTurn!=0?"P1:WIN!       ":(const char*)msgBlank );
+		put_update_debug(1,5, 14, whichTurn==0?"P2:WIN!       ":(const char*)msgBlank );
+	}
+*/
+	autoPrintBar();
+	
 
 }
 void initLife()
 {
-	put_update_debug(26,23, 3, "   " );
-	put_update_debug(26,6, 3,  "   " );
+	put_update_debug(25,23, 3, "   " );
+	put_update_debug(25,6, 3,  "   " );
 }
 void printLife()
 {
-	put_update_debug(26,23, 3, err[1] == 0 ? "   ": err[1] == 1 ?"X  ": err[1] == 2 ?"XX ": "XXX" );
-	put_update_debug(26,6, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
+	put_update_debug(25,23, 3, err[1] == 0 ? "   ": err[1] == 1 ?"X  ": err[1] == 2 ?"XX ": "XXX" );
+	put_update_debug(25,6, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
 }
 void loseAnime()
 {
@@ -1666,9 +1703,11 @@ void loseAnime()
 
 }
 void procSayQuarto(){
+	oam_clear() ;
 	initMsg() ;
 	initLife() ;
-
+	printTimerInit() ;
+	
 	music_play(2) ;
 	for( i=0 ; i< 20; i++ ){
 		animeKomaTurn(2) ;
@@ -1678,98 +1717,134 @@ void procSayQuarto(){
 	delay(20) ;
 	music_stop() ;
 }
+void timerSet()
+{
+	if( frame % 50 == 0 && autoChoose!=1 && timerSetCount != 0 ){
+		timer--;
+		printTimer() ;
+		if( timer == 0 ){
+			autoChoose=1;
+			sfx_play(3,0);
+			//err[whichTurn==0?1:0]++ ;
+			//printLife() ;
+			timer = timerSetCount ;
+		}
+		frame=0 ;
+	}
+}
+void eventChooseButtonA(void)
+{
+	koma_exist[selBW][ChooseKoma] = 0 ;
+	putStockKoma((ChooseKoma*4),selBW==0?0:26, selBW==0?0x00:0xFF,  (unsigned char*)koma_list[0][0][ChooseKoma]) ;
 
+	oam_clear() ;
+	//spr = 0 ;
+	x = ChooseKoma*32 ;
+	y = 10+selBW*180 ;
+	moveKoma( x, y, 24, whichTurn!=0?60:146, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
+	//spr = oam_meta_spr( x, y, spr, koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
+	ppu_wait_frame();	// wait for next TV frame
+	
+	sfx_play(5,1);
+
+	whichTurn = whichTurn == 0? 1:0 ;
+	timer = timerSetCount ;
+	
+	printMsg(1);
+}
 void procChooseKoma(void)
 {
-	printCursor() ;
 	printMsg(0) ;
 	printLife() ;
 
 //	timer = 5;
 //	printTimer() ;
+	//timer = timerSetCount ;
+	//autoChoose=0;
 	while(1)
 	{
-/*
-		if( frame % 60 == 0 ){
-			timer--;
-			printTimer() ;
-			if( timer == 0 ){
-				sfx_play(3,0);
-				err[whichTurn==0?1:0]++ ;
-				printLife() ;
-				timer = setCount ;
-				
-			}
-		}
-*/
+		printCursor() ;
+		timerSet() ;
 		// カーソルセレクト
 		//isPadNull() ;
-		pad=pad_poll(0) ;
+		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
 		if(pad&PAD_LEFT){
+			//frame = 0 ;
 			ChooseKoma = ChooseKoma <= 0 ? 7 : --ChooseKoma ;
 			printCursor() ;
+			for( ;pad&PAD_LEFT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				ppu_wait_frame();	// wait for next TV frame
+				frame++ ;
+				timerSet() ;
+				printCursor() ;
+				if( autoChoose==1){break ;}
+			}
+		}
+/*
 			if( moving == 0 || moving == 2 ){
 				//for( i = 0 ; isPadNull() != 1 && i < 25; i++ ){
-				for( i = 0; i < 25 &&  pad&PAD_LEFT ;pad=pad_poll(0) ){
+				for( i = 0; i < 25 &&  pad&PAD_LEFT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 					i++ ;
-					delay(1) ;
+					//delay(1) ;
+					ppu_wait_frame();	// wait for next TV frame
+					frame++ ;
+					timerSet() ;
 				}
 			}else{
 				delay(5) ;
 			}
 			moving = 1 ;
 		}
+*/
 
 		if(pad&PAD_RIGHT){
+			//frame = 0 ;
 			ChooseKoma = ChooseKoma >= 7 ? 0 : ++ChooseKoma ;
 			printCursor() ;
+			for( ;pad&PAD_RIGHT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				ppu_wait_frame();	// wait for next TV frame
+				frame++ ;
+				timerSet() ;
+				printCursor() ;
+				if( autoChoose==1){break ;}
+			}
+		}
+/*
 			if( moving == 0 || moving == 1 ){
 				//for( i = 0 ; isPadNull() != 1 && i < 25; i++ ){
-				for( i = 0; i < 25 && pad&PAD_RIGHT ;pad=pad_poll(0) ){
+				for( i = 0; i < 25 && pad&PAD_RIGHT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 					i++ ;
-					delay(1) ;
+					//delay(1) ;
+					ppu_wait_frame();	// wait for next TV frame
+					frame++ ;
+					timerSet() ;
 				}
 			}else{
 				delay(5) ;
 			}
 			moving = 2 ;
 		}
-
+*/
 		if(pad&PAD_UP){
 			selBW = 0 ;
-			printCursor() ;
+			//printCursor() ;
 		}
 		if(pad&PAD_DOWN){
 			selBW = 1 ;
-			printCursor() ;
+			//printCursor() ;
 		}
 
 		if(pad&PAD_A){
 			if( koma_exist[selBW][ChooseKoma] == 0 ){
 				sfx_play(3,0);
 
-				for( ; pad&PAD_A ;pad=pad_poll(0) ){
+				for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 					delay(1) ;
 				}
 				continue ;
 			}
 
-			koma_exist[selBW][ChooseKoma] = 0 ;
-			putStockKoma((ChooseKoma*4),selBW==0?0:26, selBW==0?0x00:0xFF,  (unsigned char*)koma_list[0][0][ChooseKoma]) ;
-
-			oam_clear() ;
-			//spr = 0 ;
-			x = ChooseKoma*32 ;
-			y = 10+selBW*180 ;
-			moveKoma( x, y, 24, whichTurn!=0?60:146, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
-			//spr = oam_meta_spr( x, y, spr, koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
-			ppu_wait_frame();	// wait for next TV frame
-			
-			sfx_play(5,1);
-
-			whichTurn = whichTurn == 0? 1:0 ;
-			printMsg(1);
-			
+			eventChooseButtonA() ;
 			return ;
 			
 		}
@@ -1782,7 +1857,7 @@ void procChooseKoma(void)
 				pal_spr((char*)bg_palettes[bgpl]);
 				pal_bg((char*)bg_palettes[bgpl]);
 
-				for( ; pad&PAD_SELECT ;pad=pad_poll(0) ){
+				for( ; pad&PAD_SELECT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 					delay(1) ;
 				}
 
@@ -1805,10 +1880,36 @@ void procChooseKoma(void)
 			}
 			printLife() ;
 			printMsg(0) ;
-			for( ; pad&PAD_START ;pad=pad_poll(0) ){
+			for( ; pad&PAD_START ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 				delay(1) ;
 			}
 			continue ;
+		}
+		if( autoChoose==1){
+			// 自動コマ選択.
+			if( koma_exist[selBW][ChooseKoma] == 0 ){
+				isForceFin = 1 ;
+				for( i=0; i<2; i++){
+					for( j=0; j<8; j++){
+						if( koma_exist[i][j] == 1 ){
+							selBW=i;
+							ChooseKoma=j;
+							printCursor() ;
+							isForceFin=0 ;
+							//put_update_debug(1,10, 1, itoa(selBW, &strbuf[0], 10 ));
+							//put_update_debug(4,10, 1, itoa(ChooseKoma, &strbuf[0], 10 ));
+
+						}
+					}
+				}
+				if( isForceFin == 1 ){
+					loseAnime() ;
+					return ;
+				}
+			}
+			eventChooseButtonA() ;
+			return ;
+			
 		}
 
 		ppu_wait_frame();	// wait for next TV frame
@@ -1855,39 +1956,68 @@ void checkReach()
 	if( reach == 1 && game_music != 4 ){
 		game_music = 4 ;
 		music_stop() ;
-		bgFlash(8) ;
+		//bgFlash(8) ;
 		delay(30) ;
 		music_play(game_music) ;
 	}
 
 }
-void procMooveKoma(void)
+eventMoveButtonA()
+{
+	putKoma( x/8, y/8, selBW==0?0xAA:0x55, (unsigned char*)koma_list[0][0][ChooseKoma] ) ;
+	/*
+	put_update_debug(1,10, 1, itoa(x_index, &strbuf[0], 10 ));
+	put_update_debug(4,10, 1, itoa(y_index, &strbuf[0], 10 ));
+	*/
+	stage_stat[x_index][y_index][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
+	stage_stat[x_index][y_index][_CHOOSE_KOMA] = ChooseKoma ;
+	stage_stat[x_index][y_index][_SEL_BW] = selBW ;
+	oam_clear() ;
+	
+	//putStageKomaColor( x/8, y/8, selBW==0?0xAA:0x55 ) ;
+	
+	//putStageColor( set_posx, set_posy ) ;
+	sfx_play(4,1);
+	
+	//initBar() ;
+	printMsg(0) ;
+
+	checkReach() ;
+}
+void autoSetXY()
+{
+	for( k=0; k<4; k++){
+		for( l=0; l<4; l++){
+			x = (k*32)-(l*32)+115+16 ;
+			y = (l*16)+(k*16)+71-16 ;
+			//put_update_debug(1,10, 1, itoa(x, &strbuf[0], 10 ));
+			//put_update_debug(4,10, 1, itoa(y, &strbuf[0], 10 ));
+			if( checkPutPos(x/8, y/8) == 1 ){
+				continue ;
+			}
+			return ;
+		}
+	}
+	isForceFin=1;
+}
+void procMoveKoma(void)
 {
 	
-	for( ; pad&PAD_A ;pad=pad_poll(0) ){
+	for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 		delay(1) ;
 	}
 
 //	timer = setCount ;
-//	printTimer() ;
+	//printTimer() ;
+	//timer = timerSetCount ;
+	autoChoose=0;
 	while(1)
 	{
-/*
-		if( frame % 60 == 0 ){
-			timer--;
-			printTimer() ;
-			if( timer == 0 ){
-				sfx_play(3,0);
-				err[whichTurn==0?1:0]++ ;
-				printLife() ;
-				timer = setCount ;
-				
-			}
-		}
-*/
+		timerSet() ;
+
 		//delay(1) ;
 		//isPadNull() ;
-		pad=pad_poll(0) ;
+		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
 		if(pad&PAD_LEFT){
 			if( x > 4 ){
 				x-= pad&PAD_B ? 4 : 2 ;
@@ -1913,34 +2043,15 @@ void procMooveKoma(void)
 			if( checkPutPos(x/8, y/8) == 1 ){
 				sfx_play(3,0);
 				
-				for( ; pad&PAD_A ;pad=pad_poll(0) ){
-					delay(1) ;
+				for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+					ppu_wait_frame();
+					frame++ ;
+					//delay(1) ;
 				}
-				continue ;
+			}else{
+				eventMoveButtonA();
+				return ;
 			}
-
-
-			putKoma( x/8, y/8, selBW==0?0xAA:0x55, (unsigned char*)koma_list[0][0][ChooseKoma] ) ;
-			/*
-			put_update_debug(1,10, 1, itoa(x_index, &strbuf[0], 10 ));
-			put_update_debug(4,10, 1, itoa(y_index, &strbuf[0], 10 ));
-			*/
-			stage_stat[x_index][y_index][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
-			stage_stat[x_index][y_index][_CHOOSE_KOMA] = ChooseKoma ;
-			stage_stat[x_index][y_index][_SEL_BW] = selBW ;
-			oam_clear() ;
-			
-			//putStageKomaColor( x/8, y/8, selBW==0?0xAA:0x55 ) ;
-			
-			//putStageColor( set_posx, set_posy ) ;
-			sfx_play(4,1);
-			
-			//initBar() ;
-			printMsg(0) ;
-
-			checkReach() ;
-
-			return ;
 			
 		}
 
@@ -1957,6 +2068,7 @@ void procMooveKoma(void)
 			koma_exist[selBW][ChooseKoma] = 1 ;
 			putStockKoma((ChooseKoma*4),selBW==0?0:26, selBW==0?0xAA:0x55, (unsigned char*)koma_list[0][0][ChooseKoma]) ;
 			whichTurn = whichTurn == 0? 1:0 ;
+			timer = timerSetCount ;
 
 			sfx_play(6,0);
 			
@@ -1981,11 +2093,25 @@ void procMooveKoma(void)
 			}
 			printLife() ;
 			printMsg(1) ;
-			for( ; pad&PAD_START ;pad=pad_poll(0) ){
+			for( ; pad&PAD_START ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 				delay(1) ;
 			}
 			continue ;
 		}
+		if( autoChoose==1){
+			// 自動コマ配置.
+			autoSetXY();
+			if( isForceFin == 1 ){
+				loseAnime() ;
+				return ;
+			}
+			eventMoveButtonA() ;
+			return ;
+			
+		}
+		
+		ppu_wait_frame();	// wait for next TV frame
+		frame++;
 
 		oam_clear() ;
 		spr = 0 ;
@@ -1994,8 +2120,6 @@ void procMooveKoma(void)
 		}
 		spr = oam_meta_spr( x, y, spr, koma_list[koma_exist[selBW][ChooseKoma]][selBW==0?1:0][ChooseKoma] ) ;
 			
-		ppu_wait_frame();	// wait for next TV frame
-		frame++;
 	}
 }
 void procCheckQuarto(){
@@ -2019,10 +2143,10 @@ void procCheckQuarto(){
 		while(1){
 			x-=4 ;
 			spr = 0 ;
-			spr = oam_meta_spr( x + tmp, 80, spr, meta_quarto) ;
-			spr = oam_meta_spr( x + tmp2, 100, spr, meta_quarto) ;
-			spr = oam_meta_spr( x + tmp3, 120, spr, meta_quarto) ;
-			spr = oam_meta_spr( x + tmp3, 140, spr, meta_quarto) ;
+			//spr = oam_meta_spr( x + tmp, 20, spr, meta_quarto) ;
+			//spr = oam_meta_spr( x + tmp2, 40, spr, meta_quarto) ;
+			//spr = oam_meta_spr( x + tmp3, 180, spr, meta_quarto) ;
+			//spr = oam_meta_spr( x + tmp3, 200, spr, meta_quarto) ;
 			//spr = oam_meta_spr( x + tmp2, 100, spr, whichTurn!=0?meta_p1win:meta_p2win) ;
 			//spr = oam_meta_spr( x + tmp4, 140, spr, whichTurn!=0?meta_p1win:meta_p2win) ;
 			for( i = 0; i < 4; i++ ){
@@ -2043,7 +2167,7 @@ void procCheckQuarto(){
 			animeKomaTurn(4) ;
 			frame++ ;
 
-			pad=pad_poll(0);
+			pad=pad_poll((whichTurn!=0 || p1only==1)?0:1);
 			if( pad&PAD_START ){
 				oam_clear() ;
 
@@ -2073,7 +2197,9 @@ void procCheckQuarto(){
 void initVal(){
 	//update_init() ;
 	//set initial coords
-	setCount = 6 ;
+	p1only=1;
+	isForceFin = 0 ;
+	timerSetCount = 60 ;
 	quarto = 0 ;
 	bgpl = 0;
 	ChooseKoma = 0;
@@ -2087,6 +2213,8 @@ void initVal(){
 	koma_y[0] = 122 ;
 	koma_x[1] = 152 ;
 	koma_y[1] = 122 ;
+
+	timer = 0 ;
 
 	game_music = 1; // 1:game1, 4:game2
 	reach = 0 ;
@@ -2111,11 +2239,82 @@ void reset(void)
 {
 	scroll(0,0);
 	initVal() ;
+
+	oam_clear() ;
+	ppu_off() ;
+	vram_adr(NAMETABLE_A);//set VRAM address
+	vram_unrle((unsigned char*)menu);
+	pal_bg((char*)bg_palettes[bgpl]);
+	ppu_on_all();//enable rendering
+
+	// MODE SELECT.
+	put_update_debug(16,17, 3, "   ");
+	put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
+	while(1){
+		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
+		if(pad&PAD_UP && p1only == 0){
+			p1only = 1 ;
+			sfx_play(2,0);
+		}
+
+		if(pad&PAD_DOWN && p1only == 1){
+			p1only = 0 ;
+			sfx_play(2,0);
+		}
+		if(pad&PAD_A){
+			sfx_play(5,0);
+			for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				delay(1) ;
+			}
+			break ;
+		}
+		spr = 0 ;
+		spr = oam_meta_spr( 70, 63+(p1only==1?0:1*16), spr, meta_right_cursor) ;
+	}
+	spr = 0 ;
+	spr = oam_meta_spr( 70, 135, spr, meta_right_cursor) ;
+	while(1){
+		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
+		if(pad&PAD_UP&& timerSetCount<=200){
+			timerSetCount+= pad&PAD_B?10:1 ;
+
+			if( timerSetCount < 3 ){ timerSetCount=3 ;} ;
+
+			put_update_debug(16,17, 3, "   ");
+			put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
+			sfx_play(2,0);
+			delay(2) ;
+		}
+
+		if(pad&PAD_DOWN&&timerSetCount>3){
+			tmp = pad&PAD_B?10:1;
+			if( timerSetCount <= tmp ){ 
+				timerSetCount = 3 ;
+			}else{
+				timerSetCount-= tmp ;
+			}
+			put_update_debug(16,17, 3, "   ");
+			put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
+			sfx_play(2,0);
+			delay(2) ;
+		}
+		if(pad&PAD_RIGHT && timerSetCount!=0){
+			timerSetCount = 0 ;
+			put_update_debug(16,17, 3, "OFF");
+			sfx_play(2,0);
+			delay(2) ;
+		}
+		if(pad&PAD_A){
+			sfx_play(5,0);
+			break ;
+		}
+	}
+	timer=timerSetCount;
 	
+	oam_clear() ;
 	pal_spr((char*)bg_palettes[bgpl]);//set background palette from an array
 	pal_bg((char*)bg_palettes[bgpl]);//set background palette from an array
 
-	oam_clear() ;
 	ppu_off() ;
 	vram_adr(NAMETABLE_A);//set VRAM address
 	vram_unrle((unsigned char*)test2_blank);
@@ -2183,7 +2382,7 @@ void reset(void)
 		procChooseKoma() ;
 		procCheckQuarto() ;
 
-		procMooveKoma() ;
+		procMoveKoma() ;
 		procCheckQuarto() ;
 	}
 }
