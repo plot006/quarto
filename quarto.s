@@ -10,7 +10,7 @@
 	.importzp	sp, sreg, regsave, regbank
 	.importzp	tmp1, tmp2, tmp3, tmp4, ptr1, ptr2, ptr3, ptr4
 	.macpack	longbranch
-	.dbg		file, "quarto.c", 49441, 1631713567
+	.dbg		file, "quarto.c", 51395, 1631782018
 	.dbg		file, "lib/neslib.h", 8684, 1631688193
 	.dbg		file, "resource/test2_blank.h", 258, 1631688194
 	.dbg		file, "resource/open_name.h", 1775, 1631707533
@@ -25,10 +25,12 @@
 	.dbg		sym, "ppu_on_all", "00", extern, "_ppu_on_all"
 	.dbg		sym, "oam_clear", "00", extern, "_oam_clear"
 	.dbg		sym, "oam_meta_spr", "00", extern, "_oam_meta_spr"
+	.dbg		sym, "oam_hide_rest", "00", extern, "_oam_hide_rest"
 	.dbg		sym, "music_play", "00", extern, "_music_play"
 	.dbg		sym, "music_stop", "00", extern, "_music_stop"
 	.dbg		sym, "sfx_play", "00", extern, "_sfx_play"
 	.dbg		sym, "pad_poll", "00", extern, "_pad_poll"
+	.dbg		sym, "scroll", "00", extern, "_scroll"
 	.dbg		sym, "bank_bg", "00", extern, "_bank_bg"
 	.dbg		sym, "rand8", "00", extern, "_rand8"
 	.dbg		sym, "set_vram_update", "00", extern, "_set_vram_update"
@@ -45,10 +47,12 @@
 	.import		_ppu_on_all
 	.import		_oam_clear
 	.import		_oam_meta_spr
+	.import		_oam_hide_rest
 	.import		_music_play
 	.import		_music_stop
 	.import		_sfx_play
 	.import		_pad_poll
+	.import		_scroll
 	.import		_bank_bg
 	.import		_rand8
 	.import		_set_vram_update
@@ -149,6 +153,7 @@
 	.export		_loseAnime
 	.export		_procSayQuarto
 	.export		_procChooseKoma
+	.export		_checkReach
 	.export		_procMooveKoma
 	.export		_procCheckQuarto
 	.export		_initVal
@@ -2720,10 +2725,16 @@ _koma_exist:
 	.res	16,$00
 _bgpl:
 	.res	1,$00
+_game_music:
+	.res	1,$00
+_reach:
+	.res	1,$00
 _attr_stat:
 	.res	40,$00
 _stage_stat:
 	.res	48,$00
+_quarto_line:
+	.res	8,$00
 _update_list:
 	.res	23,$00
 _update_koma:
@@ -2748,14 +2759,20 @@ _dbgcnt:
 .segment	"CODE"
 
 ;
+; scroll(0,0);
+;
+	.dbg	line, "quarto.c", 2112
+	jsr     push0
+	jsr     _scroll
+;
 ; initVal() ;
 ;
-	.dbg	line, "quarto.c", 2021
+	.dbg	line, "quarto.c", 2113
 	jsr     _initVal
 ;
 ; pal_spr((char*)bg_palettes[bgpl]);//set background palette from an array
 ;
-	.dbg	line, "quarto.c", 2023
+	.dbg	line, "quarto.c", 2115
 	ldx     #$00
 	lda     _bgpl
 	asl     a
@@ -2776,7 +2793,7 @@ L0013:	adc     #<(_bg_palettes)
 ;
 ; pal_bg((char*)bg_palettes[bgpl]);//set background palette from an array
 ;
-	.dbg	line, "quarto.c", 2024
+	.dbg	line, "quarto.c", 2116
 	ldx     #$00
 	lda     _bgpl
 	asl     a
@@ -2797,52 +2814,52 @@ L0014:	adc     #<(_bg_palettes)
 ;
 ; oam_clear() ;
 ;
-	.dbg	line, "quarto.c", 2026
+	.dbg	line, "quarto.c", 2118
 	jsr     _oam_clear
 ;
 ; ppu_off() ;
 ;
-	.dbg	line, "quarto.c", 2027
+	.dbg	line, "quarto.c", 2119
 	jsr     _ppu_off
 ;
 ; vram_adr(NAMETABLE_A);//set VRAM address
 ;
-	.dbg	line, "quarto.c", 2028
+	.dbg	line, "quarto.c", 2120
 	ldx     #$20
 	lda     #$00
 	jsr     _vram_adr
 ;
 ; vram_unrle((unsigned char*)test2_blank);
 ;
-	.dbg	line, "quarto.c", 2029
+	.dbg	line, "quarto.c", 2121
 	lda     #<(_test2_blank)
 	ldx     #>(_test2_blank)
 	jsr     _vram_unrle
 ;
 ; ppu_on_all();//enable rendering
 ;
-	.dbg	line, "quarto.c", 2030
+	.dbg	line, "quarto.c", 2122
 	jsr     _ppu_on_all
 ;
 ; music_stop();
 ;
-	.dbg	line, "quarto.c", 2032
+	.dbg	line, "quarto.c", 2124
 	jsr     _music_stop
 ;
 ; delay(30) ;
 ;
-	.dbg	line, "quarto.c", 2035
+	.dbg	line, "quarto.c", 2127
 	lda     #$1E
 	jsr     _delay
 ;
 ; update_init() ;
 ;
-	.dbg	line, "quarto.c", 2053
+	.dbg	line, "quarto.c", 2145
 	jsr     _update_init
 ;
 ; for( tmp=0; tmp < 16; tmp++ ){
 ;
-	.dbg	line, "quarto.c", 2054
+	.dbg	line, "quarto.c", 2146
 	lda     #$00
 	sta     _tmp
 L0017:	lda     _tmp
@@ -2851,7 +2868,7 @@ L0017:	lda     _tmp
 ;
 ; up_stage(stage_anime_index[tmp][0], stage_anime_index[tmp][1] );
 ;
-	.dbg	line, "quarto.c", 2055
+	.dbg	line, "quarto.c", 2147
 	ldx     #$00
 	lda     _tmp
 	asl     a
@@ -2882,19 +2899,19 @@ L0015:	adc     #<(_stage_anime_index)
 ;
 ; for( tmp=0; tmp < 16; tmp++ ){
 ;
-	.dbg	line, "quarto.c", 2054
+	.dbg	line, "quarto.c", 2146
 	inc     _tmp
 	jmp     L0017
 ;
 ; delay(15) ;
 ;
-	.dbg	line, "quarto.c", 2058
+	.dbg	line, "quarto.c", 2150
 L0018:	lda     #$0F
 	jsr     _delay
 ;
 ; for( x = 0; x < 8; x++ ){
 ;
-	.dbg	line, "quarto.c", 2059
+	.dbg	line, "quarto.c", 2151
 	lda     #$00
 	sta     _x
 L0019:	lda     _x
@@ -2903,7 +2920,7 @@ L0019:	lda     _x
 ;
 ; sfx_play(2,0);
 ;
-	.dbg	line, "quarto.c", 2060
+	.dbg	line, "quarto.c", 2152
 	lda     #$02
 	jsr     pusha
 	lda     #$00
@@ -2911,7 +2928,7 @@ L0019:	lda     _x
 ;
 ; putStockKoma((x*4),0,0xAA, (unsigned char*)koma_list[0][0][x]) ;
 ;
-	.dbg	line, "quarto.c", 2062
+	.dbg	line, "quarto.c", 2154
 	jsr     decsp3
 	lda     _x
 	asl     a
@@ -2944,7 +2961,7 @@ L0016:	adc     #<(_koma_list)
 ;
 ; sfx_play(2,1);
 ;
-	.dbg	line, "quarto.c", 2063
+	.dbg	line, "quarto.c", 2155
 	lda     #$02
 	jsr     pusha
 	lda     #$01
@@ -2952,7 +2969,7 @@ L0016:	adc     #<(_koma_list)
 ;
 ; putStockKoma(28-(x*4),26,0x55, (unsigned char*)koma_list[0][1][7-x]) ;
 ;
-	.dbg	line, "quarto.c", 2065
+	.dbg	line, "quarto.c", 2157
 	jsr     decsp3
 	lda     #$1C
 	jsr     pusha0
@@ -2992,13 +3009,13 @@ L0016:	adc     #<(_koma_list)
 ;
 ; for( x = 0; x < 8; x++ ){
 ;
-	.dbg	line, "quarto.c", 2059
+	.dbg	line, "quarto.c", 2151
 	inc     _x
 	jmp     L0019
 ;
 ; memfill( stage_stat, 0x00, 48 );
 ;
-	.dbg	line, "quarto.c", 2070
+	.dbg	line, "quarto.c", 2162
 L0008:	jsr     decsp3
 	lda     #<(_stage_stat)
 	ldy     #$01
@@ -3015,7 +3032,7 @@ L0008:	jsr     decsp3
 ;
 ; memfill( koma_exist, 0x01, 16 );
 ;
-	.dbg	line, "quarto.c", 2071
+	.dbg	line, "quarto.c", 2163
 	jsr     decsp3
 	lda     #<(_koma_exist)
 	ldy     #$01
@@ -3030,47 +3047,64 @@ L0008:	jsr     decsp3
 	lda     #$10
 	jsr     _memfill
 ;
-; music_play(1);
+; memfill( quarto_line, 0x00, 8 );
 ;
-	.dbg	line, "quarto.c", 2078
-	lda     #$01
+	.dbg	line, "quarto.c", 2164
+	jsr     decsp3
+	lda     #<(_quarto_line)
+	ldy     #$01
+	sta     (sp),y
+	iny
+	lda     #>(_quarto_line)
+	sta     (sp),y
+	lda     #$00
+	tay
+	sta     (sp),y
+	tax
+	lda     #$08
+	jsr     _memfill
+;
+; music_play(game_music) ;
+;
+	.dbg	line, "quarto.c", 2171
+	lda     _game_music
 	jsr     _music_play
 ;
 ; delay(10) ;
 ;
-	.dbg	line, "quarto.c", 2081
+	.dbg	line, "quarto.c", 2174
 	lda     #$0A
 	jsr     _delay
 ;
 ; delay(10) ;
 ;
-	.dbg	line, "quarto.c", 2088
+	.dbg	line, "quarto.c", 2181
 L000B:	lda     #$0A
 	jsr     _delay
 ;
 ; procChooseKoma() ;
 ;
-	.dbg	line, "quarto.c", 2090
+	.dbg	line, "quarto.c", 2183
 	jsr     _procChooseKoma
 ;
 ; procCheckQuarto() ;
 ;
-	.dbg	line, "quarto.c", 2091
+	.dbg	line, "quarto.c", 2184
 	jsr     _procCheckQuarto
 ;
 ; procMooveKoma() ;
 ;
-	.dbg	line, "quarto.c", 2093
+	.dbg	line, "quarto.c", 2186
 	jsr     _procMooveKoma
 ;
 ; procCheckQuarto() ;
 ;
-	.dbg	line, "quarto.c", 2094
+	.dbg	line, "quarto.c", 2187
 	jsr     _procCheckQuarto
 ;
 ; while(1)
 ;
-	.dbg	line, "quarto.c", 2086
+	.dbg	line, "quarto.c", 2179
 	jmp     L000B
 
 	.dbg	line
@@ -3095,12 +3129,12 @@ L000B:	lda     #$0A
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 822
+	.dbg	line, "quarto.c", 827
 	jsr     pushax
 ;
 ; update_debug[0]=MSB(NTADR_A(x,y))|NT_UPD_HORZ;//set the address
 ;
-	.dbg	line, "quarto.c", 824
+	.dbg	line, "quarto.c", 829
 	ldy     #$03
 	ldx     #$00
 	lda     (sp),y
@@ -3122,7 +3156,7 @@ L000B:	lda     #$0A
 ;
 ; update_debug[1]=LSB(NTADR_A(x,y));
 ;
-	.dbg	line, "quarto.c", 825
+	.dbg	line, "quarto.c", 830
 	dey
 	ldx     #$00
 	lda     (sp),y
@@ -3140,14 +3174,14 @@ L000B:	lda     #$0A
 ;
 ; update_debug[2]=len;//update sequence is 4 tiles wide
 ;
-	.dbg	line, "quarto.c", 826
+	.dbg	line, "quarto.c", 831
 	ldy     #$02
 	lda     (sp),y
 	sta     _update_debug+2
 ;
 ; update_debug[3+len]=NT_UPD_EOF;
 ;
-	.dbg	line, "quarto.c", 827
+	.dbg	line, "quarto.c", 832
 	ldx     #$00
 	lda     (sp),y
 	clc
@@ -3166,14 +3200,14 @@ L000B:	adc     #<(_update_debug)
 ;
 ; set_vram_update(update_debug);
 ;
-	.dbg	line, "quarto.c", 828
+	.dbg	line, "quarto.c", 833
 	lda     #<(_update_debug)
 	ldx     #>(_update_debug)
 	jsr     _set_vram_update
 ;
 ; for( dbgcnt = 0;dbgcnt<len;dbgcnt++)
 ;
-	.dbg	line, "quarto.c", 830
+	.dbg	line, "quarto.c", 835
 	lda     #$00
 	sta     _dbgcnt
 L000D:	lda     _dbgcnt
@@ -3183,7 +3217,7 @@ L000D:	lda     _dbgcnt
 ;
 ; if(!*str) break;
 ;
-	.dbg	line, "quarto.c", 832
+	.dbg	line, "quarto.c", 837
 	dey
 	lda     (sp),y
 	sta     ptr1+1
@@ -3195,7 +3229,7 @@ L000D:	lda     _dbgcnt
 ;
 ; update_debug[3+dbgcnt]=(*str++)-0x20 ;//fill row buffer with random tiles
 ;
-	.dbg	line, "quarto.c", 833
+	.dbg	line, "quarto.c", 838
 	ldx     #$00
 	lda     _dbgcnt
 	clc
@@ -3224,25 +3258,25 @@ L000C:	adc     #<(_update_debug)
 ;
 ; for( dbgcnt = 0;dbgcnt<len;dbgcnt++)
 ;
-	.dbg	line, "quarto.c", 830
+	.dbg	line, "quarto.c", 835
 	inc     _dbgcnt
 	jmp     L000D
 ;
 ; ppu_wait_frame();
 ;
-	.dbg	line, "quarto.c", 835
+	.dbg	line, "quarto.c", 840
 L0005:	jsr     _ppu_wait_frame
 ;
 ; set_vram_update(0);
 ;
-	.dbg	line, "quarto.c", 836
+	.dbg	line, "quarto.c", 841
 	ldx     #$00
 	txa
 	jsr     _set_vram_update
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 837
+	.dbg	line, "quarto.c", 842
 	jmp     incsp5
 
 	.dbg	line
@@ -3263,67 +3297,67 @@ L0005:	jsr     _ppu_wait_frame
 ;
 ; update_list[0]=0x20|NT_UPD_HORZ;
 ;
-	.dbg	line, "quarto.c", 841
+	.dbg	line, "quarto.c", 846
 	lda     #$60
 	sta     _update_list
 ;
 ; update_list[1]=0x00;
 ;
-	.dbg	line, "quarto.c", 842
+	.dbg	line, "quarto.c", 847
 	lda     #$00
 	sta     _update_list+1
 ;
 ; update_list[2]=3;
 ;
-	.dbg	line, "quarto.c", 843
+	.dbg	line, "quarto.c", 848
 	lda     #$03
 	sta     _update_list+2
 ;
 ; update_list[(6)]=0x20|NT_UPD_HORZ;
 ;
-	.dbg	line, "quarto.c", 845
+	.dbg	line, "quarto.c", 850
 	lda     #$60
 	sta     _update_list+6
 ;
 ; update_list[(6)+1]=0x00;
 ;
-	.dbg	line, "quarto.c", 846
+	.dbg	line, "quarto.c", 851
 	lda     #$00
 	sta     _update_list+7
 ;
 ; update_list[(6)+2]=5;
 ;
-	.dbg	line, "quarto.c", 847
+	.dbg	line, "quarto.c", 852
 	lda     #$05
 	sta     _update_list+8
 ;
 ; update_list[(6+8)]=0x20|NT_UPD_HORZ;
 ;
-	.dbg	line, "quarto.c", 849
+	.dbg	line, "quarto.c", 854
 	lda     #$60
 	sta     _update_list+14
 ;
 ; update_list[(6+8)+1]=0x00;
 ;
-	.dbg	line, "quarto.c", 850
+	.dbg	line, "quarto.c", 855
 	lda     #$00
 	sta     _update_list+15
 ;
 ; update_list[(6+8)+2]=5;
 ;
-	.dbg	line, "quarto.c", 851
+	.dbg	line, "quarto.c", 856
 	lda     #$05
 	sta     _update_list+16
 ;
 ; update_list[(6+8+8)]=NT_UPD_EOF;
 ;
-	.dbg	line, "quarto.c", 853
+	.dbg	line, "quarto.c", 858
 	lda     #$FF
 	sta     _update_list+22
 ;
 ; set_vram_update(update_list);
 ;
-	.dbg	line, "quarto.c", 854
+	.dbg	line, "quarto.c", 859
 	lda     #<(_update_list)
 	ldx     #>(_update_list)
 	jmp     _set_vram_update
@@ -3348,12 +3382,12 @@ L0005:	jsr     _ppu_wait_frame
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 873
+	.dbg	line, "quarto.c", 878
 	jsr     pusha
 ;
 ; for( i = 0; i < 5; i++ ){
 ;
-	.dbg	line, "quarto.c", 874
+	.dbg	line, "quarto.c", 879
 	lda     #$00
 	sta     _i
 L0068:	lda     _i
@@ -3362,7 +3396,7 @@ L0068:	lda     _i
 ;
 ; if( anime[x][y] == 0 ){
 ;
-	.dbg	line, "quarto.c", 875
+	.dbg	line, "quarto.c", 880
 	ldy     #$01
 	ldx     #$00
 	lda     (sp),y
@@ -3381,7 +3415,7 @@ L0068:	lda     _i
 ;
 ; if( i != 0 && i != 4 ){
 ;
-	.dbg	line, "quarto.c", 877
+	.dbg	line, "quarto.c", 882
 	tax
 	lda     _i
 	beq     L006C
@@ -3390,7 +3424,7 @@ L0068:	lda     _i
 ;
 ; update_list[i+3-1] = 0 ; 
 ;
-	.dbg	line, "quarto.c", 878
+	.dbg	line, "quarto.c", 883
 	clc
 	adc     #$03
 	bcc     L000B
@@ -3411,7 +3445,7 @@ L000C:	clc
 ;
 ; update_list[i+(6)+3] = (unsigned char)(0xE5+i) ;
 ;
-	.dbg	line, "quarto.c", 880
+	.dbg	line, "quarto.c", 885
 	tax
 L006C:	lda     _i
 	clc
@@ -3436,7 +3470,7 @@ L0055:	adc     #<(_update_list)
 ;
 ; update_list[i+(6+8)+3] = (unsigned char)(0xF5+i) ;
 ;
-	.dbg	line, "quarto.c", 881
+	.dbg	line, "quarto.c", 886
 	ldx     #$00
 	lda     _i
 	clc
@@ -3459,7 +3493,7 @@ L0057:	adc     #<(_update_list)
 ;
 ; }else if( anime[x][y] == 1 ){
 ;
-	.dbg	line, "quarto.c", 882
+	.dbg	line, "quarto.c", 887
 	jmp     L0087
 L0006:	ldy     #$01
 	ldx     #$00
@@ -3480,7 +3514,7 @@ L0006:	ldy     #$01
 ;
 ; if( i != 0 && i != 4 ){
 ;
-	.dbg	line, "quarto.c", 883
+	.dbg	line, "quarto.c", 888
 	ldx     #$00
 	lda     _i
 	beq     L0070
@@ -3489,7 +3523,7 @@ L0006:	ldy     #$01
 ;
 ; update_list[i+3-1] = 0 ; 
 ;
-	.dbg	line, "quarto.c", 884
+	.dbg	line, "quarto.c", 889
 	clc
 	adc     #$03
 	bcc     L0019
@@ -3510,7 +3544,7 @@ L001A:	clc
 ;
 ; update_list[i+(6)+3] = (unsigned char)(0xE5+i) ;
 ;
-	.dbg	line, "quarto.c", 886
+	.dbg	line, "quarto.c", 891
 	tax
 L0070:	lda     _i
 	clc
@@ -3535,7 +3569,7 @@ L0059:	adc     #<(_update_list)
 ;
 ; update_list[i+(6+8)+3] = (unsigned char)(0xF5+i) ;
 ;
-	.dbg	line, "quarto.c", 887
+	.dbg	line, "quarto.c", 892
 	ldx     #$00
 	lda     _i
 	clc
@@ -3558,7 +3592,7 @@ L005B:	adc     #<(_update_list)
 ;
 ; }else if( anime[x][y] == 2 ){
 ;
-	.dbg	line, "quarto.c", 888
+	.dbg	line, "quarto.c", 893
 	jmp     L0087
 L0014:	ldy     #$01
 	ldx     #$00
@@ -3579,7 +3613,7 @@ L0014:	ldy     #$01
 ;
 ; if( i != 0 && i != 4 ){
 ;
-	.dbg	line, "quarto.c", 889
+	.dbg	line, "quarto.c", 894
 	ldx     #$00
 	lda     _i
 	beq     L0074
@@ -3588,7 +3622,7 @@ L0014:	ldy     #$01
 ;
 ; update_list[i+3-1] = 0 ; 
 ;
-	.dbg	line, "quarto.c", 890
+	.dbg	line, "quarto.c", 895
 	clc
 	adc     #$03
 	bcc     L0027
@@ -3609,7 +3643,7 @@ L0028:	clc
 ;
 ; update_list[i+(6)+3] = (unsigned char)(0xE0+i) ;
 ;
-	.dbg	line, "quarto.c", 892
+	.dbg	line, "quarto.c", 897
 	tax
 L0074:	lda     _i
 	clc
@@ -3634,7 +3668,7 @@ L005D:	adc     #<(_update_list)
 ;
 ; update_list[i+(6+8)+3] = (unsigned char)(0xF0+i) ;
 ;
-	.dbg	line, "quarto.c", 893
+	.dbg	line, "quarto.c", 898
 	ldx     #$00
 	lda     _i
 	clc
@@ -3657,7 +3691,7 @@ L005F:	adc     #<(_update_list)
 ;
 ; }else if( anime[x][y] == 3 ){
 ;
-	.dbg	line, "quarto.c", 894
+	.dbg	line, "quarto.c", 899
 	jmp     L0087
 L0022:	ldy     #$01
 	ldx     #$00
@@ -3678,7 +3712,7 @@ L0022:	ldy     #$01
 ;
 ; if( i != 0 && i != 4 ){
 ;
-	.dbg	line, "quarto.c", 895
+	.dbg	line, "quarto.c", 900
 	lda     _i
 	beq     L0078
 	cmp     #$04
@@ -3686,7 +3720,7 @@ L0022:	ldy     #$01
 ;
 ; update_list[i+3-1] = (unsigned char)(0xC5+i) ;
 ;
-	.dbg	line, "quarto.c", 896
+	.dbg	line, "quarto.c", 901
 	ldx     #$00
 	lda     _i
 	clc
@@ -3711,7 +3745,7 @@ L0036:	clc
 ;
 ; if( i == 0 || i == 4 ){
 ;
-	.dbg	line, "quarto.c", 898
+	.dbg	line, "quarto.c", 903
 L0078:	lda     _i
 	beq     L0079
 	cmp     #$04
@@ -3719,7 +3753,7 @@ L0078:	lda     _i
 ;
 ; update_list[i+(6)+3] = (unsigned char)(0xC5+i) ;
 ;
-	.dbg	line, "quarto.c", 899
+	.dbg	line, "quarto.c", 904
 L0079:	ldx     #$00
 	lda     _i
 	clc
@@ -3744,7 +3778,7 @@ L0061:	adc     #<(_update_list)
 ;
 ; update_list[i+(6+8)+3] = (unsigned char)(0xD5+i) ;
 ;
-	.dbg	line, "quarto.c", 901
+	.dbg	line, "quarto.c", 906
 L0084:	ldx     #$00
 	lda     _i
 	clc
@@ -3767,7 +3801,7 @@ L0063:	adc     #<(_update_list)
 ;
 ; }else if( anime[x][y] == 4 ){
 ;
-	.dbg	line, "quarto.c", 902
+	.dbg	line, "quarto.c", 907
 	jmp     L0086
 L0030:	ldy     #$01
 	ldx     #$00
@@ -3788,7 +3822,7 @@ L0030:	ldy     #$01
 ;
 ; if( i != 0 && i != 4 ){
 ;
-	.dbg	line, "quarto.c", 903
+	.dbg	line, "quarto.c", 908
 	lda     _i
 	beq     L007E
 	cmp     #$04
@@ -3796,7 +3830,7 @@ L0030:	ldy     #$01
 ;
 ; update_list[i+3-1] = (unsigned char)(0xC0+i) ;
 ;
-	.dbg	line, "quarto.c", 904
+	.dbg	line, "quarto.c", 909
 	ldx     #$00
 	lda     _i
 	clc
@@ -3821,7 +3855,7 @@ L0048:	clc
 ;
 ; if( i == 0 || i == 4 ){
 ;
-	.dbg	line, "quarto.c", 906
+	.dbg	line, "quarto.c", 911
 L007E:	lda     _i
 	beq     L007F
 	cmp     #$04
@@ -3829,7 +3863,7 @@ L007E:	lda     _i
 ;
 ; update_list[i+(6)+3] = (unsigned char)(0xC0+i) ;
 ;
-	.dbg	line, "quarto.c", 907
+	.dbg	line, "quarto.c", 912
 L007F:	ldx     #$00
 	lda     _i
 	clc
@@ -3854,7 +3888,7 @@ L0065:	adc     #<(_update_list)
 ;
 ; update_list[i+(6+8)+3] = (unsigned char)(0xD0+i) ;
 ;
-	.dbg	line, "quarto.c", 909
+	.dbg	line, "quarto.c", 914
 L0085:	ldx     #$00
 	lda     _i
 	clc
@@ -3879,19 +3913,19 @@ L0087:	sta     (ptr1),y
 ;
 ; for( i = 0; i < 5; i++ ){
 ;
-	.dbg	line, "quarto.c", 874
+	.dbg	line, "quarto.c", 879
 	inc     _i
 	jmp     L0068
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 914
+	.dbg	line, "quarto.c", 919
 L0082:	lda     #$01
 	jsr     _delay
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 915
+	.dbg	line, "quarto.c", 920
 L0001:	jmp     incsp2
 
 	.dbg	line
@@ -3914,12 +3948,12 @@ L0001:	jmp     incsp2
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 917
+	.dbg	line, "quarto.c", 922
 	jsr     pusha
 ;
 ; update_list[0]=0x20+stage_pos[x][y][0]|NT_UPD_HORZ;//horizontal update sequence, dummy address
 ;
-	.dbg	line, "quarto.c", 918
+	.dbg	line, "quarto.c", 923
 	ldy     #$01
 	lda     (sp),y
 	jsr     pusha0
@@ -3949,7 +3983,7 @@ L0001:	jmp     incsp2
 ;
 ; update_list[1]=stage_pos[x][y][1]+1;
 ;
-	.dbg	line, "quarto.c", 919
+	.dbg	line, "quarto.c", 924
 	iny
 	lda     (sp),y
 	jsr     pusha0
@@ -3981,7 +4015,7 @@ L0001:	jmp     incsp2
 ;
 ; update_list[(6)]=0x20+stage_pos[x][y][2]|NT_UPD_HORZ;//horizontal update sequence, dummy address
 ;
-	.dbg	line, "quarto.c", 920
+	.dbg	line, "quarto.c", 925
 	lda     (sp),y
 	jsr     pusha0
 	lda     #$18
@@ -4013,7 +4047,7 @@ L0001:	jmp     incsp2
 ;
 ; update_list[(6)+1]=stage_pos[x][y][3];
 ;
-	.dbg	line, "quarto.c", 921
+	.dbg	line, "quarto.c", 926
 	dey
 	lda     (sp),y
 	jsr     pusha0
@@ -4043,7 +4077,7 @@ L0001:	jmp     incsp2
 ;
 ; update_list[(6+8)]=0x20+stage_pos[x][y][4]|NT_UPD_HORZ;//horizontal update sequence, dummy address
 ;
-	.dbg	line, "quarto.c", 922
+	.dbg	line, "quarto.c", 927
 	ldy     #$01
 	lda     (sp),y
 	jsr     pusha0
@@ -4076,7 +4110,7 @@ L0001:	jmp     incsp2
 ;
 ; update_list[(6+8)+1]=stage_pos[x][y][5];
 ;
-	.dbg	line, "quarto.c", 923
+	.dbg	line, "quarto.c", 928
 	ldy     #$01
 	lda     (sp),y
 	jsr     pusha0
@@ -4106,7 +4140,7 @@ L0001:	jmp     incsp2
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 924
+	.dbg	line, "quarto.c", 929
 	jmp     incsp2
 
 	.dbg	line
@@ -4129,12 +4163,12 @@ L0001:	jmp     incsp2
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 926
+	.dbg	line, "quarto.c", 931
 	jsr     pusha
 ;
 ; setStageAdr(x,y);
 ;
-	.dbg	line, "quarto.c", 927
+	.dbg	line, "quarto.c", 932
 	ldy     #$01
 	lda     (sp),y
 	jsr     pusha
@@ -4144,7 +4178,7 @@ L0001:	jmp     incsp2
 ;
 ; sfx_play(5,0);
 ;
-	.dbg	line, "quarto.c", 936
+	.dbg	line, "quarto.c", 941
 	lda     #$05
 	jsr     pusha
 	lda     #$00
@@ -4152,7 +4186,7 @@ L0001:	jmp     incsp2
 ;
 ; for( anime[x][y] = 0 ; anime[x][y] < 5; anime[x][y]++ ){
 ;
-	.dbg	line, "quarto.c", 938
+	.dbg	line, "quarto.c", 943
 	ldy     #$01
 	ldx     #$00
 	lda     (sp),y
@@ -4193,7 +4227,7 @@ L0002:	iny
 ;
 ; upProc(x,y) ;
 ;
-	.dbg	line, "quarto.c", 982
+	.dbg	line, "quarto.c", 987
 	ldy     #$01
 	lda     (sp),y
 	jsr     pusha
@@ -4203,7 +4237,7 @@ L0002:	iny
 ;
 ; for( anime[x][y] = 0 ; anime[x][y] < 5; anime[x][y]++ ){
 ;
-	.dbg	line, "quarto.c", 938
+	.dbg	line, "quarto.c", 943
 	ldy     #$01
 	ldx     #$00
 	lda     (sp),y
@@ -4233,7 +4267,7 @@ L0007:	sta     sreg
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 984
+	.dbg	line, "quarto.c", 989
 L0003:	jmp     incsp2
 
 	.dbg	line
@@ -4254,7 +4288,7 @@ L0003:	jmp     incsp2
 ;
 ; if(frame%4==0){ pal_bg((char*)open_palette4);}
 ;
-	.dbg	line, "quarto.c", 998
+	.dbg	line, "quarto.c", 1003
 	lda     _frame
 	and     #$03
 	bne     L000A
@@ -4264,7 +4298,7 @@ L0003:	jmp     incsp2
 ;
 ; if(frame%4==1){ pal_bg((char*)open_palette3);}
 ;
-	.dbg	line, "quarto.c", 999
+	.dbg	line, "quarto.c", 1004
 L000A:	lda     _frame
 	and     #$03
 	cmp     #$01
@@ -4275,7 +4309,7 @@ L000A:	lda     _frame
 ;
 ; if(frame%4==2){ pal_bg((char*)open_palette2);}
 ;
-	.dbg	line, "quarto.c", 1000
+	.dbg	line, "quarto.c", 1005
 L000B:	lda     _frame
 	and     #$03
 	cmp     #$02
@@ -4286,7 +4320,7 @@ L000B:	lda     _frame
 ;
 ; if(frame%4==3){ pal_bg((char*)open_palette1);}
 ;
-	.dbg	line, "quarto.c", 1001
+	.dbg	line, "quarto.c", 1006
 L000C:	lda     _frame
 	and     #$03
 	cmp     #$03
@@ -4297,7 +4331,7 @@ L000C:	lda     _frame
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1002
+	.dbg	line, "quarto.c", 1007
 L0008:	rts
 
 	.dbg	line
@@ -4318,7 +4352,7 @@ L0008:	rts
 ;
 ; if(frame%4==0){ pal_spr((char*)open_palette4);}
 ;
-	.dbg	line, "quarto.c", 1005
+	.dbg	line, "quarto.c", 1010
 	lda     _frame
 	and     #$03
 	bne     L000A
@@ -4328,7 +4362,7 @@ L0008:	rts
 ;
 ; if(frame%4==1){ pal_spr((char*)open_palette3);}
 ;
-	.dbg	line, "quarto.c", 1006
+	.dbg	line, "quarto.c", 1011
 L000A:	lda     _frame
 	and     #$03
 	cmp     #$01
@@ -4339,7 +4373,7 @@ L000A:	lda     _frame
 ;
 ; if(frame%4==2){ pal_spr((char*)open_palette2);}
 ;
-	.dbg	line, "quarto.c", 1007
+	.dbg	line, "quarto.c", 1012
 L000B:	lda     _frame
 	and     #$03
 	cmp     #$02
@@ -4350,7 +4384,7 @@ L000B:	lda     _frame
 ;
 ; if(frame%4==3){ pal_spr((char*)open_palette1);}
 ;
-	.dbg	line, "quarto.c", 1008
+	.dbg	line, "quarto.c", 1013
 L000C:	lda     _frame
 	and     #$03
 	cmp     #$03
@@ -4361,7 +4395,7 @@ L000C:	lda     _frame
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1009
+	.dbg	line, "quarto.c", 1014
 L0008:	rts
 
 	.dbg	line
@@ -4382,14 +4416,14 @@ L0008:	rts
 ;
 ; pad = pad_poll(0);
 ;
-	.dbg	line, "quarto.c", 1012
+	.dbg	line, "quarto.c", 1017
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
 ;
 ; if(pad&PAD_START || pad&PAD_SELECT || pad&PAD_A || pad&PAD_B ){
 ;
-	.dbg	line, "quarto.c", 1013
+	.dbg	line, "quarto.c", 1018
 	and     #$10
 	bne     L0005
 	lda     _pad
@@ -4406,7 +4440,7 @@ L0008:	rts
 ;
 ; return 1 ;
 ;
-	.dbg	line, "quarto.c", 1014
+	.dbg	line, "quarto.c", 1019
 L0005:	ldx     #$00
 	lda     #$01
 	rts
@@ -4430,56 +4464,56 @@ L0005:	ldx     #$00
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1028
+	.dbg	line, "quarto.c", 1033
 	jsr     pusha
 ;
 ; pal_bright(action);
 ;
-	.dbg	line, "quarto.c", 1029
+	.dbg	line, "quarto.c", 1034
 	ldy     #$00
 	lda     (sp),y
 	jsr     _pal_bright
 ;
 ; delay(6) ;
 ;
-	.dbg	line, "quarto.c", 1030
+	.dbg	line, "quarto.c", 1035
 	lda     #$06
 	jsr     _delay
 ;
 ; pal_bright(4);
 ;
-	.dbg	line, "quarto.c", 1031
+	.dbg	line, "quarto.c", 1036
 	lda     #$04
 	jsr     _pal_bright
 ;
 ; delay(6) ;
 ;
-	.dbg	line, "quarto.c", 1032
+	.dbg	line, "quarto.c", 1037
 	lda     #$06
 	jsr     _delay
 ;
 ; pal_bright(action);
 ;
-	.dbg	line, "quarto.c", 1033
+	.dbg	line, "quarto.c", 1038
 	ldy     #$00
 	lda     (sp),y
 	jsr     _pal_bright
 ;
 ; delay(6) ;
 ;
-	.dbg	line, "quarto.c", 1034
+	.dbg	line, "quarto.c", 1039
 	lda     #$06
 	jsr     _delay
 ;
 ; pal_bright(4);
 ;
-	.dbg	line, "quarto.c", 1035
+	.dbg	line, "quarto.c", 1040
 	lda     #$04
 	jsr     _pal_bright
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1036
+	.dbg	line, "quarto.c", 1041
 	jmp     incsp1
 
 	.dbg	line
@@ -4500,43 +4534,43 @@ L0005:	ldx     #$00
 ;
 ; pal_bright(3);
 ;
-	.dbg	line, "quarto.c", 1039
+	.dbg	line, "quarto.c", 1044
 	lda     #$03
 	jsr     _pal_bright
 ;
 ; delay(6) ;
 ;
-	.dbg	line, "quarto.c", 1040
+	.dbg	line, "quarto.c", 1045
 	lda     #$06
 	jsr     _delay
 ;
 ; pal_bright(2);
 ;
-	.dbg	line, "quarto.c", 1041
+	.dbg	line, "quarto.c", 1046
 	lda     #$02
 	jsr     _pal_bright
 ;
 ; delay(6) ;
 ;
-	.dbg	line, "quarto.c", 1042
+	.dbg	line, "quarto.c", 1047
 	lda     #$06
 	jsr     _delay
 ;
 ; pal_bright(1);
 ;
-	.dbg	line, "quarto.c", 1043
+	.dbg	line, "quarto.c", 1048
 	lda     #$01
 	jsr     _pal_bright
 ;
 ; delay(6) ;
 ;
-	.dbg	line, "quarto.c", 1044
+	.dbg	line, "quarto.c", 1049
 	lda     #$06
 	jsr     _delay
 ;
 ; pal_bright(0);
 ;
-	.dbg	line, "quarto.c", 1045
+	.dbg	line, "quarto.c", 1050
 	lda     #$00
 	jmp     _pal_bright
 
@@ -4558,43 +4592,43 @@ L0005:	ldx     #$00
 ;
 ; pal_bright(0);
 ;
-	.dbg	line, "quarto.c", 1049
+	.dbg	line, "quarto.c", 1054
 	lda     #$00
 	jsr     _pal_bright
 ;
 ; delay(10) ;
 ;
-	.dbg	line, "quarto.c", 1050
+	.dbg	line, "quarto.c", 1055
 	lda     #$0A
 	jsr     _delay
 ;
 ; pal_bright(1);
 ;
-	.dbg	line, "quarto.c", 1051
+	.dbg	line, "quarto.c", 1056
 	lda     #$01
 	jsr     _pal_bright
 ;
 ; delay(4) ;
 ;
-	.dbg	line, "quarto.c", 1052
+	.dbg	line, "quarto.c", 1057
 	lda     #$04
 	jsr     _delay
 ;
 ; pal_bright(2);
 ;
-	.dbg	line, "quarto.c", 1053
+	.dbg	line, "quarto.c", 1058
 	lda     #$02
 	jsr     _pal_bright
 ;
 ; delay(4) ;
 ;
-	.dbg	line, "quarto.c", 1054
+	.dbg	line, "quarto.c", 1059
 	lda     #$04
 	jsr     _delay
 ;
 ; pal_bright(4);
 ;
-	.dbg	line, "quarto.c", 1055
+	.dbg	line, "quarto.c", 1060
 	lda     #$04
 	jmp     _pal_bright
 
@@ -4616,7 +4650,7 @@ L0005:	ldx     #$00
 ;
 ; for( i = 0; i < 2; i++ ){
 ;
-	.dbg	line, "quarto.c", 1061
+	.dbg	line, "quarto.c", 1066
 	lda     #$00
 	sta     _i
 L0056:	lda     _i
@@ -4625,18 +4659,18 @@ L0056:	lda     _i
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1160
+	.dbg	line, "quarto.c", 1165
 	rts
 ;
 ; koma_frame = 0 ;
 ;
-	.dbg	line, "quarto.c", 1062
+	.dbg	line, "quarto.c", 1067
 L0065:	lda     #$00
 	sta     _koma_frame
 ;
 ; if( koma_frame % 10 == 0 ){ frame++ ; }
 ;
-	.dbg	line, "quarto.c", 1065
+	.dbg	line, "quarto.c", 1070
 L0057:	lda     _koma_frame
 	jsr     pusha0
 	lda     #$0A
@@ -4649,112 +4683,112 @@ L0057:	lda     _koma_frame
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1067
+	.dbg	line, "quarto.c", 1072
 L0009:	lda     #$01
 	jsr     _delay
 ;
 ; cycleColor() ;
 ;
-	.dbg	line, "quarto.c", 1068
+	.dbg	line, "quarto.c", 1073
 	jsr     _cycleColor
 ;
 ; if( koma_frame == 0 ){
 ;
-	.dbg	line, "quarto.c", 1070
+	.dbg	line, "quarto.c", 1075
 	lda     _koma_frame
 	jne     L000F
 ;
 ; if( tmp < 10 ){ 
 ;
-	.dbg	line, "quarto.c", 1072
+	.dbg	line, "quarto.c", 1077
 	lda     _tmp
 	cmp     #$0A
 	bcs     L0058
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1073
+	.dbg	line, "quarto.c", 1078
 	lda     #$01
 	jsr     _delay
 ;
 ; tmp++ ;
 ;
-	.dbg	line, "quarto.c", 1074
+	.dbg	line, "quarto.c", 1079
 	inc     _tmp
 ;
 ; continue ;
 ;
-	.dbg	line, "quarto.c", 1075
+	.dbg	line, "quarto.c", 1080
 	jmp     L0057
 ;
 ; if( tmp == 10 ){
 ;
-	.dbg	line, "quarto.c", 1077
+	.dbg	line, "quarto.c", 1082
 L0058:	lda     _tmp
 	cmp     #$0A
 	jne     L0059
 ;
 ; tmp++ ;
 ;
-	.dbg	line, "quarto.c", 1078
+	.dbg	line, "quarto.c", 1083
 	inc     _tmp
 ;
 ; delay(20) ;
 ;
-	.dbg	line, "quarto.c", 1079
+	.dbg	line, "quarto.c", 1084
 	lda     #$14
 	jsr     _delay
 ;
 ; bgFlash(0) ;
 ;
-	.dbg	line, "quarto.c", 1081
+	.dbg	line, "quarto.c", 1086
 	lda     #$00
 	jsr     _bgFlash
 ;
 ; bgDown() ;
 ;
-	.dbg	line, "quarto.c", 1082
+	.dbg	line, "quarto.c", 1087
 	jsr     _bgDown
 ;
 ; ppu_off() ;
 ;
-	.dbg	line, "quarto.c", 1084
+	.dbg	line, "quarto.c", 1089
 	jsr     _ppu_off
 ;
 ; vram_adr(NAMETABLE_A);//set VRAM address
 ;
-	.dbg	line, "quarto.c", 1085
+	.dbg	line, "quarto.c", 1090
 	ldx     #$20
 	lda     #$00
 	jsr     _vram_adr
 ;
 ; vram_unrle((unsigned char*)open_name);
 ;
-	.dbg	line, "quarto.c", 1086
+	.dbg	line, "quarto.c", 1091
 	lda     #<(_open_name)
 	ldx     #>(_open_name)
 	jsr     _vram_unrle
 ;
 ; ppu_on_all() ;
 ;
-	.dbg	line, "quarto.c", 1087
+	.dbg	line, "quarto.c", 1092
 	jsr     _ppu_on_all
 ;
 ; delay(20) ;
 ;
-	.dbg	line, "quarto.c", 1089
+	.dbg	line, "quarto.c", 1094
 	lda     #$14
 	jsr     _delay
 ;
 ; spr = 0 ;
 ;
-	.dbg	line, "quarto.c", 1090
+	.dbg	line, "quarto.c", 1095
 	lda     #$00
 	sta     _spr
 ;
 ; spr = oam_meta_spr( koma_x[0], koma_y[0], spr, koma_list[0][0][0] ) ;
 ;
-	.dbg	line, "quarto.c", 1091
+	.dbg	line, "quarto.c", 1096
 	jsr     decsp3
 	lda     _koma_x
 	ldy     #$02
@@ -4772,7 +4806,7 @@ L0058:	lda     _tmp
 ;
 ; spr = oam_meta_spr( koma_x[1], koma_y[1], spr, koma_list[0][1][0] ) ;
 ;
-	.dbg	line, "quarto.c", 1092
+	.dbg	line, "quarto.c", 1097
 	jsr     decsp3
 	lda     _koma_x+1
 	ldy     #$02
@@ -4790,12 +4824,12 @@ L0058:	lda     _tmp
 ;
 ; bgUp() ;
 ;
-	.dbg	line, "quarto.c", 1094
+	.dbg	line, "quarto.c", 1099
 	jsr     _bgUp
 ;
 ; put_update_debug(10,25, 13, "PRESS BUTTON!" );
 ;
-	.dbg	line, "quarto.c", 1096
+	.dbg	line, "quarto.c", 1101
 	jsr     decsp3
 	lda     #$0A
 	ldy     #$02
@@ -4812,7 +4846,7 @@ L0058:	lda     _tmp
 ;
 ; put_update_debug(11,27, 10, "006 * 2021" );
 ;
-	.dbg	line, "quarto.c", 1097
+	.dbg	line, "quarto.c", 1102
 	jsr     decsp3
 	lda     #$0B
 	ldy     #$02
@@ -4829,25 +4863,25 @@ L0058:	lda     _tmp
 ;
 ; delay(20) ;
 ;
-	.dbg	line, "quarto.c", 1098
+	.dbg	line, "quarto.c", 1103
 	lda     #$14
 	jsr     _delay
 ;
 ; pal_bright(4);
 ;
-	.dbg	line, "quarto.c", 1099
+	.dbg	line, "quarto.c", 1104
 	lda     #$04
 	jsr     _pal_bright
 ;
 ; music_play(0);
 ;
-	.dbg	line, "quarto.c", 1100
+	.dbg	line, "quarto.c", 1105
 	lda     #$00
 	jsr     _music_play
 ;
 ; for( j = 0; j < 14; j++ ){
 ;
-	.dbg	line, "quarto.c", 1103
+	.dbg	line, "quarto.c", 1108
 L0059:	lda     #$00
 	sta     _j
 L005A:	lda     _j
@@ -4856,13 +4890,13 @@ L005A:	lda     _j
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1104
+	.dbg	line, "quarto.c", 1109
 	lda     #$01
 	jsr     _delay
 ;
 ; koma_y[i]-- ;
 ;
-	.dbg	line, "quarto.c", 1105
+	.dbg	line, "quarto.c", 1110
 	lda     #<(_koma_y)
 	ldx     #>(_koma_y)
 	clc
@@ -4881,12 +4915,12 @@ L0012:	sta     sreg
 ;
 ; spr = 0 ;
 ;
-	.dbg	line, "quarto.c", 1106
+	.dbg	line, "quarto.c", 1111
 	sty     _spr
 ;
 ; spr = oam_meta_spr( koma_x[0], koma_y[0], spr, koma_list[0][0][0] ) ;
 ;
-	.dbg	line, "quarto.c", 1107
+	.dbg	line, "quarto.c", 1112
 	jsr     decsp3
 	lda     _koma_x
 	ldy     #$02
@@ -4904,7 +4938,7 @@ L0012:	sta     sreg
 ;
 ; spr = oam_meta_spr( koma_x[1], koma_y[1], spr, koma_list[0][1][0] ) ;
 ;
-	.dbg	line, "quarto.c", 1108
+	.dbg	line, "quarto.c", 1113
 	jsr     decsp3
 	lda     _koma_x+1
 	ldy     #$02
@@ -4922,12 +4956,12 @@ L0012:	sta     sreg
 ;
 ; cycleColor() ;
 ;
-	.dbg	line, "quarto.c", 1109
+	.dbg	line, "quarto.c", 1114
 	jsr     _cycleColor
 ;
 ; if( koma_frame % 10 == 0 ){ frame++ ; }
 ;
-	.dbg	line, "quarto.c", 1110
+	.dbg	line, "quarto.c", 1115
 	lda     _koma_frame
 	jsr     pusha0
 	lda     #$0A
@@ -4940,52 +4974,52 @@ L0012:	sta     sreg
 ;
 ; koma_frame++ ;
 ;
-	.dbg	line, "quarto.c", 1111
+	.dbg	line, "quarto.c", 1116
 L0013:	inc     _koma_frame
 ;
 ; if( checkForceBreak() ){ return ; }
 ;
-	.dbg	line, "quarto.c", 1112
+	.dbg	line, "quarto.c", 1117
 	jsr     _checkForceBreak
 	tax
 	beq     L0066
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1160
+	.dbg	line, "quarto.c", 1165
 	rts
 ;
 ; for( j = 0; j < 14; j++ ){
 ;
-	.dbg	line, "quarto.c", 1103
+	.dbg	line, "quarto.c", 1108
 L0066:	inc     _j
 	jmp     L005A
 ;
 ; if( checkForceBreak() ){ return ; }
 ;
-	.dbg	line, "quarto.c", 1117
+	.dbg	line, "quarto.c", 1122
 L000F:	jsr     _checkForceBreak
 	tax
 	beq     L0067
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1160
+	.dbg	line, "quarto.c", 1165
 	rts
 ;
 ; koma_frame++ ;
 ;
-	.dbg	line, "quarto.c", 1118
+	.dbg	line, "quarto.c", 1123
 L0067:	inc     _koma_frame
 ;
 ; spr = 0 ;
 ;
-	.dbg	line, "quarto.c", 1120
+	.dbg	line, "quarto.c", 1125
 	sta     _spr
 ;
 ; spr = oam_meta_spr( koma_x[0], koma_y[0], spr, koma_list[0][0][0] ) ;
 ;
-	.dbg	line, "quarto.c", 1122
+	.dbg	line, "quarto.c", 1127
 	jsr     decsp3
 	lda     _koma_x
 	ldy     #$02
@@ -5003,7 +5037,7 @@ L0067:	inc     _koma_frame
 ;
 ; spr = oam_meta_spr( koma_x[1], koma_y[1], spr, koma_list[0][1][0] ) ;
 ;
-	.dbg	line, "quarto.c", 1123
+	.dbg	line, "quarto.c", 1128
 	jsr     decsp3
 	lda     _koma_x+1
 	ldy     #$02
@@ -5021,14 +5055,14 @@ L0067:	inc     _koma_frame
 ;
 ; if( koma_pos[i] == 0 ){
 ;
-	.dbg	line, "quarto.c", 1126
+	.dbg	line, "quarto.c", 1131
 	ldy     _i
 	lda     _koma_pos,y
 	bne     L0017
 ;
 ; if( koma_x[i] != 152 ){ koma_x[i]+=2; }
 ;
-	.dbg	line, "quarto.c", 1127
+	.dbg	line, "quarto.c", 1132
 	ldy     _i
 	lda     _koma_x,y
 	cmp     #$98
@@ -5049,7 +5083,7 @@ L001B:	sta     ptr1
 ;
 ; if( koma_y[i] != 122 ){ koma_y[i]+=1; }
 ;
-	.dbg	line, "quarto.c", 1128
+	.dbg	line, "quarto.c", 1133
 L0019:	ldy     _i
 	lda     _koma_y,y
 	cmp     #$7A
@@ -5070,7 +5104,7 @@ L001E:	sta     ptr1
 ;
 ; if( koma_x[i] == 152 && koma_y[i] == 122 ){ 
 ;
-	.dbg	line, "quarto.c", 1129
+	.dbg	line, "quarto.c", 1134
 L001C:	ldy     _i
 	lda     _koma_x,y
 	cmp     #$98
@@ -5082,18 +5116,18 @@ L001C:	ldy     _i
 ;
 ; koma_pos[i] = 1 ;
 ;
-	.dbg	line, "quarto.c", 1130
+	.dbg	line, "quarto.c", 1135
 	ldy     _i
 	lda     #$01
 ;
 ; break ;
 ;
-	.dbg	line, "quarto.c", 1131
+	.dbg	line, "quarto.c", 1136
 	jmp     L0064
 ;
 ; else if( koma_pos[i] == 1 ){
 ;
-	.dbg	line, "quarto.c", 1134
+	.dbg	line, "quarto.c", 1139
 L0017:	ldy     _i
 	lda     _koma_pos,y
 	cmp     #$01
@@ -5101,7 +5135,7 @@ L0017:	ldy     _i
 ;
 ; if( koma_x[i] != 112 ){ koma_x[i]-=2; }
 ;
-	.dbg	line, "quarto.c", 1135
+	.dbg	line, "quarto.c", 1140
 	ldy     _i
 	lda     _koma_x,y
 	cmp     #$70
@@ -5122,7 +5156,7 @@ L002B:	sta     ptr1
 ;
 ; if( koma_y[i] != 144 ){ koma_y[i]+=1; }
 ;
-	.dbg	line, "quarto.c", 1136
+	.dbg	line, "quarto.c", 1141
 L0029:	ldy     _i
 	lda     _koma_y,y
 	cmp     #$90
@@ -5143,7 +5177,7 @@ L002E:	sta     ptr1
 ;
 ; if( koma_x[i] == 112 && koma_y[i] == 144  ){
 ;
-	.dbg	line, "quarto.c", 1137
+	.dbg	line, "quarto.c", 1142
 L002C:	ldy     _i
 	lda     _koma_x,y
 	cmp     #$70
@@ -5155,18 +5189,18 @@ L002C:	ldy     _i
 ;
 ; koma_pos[i] = 2 ;
 ;
-	.dbg	line, "quarto.c", 1138
+	.dbg	line, "quarto.c", 1143
 	ldy     _i
 	lda     #$02
 ;
 ; break ;
 ;
-	.dbg	line, "quarto.c", 1139
+	.dbg	line, "quarto.c", 1144
 	jmp     L0064
 ;
 ; else if( koma_pos[i] == 2 ){
 ;
-	.dbg	line, "quarto.c", 1142
+	.dbg	line, "quarto.c", 1147
 L0027:	ldy     _i
 	lda     _koma_pos,y
 	cmp     #$02
@@ -5174,7 +5208,7 @@ L0027:	ldy     _i
 ;
 ; if( koma_x[i] != 72 ){ koma_x[i]-=2; }
 ;
-	.dbg	line, "quarto.c", 1143
+	.dbg	line, "quarto.c", 1148
 	ldy     _i
 	lda     _koma_x,y
 	cmp     #$48
@@ -5195,7 +5229,7 @@ L003B:	sta     ptr1
 ;
 ; if( koma_y[i] != 122 ){ koma_y[i]-=1; }
 ;
-	.dbg	line, "quarto.c", 1144
+	.dbg	line, "quarto.c", 1149
 L0039:	ldy     _i
 	lda     _koma_y,y
 	cmp     #$7A
@@ -5216,7 +5250,7 @@ L003E:	sta     ptr1
 ;
 ; if( koma_x[i] == 72 && koma_y[i] == 122 ){
 ;
-	.dbg	line, "quarto.c", 1145
+	.dbg	line, "quarto.c", 1150
 L003C:	ldy     _i
 	lda     _koma_x,y
 	cmp     #$48
@@ -5228,18 +5262,18 @@ L003C:	ldy     _i
 ;
 ; koma_pos[i] = 3 ;
 ;
-	.dbg	line, "quarto.c", 1146
+	.dbg	line, "quarto.c", 1151
 	ldy     _i
 	lda     #$03
 ;
 ; break ;
 ;
-	.dbg	line, "quarto.c", 1147
+	.dbg	line, "quarto.c", 1152
 	jmp     L0064
 ;
 ; else if( koma_pos[i] == 3 ){
 ;
-	.dbg	line, "quarto.c", 1150
+	.dbg	line, "quarto.c", 1155
 L0037:	ldy     _i
 	lda     _koma_pos,y
 	cmp     #$03
@@ -5247,7 +5281,7 @@ L0037:	ldy     _i
 ;
 ; if( koma_x[i] != 112 ){ koma_x[i]+=2; }
 ;
-	.dbg	line, "quarto.c", 1151
+	.dbg	line, "quarto.c", 1156
 	ldy     _i
 	lda     _koma_x,y
 	cmp     #$70
@@ -5268,7 +5302,7 @@ L004B:	sta     ptr1
 ;
 ; if( koma_y[i] != 96 ){ koma_y[i]-=1; }
 ;
-	.dbg	line, "quarto.c", 1152
+	.dbg	line, "quarto.c", 1157
 L0049:	ldy     _i
 	lda     _koma_y,y
 	cmp     #$60
@@ -5289,7 +5323,7 @@ L004E:	sta     ptr1
 ;
 ; if( koma_x[i] == 112 && koma_y[i] == 96 ){
 ;
-	.dbg	line, "quarto.c", 1153
+	.dbg	line, "quarto.c", 1158
 L004C:	ldy     _i
 	lda     _koma_x,y
 	cmp     #$70
@@ -5301,14 +5335,14 @@ L004C:	ldy     _i
 ;
 ; koma_pos[i] = 0 ;
 ;
-	.dbg	line, "quarto.c", 1154
+	.dbg	line, "quarto.c", 1159
 	ldy     _i
 	lda     #$00
 L0064:	sta     _koma_pos,y
 ;
 ; for( i = 0; i < 2; i++ ){
 ;
-	.dbg	line, "quarto.c", 1061
+	.dbg	line, "quarto.c", 1066
 	inc     _i
 	jmp     L0056
 
@@ -5332,18 +5366,18 @@ L0064:	sta     _koma_pos,y
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1164
+	.dbg	line, "quarto.c", 1169
 	jsr     pusha
 ;
 ; j = 0 ;
 ;
-	.dbg	line, "quarto.c", 1166
+	.dbg	line, "quarto.c", 1171
 	lda     #$00
 	sta     _j
 ;
 ; if(posx >= 2 && posx <= 5){
 ;
-	.dbg	line, "quarto.c", 1168
+	.dbg	line, "quarto.c", 1173
 	ldy     #$01
 	lda     (sp),y
 	cmp     #$02
@@ -5353,7 +5387,7 @@ L0064:	sta     _koma_pos,y
 ;
 ; if( posy >= 10 && posy <= 12 ){ posx = 3 ;posy = 12 ; j++; x_index=0 ; y_index=3 ;}
 ;
-	.dbg	line, "quarto.c", 1169
+	.dbg	line, "quarto.c", 1174
 	dey
 	lda     (sp),y
 	cmp     #$0A
@@ -5373,7 +5407,7 @@ L0064:	sta     _koma_pos,y
 ;
 ; if(posx >= 6 && posx <= 9){
 ;
-	.dbg	line, "quarto.c", 1171
+	.dbg	line, "quarto.c", 1176
 L0006:	iny
 L006B:	lda     (sp),y
 	cmp     #$06
@@ -5383,7 +5417,7 @@ L006B:	lda     (sp),y
 ;
 ; if( posy >= 8 && posy <= 10 ){ posx = 7 ;posy = 10 ; j++; x_index=0 ; y_index=2 ;}
 ;
-	.dbg	line, "quarto.c", 1172
+	.dbg	line, "quarto.c", 1177
 	dey
 	lda     (sp),y
 	cmp     #$08
@@ -5403,7 +5437,7 @@ L006B:	lda     (sp),y
 ;
 ; if( posy >= 12 && posy <= 14 ){ posx = 7 ;posy = 14 ; j++; x_index=1 ; y_index=3 ;}
 ;
-	.dbg	line, "quarto.c", 1173
+	.dbg	line, "quarto.c", 1178
 L0073:	lda     (sp),y
 	cmp     #$0C
 	bcc     L0012
@@ -5423,7 +5457,7 @@ L0073:	lda     (sp),y
 ;
 ; if(posx >= 10 && posx <= 13){
 ;
-	.dbg	line, "quarto.c", 1175
+	.dbg	line, "quarto.c", 1180
 L0012:	iny
 L0078:	lda     (sp),y
 	cmp     #$0A
@@ -5433,7 +5467,7 @@ L0078:	lda     (sp),y
 ;
 ; if( posy >= 6 && posy <= 8 ){ posx = 11 ;posy = 8 ; j++; x_index=0 ; y_index=1 ;}
 ;
-	.dbg	line, "quarto.c", 1176
+	.dbg	line, "quarto.c", 1181
 	dey
 	lda     (sp),y
 	cmp     #$06
@@ -5453,7 +5487,7 @@ L0078:	lda     (sp),y
 ;
 ; if( posy >= 10 && posy <= 12 ){ posx = 11 ;posy = 12 ; j++; x_index=1 ; y_index=2 ;}
 ;
-	.dbg	line, "quarto.c", 1177
+	.dbg	line, "quarto.c", 1182
 L0080:	lda     (sp),y
 	cmp     #$0A
 	bcc     L0085
@@ -5473,7 +5507,7 @@ L0080:	lda     (sp),y
 ;
 ; if( posy >= 14 && posy <= 16 ){ posx = 11 ;posy = 16 ; j++; x_index=2 ; y_index=3 ;}
 ;
-	.dbg	line, "quarto.c", 1178
+	.dbg	line, "quarto.c", 1183
 L0085:	lda     (sp),y
 	cmp     #$0E
 	bcc     L0022
@@ -5493,7 +5527,7 @@ L0085:	lda     (sp),y
 ;
 ; if(posx >= 14 && posx <= 17){
 ;
-	.dbg	line, "quarto.c", 1180
+	.dbg	line, "quarto.c", 1185
 L0022:	iny
 L008A:	lda     (sp),y
 	cmp     #$0E
@@ -5503,7 +5537,7 @@ L008A:	lda     (sp),y
 ;
 ; if( posy >= 4 && posy <= 7 ){ posx = 15 ;posy = 6 ; j++; x_index=0 ; y_index=0 ; }
 ;
-	.dbg	line, "quarto.c", 1181
+	.dbg	line, "quarto.c", 1186
 	dey
 	lda     (sp),y
 	cmp     #$04
@@ -5523,7 +5557,7 @@ L008A:	lda     (sp),y
 ;
 ; if( posy >= 8 && posy <= 10 ){ posx = 15 ;posy = 10 ; j++; x_index=1 ; y_index=1 ;}
 ;
-	.dbg	line, "quarto.c", 1182
+	.dbg	line, "quarto.c", 1187
 L0092:	lda     (sp),y
 	cmp     #$08
 	bcc     L0097
@@ -5542,7 +5576,7 @@ L0092:	lda     (sp),y
 ;
 ; if( posy >= 12 && posy <= 14 ){ posx = 15 ;posy = 14 ; j++; x_index=2 ; y_index=2 ;}
 ;
-	.dbg	line, "quarto.c", 1183
+	.dbg	line, "quarto.c", 1188
 L0097:	lda     (sp),y
 	cmp     #$0C
 	bcc     L009C
@@ -5561,7 +5595,7 @@ L0097:	lda     (sp),y
 ;
 ; if( posy >= 16 && posy <= 18 ){ posx = 15 ;posy = 18 ; j++; x_index=3 ; y_index=3 ;}
 ;
-	.dbg	line, "quarto.c", 1184
+	.dbg	line, "quarto.c", 1189
 L009C:	lda     (sp),y
 	cmp     #$10
 	bcc     L0036
@@ -5580,7 +5614,7 @@ L009C:	lda     (sp),y
 ;
 ; if(posx >= 18 && posx <= 21){
 ;
-	.dbg	line, "quarto.c", 1186
+	.dbg	line, "quarto.c", 1191
 L0036:	iny
 L00A1:	lda     (sp),y
 	cmp     #$12
@@ -5590,7 +5624,7 @@ L00A1:	lda     (sp),y
 ;
 ; if( posy >= 6 && posy <= 8 ){ posx = 19 ;posy = 8 ; j++; x_index=1 ; y_index=0 ;}
 ;
-	.dbg	line, "quarto.c", 1187
+	.dbg	line, "quarto.c", 1192
 	dey
 	lda     (sp),y
 	cmp     #$06
@@ -5610,7 +5644,7 @@ L00A1:	lda     (sp),y
 ;
 ; if( posy >= 10 && posy <= 12 ){ posx = 19 ;posy = 12 ; j++; x_index=2 ; y_index=1 ;}
 ;
-	.dbg	line, "quarto.c", 1188
+	.dbg	line, "quarto.c", 1193
 L00A9:	lda     (sp),y
 	cmp     #$0A
 	bcc     L00AE
@@ -5630,7 +5664,7 @@ L00A9:	lda     (sp),y
 ;
 ; if( posy >= 14 && posy <= 16 ){ posx = 19 ;posy = 16 ; j++; x_index=3 ; y_index=2 ;}
 ;
-	.dbg	line, "quarto.c", 1189
+	.dbg	line, "quarto.c", 1194
 L00AE:	lda     (sp),y
 	cmp     #$0E
 	bcc     L0046
@@ -5650,7 +5684,7 @@ L00AE:	lda     (sp),y
 ;
 ; if(posx >= 22 && posx <= 25){
 ;
-	.dbg	line, "quarto.c", 1191
+	.dbg	line, "quarto.c", 1196
 L0046:	iny
 L00B3:	lda     (sp),y
 	cmp     #$16
@@ -5660,7 +5694,7 @@ L00B3:	lda     (sp),y
 ;
 ; if( posy >= 8 && posy <= 10 ){ posx = 23 ;posy = 10 ; j++; x_index=2 ; y_index=0 ;}
 ;
-	.dbg	line, "quarto.c", 1192
+	.dbg	line, "quarto.c", 1197
 	dey
 	lda     (sp),y
 	cmp     #$08
@@ -5680,7 +5714,7 @@ L00B3:	lda     (sp),y
 ;
 ; if( posy >= 12 && posy <= 14 ){ posx = 23 ;posy = 14 ; j++; x_index=3 ; y_index=1 ;}
 ;
-	.dbg	line, "quarto.c", 1193
+	.dbg	line, "quarto.c", 1198
 L00BB:	lda     (sp),y
 	cmp     #$0C
 	bcc     L0052
@@ -5700,7 +5734,7 @@ L00BB:	lda     (sp),y
 ;
 ; if(posx >= 26 && posx <= 29){
 ;
-	.dbg	line, "quarto.c", 1195
+	.dbg	line, "quarto.c", 1200
 L0052:	iny
 L00C0:	lda     (sp),y
 	cmp     #$1A
@@ -5710,7 +5744,7 @@ L00C0:	lda     (sp),y
 ;
 ; if( posy >= 10 && posy <= 12 ){ posx = 27 ;posy = 12 ; j++;x_index=3 ; y_index=0 ;}
 ;
-	.dbg	line, "quarto.c", 1196
+	.dbg	line, "quarto.c", 1201
 	dey
 	lda     (sp),y
 	cmp     #$0A
@@ -5730,7 +5764,7 @@ L00C0:	lda     (sp),y
 ;
 ; if( posy < 8 ){
 ;
-	.dbg	line, "quarto.c", 1199
+	.dbg	line, "quarto.c", 1204
 L005A:	ldy     #$00
 L00C8:	lda     (sp),y
 	cmp     #$08
@@ -5738,13 +5772,13 @@ L00C8:	lda     (sp),y
 ;
 ; set_posh = 0x20 ;
 ;
-	.dbg	line, "quarto.c", 1200
+	.dbg	line, "quarto.c", 1205
 	lda     #$20
 	sta     _set_posh
 ;
 ; set_posl = 0x00 + (0x20*posy) + posx ;
 ;
-	.dbg	line, "quarto.c", 1201
+	.dbg	line, "quarto.c", 1206
 	ldx     #$00
 	lda     (sp),y
 	jsr     shlax4
@@ -5760,12 +5794,12 @@ L00C8:	lda     (sp),y
 ;
 ; }else{
 ;
-	.dbg	line, "quarto.c", 1202
+	.dbg	line, "quarto.c", 1207
 	jmp     L0063
 ;
 ; set_posh = 0x20 + posy / 8 ;
 ;
-	.dbg	line, "quarto.c", 1203
+	.dbg	line, "quarto.c", 1208
 L00CA:	lda     (sp),y
 	lsr     a
 	lsr     a
@@ -5776,7 +5810,7 @@ L00CA:	lda     (sp),y
 ;
 ; set_posl = 0x00 + (0x20*(posy%8)) + posx ;
 ;
-	.dbg	line, "quarto.c", 1204
+	.dbg	line, "quarto.c", 1209
 	lda     (sp),y
 	ldx     #$00
 	and     #$07
@@ -5793,20 +5827,20 @@ L0063:	sta     _set_posl
 ;
 ; set_posx = posx ;
 ;
-	.dbg	line, "quarto.c", 1206
+	.dbg	line, "quarto.c", 1211
 	lda     (sp),y
 	sta     _set_posx
 ;
 ; set_posy = posy ;
 ;
-	.dbg	line, "quarto.c", 1207
+	.dbg	line, "quarto.c", 1212
 	dey
 	lda     (sp),y
 	sta     _set_posy
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1209
+	.dbg	line, "quarto.c", 1214
 	jmp     incsp2
 
 	.dbg	line
@@ -5829,18 +5863,18 @@ L0063:	sta     _set_posl
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1211
+	.dbg	line, "quarto.c", 1216
 	jsr     pusha
 ;
 ; set_posh = 0x23 ;
 ;
-	.dbg	line, "quarto.c", 1212
+	.dbg	line, "quarto.c", 1217
 	lda     #$23
 	sta     _set_posh
 ;
 ; set_posl = 0xC0 + (0x08*(posy/4)) + posx/4 ;
 ;
-	.dbg	line, "quarto.c", 1213
+	.dbg	line, "quarto.c", 1218
 	ldy     #$00
 	lda     (sp),y
 	lsr     a
@@ -5861,7 +5895,7 @@ L0063:	sta     _set_posl
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1215
+	.dbg	line, "quarto.c", 1220
 	jmp     incsp2
 
 	.dbg	line
@@ -5883,43 +5917,43 @@ L0063:	sta     _set_posl
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1218
+	.dbg	line, "quarto.c", 1223
 	jsr     pusha
 ;
 ; update_koma_color[0]=0x23|NT_UPD_HORZ;
 ;
-	.dbg	line, "quarto.c", 1220
+	.dbg	line, "quarto.c", 1225
 	lda     #$63
 	sta     _update_koma_color
 ;
 ; update_koma_color[1]=0x00;
 ;
-	.dbg	line, "quarto.c", 1221
+	.dbg	line, "quarto.c", 1226
 	lda     #$00
 	sta     _update_koma_color+1
 ;
 ; update_koma_color[2]=1;
 ;
-	.dbg	line, "quarto.c", 1222
+	.dbg	line, "quarto.c", 1227
 	lda     #$01
 	sta     _update_koma_color+2
 ;
 ; update_koma_color[4]=NT_UPD_EOF;
 ;
-	.dbg	line, "quarto.c", 1223
+	.dbg	line, "quarto.c", 1228
 	lda     #$FF
 	sta     _update_koma_color+4
 ;
 ; set_vram_update(update_koma_color);
 ;
-	.dbg	line, "quarto.c", 1224
+	.dbg	line, "quarto.c", 1229
 	lda     #<(_update_koma_color)
 	ldx     #>(_update_koma_color)
 	jsr     _set_vram_update
 ;
 ; for( i=0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1226
+	.dbg	line, "quarto.c", 1231
 	lda     #$00
 	sta     _i
 L0039:	lda     _i
@@ -5928,13 +5962,13 @@ L0039:	lda     _i
 ;
 ; update_koma_color[0]=0x23|NT_UPD_HORZ;
 ;
-	.dbg	line, "quarto.c", 1227
+	.dbg	line, "quarto.c", 1232
 	lda     #$63
 	sta     _update_koma_color
 ;
 ; update_koma_color[1]=attr_pos[x_index][y_index][i];
 ;
-	.dbg	line, "quarto.c", 1228
+	.dbg	line, "quarto.c", 1233
 	ldx     #$00
 	lda     _x_index
 	jsr     aslax4
@@ -5962,7 +5996,7 @@ L0039:	lda     _i
 ;
 ; if( (x_index - y_index) % 2 == 0 ){
 ;
-	.dbg	line, "quarto.c", 1229
+	.dbg	line, "quarto.c", 1234
 	lda     _x_index
 	jsr     pusha0
 	lda     _y_index
@@ -5978,7 +6012,7 @@ L0039:	lda     _i
 ;
 ; if( i == 0 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b01000000:0b10000000 ; tmp3 = 0b00111111 ;}
 ;
-	.dbg	line, "quarto.c", 1230
+	.dbg	line, "quarto.c", 1235
 	lda     _i
 	bne     L003C
 	lda     _x_index
@@ -6029,7 +6063,7 @@ L003B:	sta     _tmp2
 ;
 ; if( i == 1 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00010000:0b00100000 ; tmp3 = 0b11001111 ;}
 ;
-	.dbg	line, "quarto.c", 1231
+	.dbg	line, "quarto.c", 1236
 L003C:	lda     _i
 	cmp     #$01
 	bne     L003F
@@ -6082,7 +6116,7 @@ L003E:	sta     _tmp2
 ;
 ; if( i == 2 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000100:0b00001000 ; tmp3 = 0b11110011 ;}
 ;
-	.dbg	line, "quarto.c", 1232
+	.dbg	line, "quarto.c", 1237
 L003F:	lda     _i
 	cmp     #$02
 	bne     L0042
@@ -6135,7 +6169,7 @@ L0041:	sta     _tmp2
 ;
 ; if( i == 3 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000001:0b00000010 ; tmp3 = 0b11111100 ;}
 ;
-	.dbg	line, "quarto.c", 1233
+	.dbg	line, "quarto.c", 1238
 L0042:	lda     _i
 	cmp     #$03
 	jne     L007E
@@ -6187,12 +6221,12 @@ L0044:	sta     _tmp2
 ;
 ; }else{
 ;
-	.dbg	line, "quarto.c", 1240
+	.dbg	line, "quarto.c", 1245
 	jmp     L007F
 ;
 ; if( i == 0 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000100:0b00001000 ; tmp3 = 0b11110011 ;}
 ;
-	.dbg	line, "quarto.c", 1241
+	.dbg	line, "quarto.c", 1246
 L0006:	lda     _i
 	bne     L0048
 	tax
@@ -6244,7 +6278,7 @@ L0047:	sta     _tmp2
 ;
 ; if( i == 1 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000001:0b00000010 ; tmp3 = 0b11111100 ;}
 ;
-	.dbg	line, "quarto.c", 1242
+	.dbg	line, "quarto.c", 1247
 L0048:	lda     _i
 	cmp     #$01
 	bne     L004B
@@ -6297,7 +6331,7 @@ L004A:	sta     _tmp2
 ;
 ; if( i == 2 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b01000000:0b10000000 ; tmp3 = 0b00111111 ;}
 ;
-	.dbg	line, "quarto.c", 1243
+	.dbg	line, "quarto.c", 1248
 L004B:	lda     _i
 	cmp     #$02
 	bne     L004E
@@ -6350,7 +6384,7 @@ L004D:	sta     _tmp2
 ;
 ; if( i == 3 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00010000:0b00100000 ; tmp3 = 0b11001111 ;}
 ;
-	.dbg	line, "quarto.c", 1244
+	.dbg	line, "quarto.c", 1249
 L004E:	lda     _i
 	cmp     #$03
 	bne     L007E
@@ -6403,7 +6437,7 @@ L007F:	sta     _tmp3
 ;
 ; if( color==0x00 ){ tmp2 = 0x00 ;}
 ;
-	.dbg	line, "quarto.c", 1245
+	.dbg	line, "quarto.c", 1250
 L007E:	ldx     #$00
 	lda     (sp,x)
 	bne     L0051
@@ -6411,26 +6445,26 @@ L007E:	ldx     #$00
 ;
 ; tmp = tmp & tmp3;
 ;
-	.dbg	line, "quarto.c", 1246
+	.dbg	line, "quarto.c", 1251
 L0051:	lda     _tmp3
 	and     _tmp
 	sta     _tmp
 ;
 ; tmp = tmp | tmp2;
 ;
-	.dbg	line, "quarto.c", 1247
+	.dbg	line, "quarto.c", 1252
 	lda     _tmp2
 	ora     _tmp
 	sta     _tmp
 ;
 ; update_koma_color[3] = tmp ;
 ;
-	.dbg	line, "quarto.c", 1248
+	.dbg	line, "quarto.c", 1253
 	sta     _update_koma_color+3
 ;
 ; attr_stat[attr_pos[x_index][y_index][i]-0xC8] = tmp ;
 ;
-	.dbg	line, "quarto.c", 1250
+	.dbg	line, "quarto.c", 1255
 	lda     _x_index
 	jsr     aslax4
 	clc
@@ -6470,18 +6504,18 @@ L002C:	clc
 ;
 ; ppu_wait_frame();
 ;
-	.dbg	line, "quarto.c", 1252
+	.dbg	line, "quarto.c", 1257
 	jsr     _ppu_wait_frame
 ;
 ; for( i=0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1226
+	.dbg	line, "quarto.c", 1231
 	inc     _i
 	jmp     L0039
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1254
+	.dbg	line, "quarto.c", 1259
 L0003:	jmp     incsp1
 
 	.dbg	line
@@ -6505,12 +6539,12 @@ L0003:	jmp     incsp1
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1257
+	.dbg	line, "quarto.c", 1262
 	jsr     pusha
 ;
 ; getAttrPos(posx, posy) ;
 ;
-	.dbg	line, "quarto.c", 1258
+	.dbg	line, "quarto.c", 1263
 	ldy     #$02
 	lda     (sp),y
 	jsr     pusha
@@ -6520,51 +6554,51 @@ L0003:	jmp     incsp1
 ;
 ; update_koma_color[0]=set_posh|NT_UPD_HORZ;
 ;
-	.dbg	line, "quarto.c", 1259
+	.dbg	line, "quarto.c", 1264
 	lda     _set_posh
 	ora     #$40
 	sta     _update_koma_color
 ;
 ; update_koma_color[1]=set_posl;
 ;
-	.dbg	line, "quarto.c", 1260
+	.dbg	line, "quarto.c", 1265
 	lda     _set_posl
 	sta     _update_koma_color+1
 ;
 ; update_koma_color[2]=1;
 ;
-	.dbg	line, "quarto.c", 1261
+	.dbg	line, "quarto.c", 1266
 	lda     #$01
 	sta     _update_koma_color+2
 ;
 ; update_koma_color[4]=NT_UPD_EOF;
 ;
-	.dbg	line, "quarto.c", 1262
+	.dbg	line, "quarto.c", 1267
 	lda     #$FF
 	sta     _update_koma_color+4
 ;
 ; set_vram_update(update_koma_color);
 ;
-	.dbg	line, "quarto.c", 1263
+	.dbg	line, "quarto.c", 1268
 	lda     #<(_update_koma_color)
 	ldx     #>(_update_koma_color)
 	jsr     _set_vram_update
 ;
 ; update_koma_color[3] = color;
 ;
-	.dbg	line, "quarto.c", 1265
+	.dbg	line, "quarto.c", 1270
 	ldy     #$00
 	lda     (sp),y
 	sta     _update_koma_color+3
 ;
 ; ppu_wait_frame();
 ;
-	.dbg	line, "quarto.c", 1267
+	.dbg	line, "quarto.c", 1272
 	jsr     _ppu_wait_frame
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1269
+	.dbg	line, "quarto.c", 1274
 	jmp     incsp3
 
 	.dbg	line
@@ -6587,12 +6621,12 @@ L0003:	jmp     incsp1
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1271
+	.dbg	line, "quarto.c", 1276
 	jsr     pusha
 ;
 ; getStagePos(posx, posy) ;
 ;
-	.dbg	line, "quarto.c", 1272
+	.dbg	line, "quarto.c", 1277
 	ldy     #$01
 	lda     (sp),y
 	jsr     pusha
@@ -6602,18 +6636,18 @@ L0003:	jmp     incsp1
 ;
 ; if( j == 0 ){
 ;
-	.dbg	line, "quarto.c", 1273
+	.dbg	line, "quarto.c", 1278
 	ldx     #$00
 	lda     _j
 ;
 ; return 1;
 ;
-	.dbg	line, "quarto.c", 1274
+	.dbg	line, "quarto.c", 1279
 	beq     L0006
 ;
 ; if( stage_stat[x_index][y_index][_KOMA_TYPE] != 0 ){
 ;
-	.dbg	line, "quarto.c", 1276
+	.dbg	line, "quarto.c", 1281
 	lda     _x_index
 	jsr     pusha0
 	lda     #$0C
@@ -6639,12 +6673,12 @@ L0003:	jmp     incsp1
 ;
 ; return 1 ;
 ;
-	.dbg	line, "quarto.c", 1277
+	.dbg	line, "quarto.c", 1282
 L0006:	lda     #$01
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1280
+	.dbg	line, "quarto.c", 1285
 L0001:	jmp     incsp2
 
 	.dbg	line
@@ -6669,12 +6703,12 @@ L0001:	jmp     incsp2
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1282
+	.dbg	line, "quarto.c", 1287
 	jsr     pushax
 ;
 ; getStagePos(posx, posy) ;
 ;
-	.dbg	line, "quarto.c", 1283
+	.dbg	line, "quarto.c", 1288
 	ldy     #$04
 	lda     (sp),y
 	jsr     pusha
@@ -6684,33 +6718,33 @@ L0001:	jmp     incsp2
 ;
 ; update_koma[0]=set_posh|NT_UPD_VERT;
 ;
-	.dbg	line, "quarto.c", 1284
+	.dbg	line, "quarto.c", 1289
 	lda     _set_posh
 	ora     #$80
 	sta     _update_koma
 ;
 ; update_koma[1]=set_posl;
 ;
-	.dbg	line, "quarto.c", 1285
+	.dbg	line, "quarto.c", 1290
 	lda     _set_posl
 	sta     _update_koma+1
 ;
 ; update_koma[2]=4;
 ;
-	.dbg	line, "quarto.c", 1286
+	.dbg	line, "quarto.c", 1291
 	lda     #$04
 	sta     _update_koma+2
 ;
 ; update_koma[7]=set_posh|NT_UPD_VERT;
 ;
-	.dbg	line, "quarto.c", 1287
+	.dbg	line, "quarto.c", 1292
 	lda     _set_posh
 	ora     #$80
 	sta     _update_koma+7
 ;
 ; update_koma[8]=set_posl+1;
 ;
-	.dbg	line, "quarto.c", 1288
+	.dbg	line, "quarto.c", 1293
 	lda     _set_posl
 	clc
 	adc     #$01
@@ -6718,20 +6752,20 @@ L0001:	jmp     incsp2
 ;
 ; update_koma[9]=4;
 ;
-	.dbg	line, "quarto.c", 1289
+	.dbg	line, "quarto.c", 1294
 	lda     #$04
 	sta     _update_koma+9
 ;
 ; update_koma[14]=set_posh|NT_UPD_VERT;
 ;
-	.dbg	line, "quarto.c", 1290
+	.dbg	line, "quarto.c", 1295
 	lda     _set_posh
 	ora     #$80
 	sta     _update_koma+14
 ;
 ; update_koma[15]=set_posl+2;
 ;
-	.dbg	line, "quarto.c", 1291
+	.dbg	line, "quarto.c", 1296
 	lda     _set_posl
 	clc
 	adc     #$02
@@ -6739,26 +6773,26 @@ L0001:	jmp     incsp2
 ;
 ; update_koma[16]=4;
 ;
-	.dbg	line, "quarto.c", 1292
+	.dbg	line, "quarto.c", 1297
 	lda     #$04
 	sta     _update_koma+16
 ;
 ; update_koma[(3+4)*3]=NT_UPD_EOF;
 ;
-	.dbg	line, "quarto.c", 1293
+	.dbg	line, "quarto.c", 1298
 	lda     #$FF
 	sta     _update_koma+21
 ;
 ; set_vram_update(update_koma);
 ;
-	.dbg	line, "quarto.c", 1294
+	.dbg	line, "quarto.c", 1299
 	lda     #<(_update_koma)
 	ldx     #>(_update_koma)
 	jsr     _set_vram_update
 ;
 ; for( i=0; i<3; i++ ){
 ;
-	.dbg	line, "quarto.c", 1296
+	.dbg	line, "quarto.c", 1301
 	lda     #$00
 	sta     _i
 L0017:	lda     _i
@@ -6767,7 +6801,7 @@ L0017:	lda     _i
 ;
 ; for( j=0; j<4; j++ ){
 ;
-	.dbg	line, "quarto.c", 1297
+	.dbg	line, "quarto.c", 1302
 	lda     #$00
 	sta     _j
 L0018:	lda     _j
@@ -6776,7 +6810,7 @@ L0018:	lda     _j
 ;
 ; update_koma[7*i+j+3] = meta[4*(4*i+j)+2] ;
 ;
-	.dbg	line, "quarto.c", 1298
+	.dbg	line, "quarto.c", 1303
 	ldx     #$00
 	lda     _i
 	jsr     mulax7
@@ -6820,24 +6854,24 @@ L0016:	ldy     #$00
 ;
 ; for( j=0; j<4; j++ ){
 ;
-	.dbg	line, "quarto.c", 1297
+	.dbg	line, "quarto.c", 1302
 	inc     _j
 	jmp     L0018
 ;
 ; for( i=0; i<3; i++ ){
 ;
-	.dbg	line, "quarto.c", 1296
+	.dbg	line, "quarto.c", 1301
 L0019:	inc     _i
 	jmp     L0017
 ;
 ; ppu_wait_frame();
 ;
-	.dbg	line, "quarto.c", 1301
+	.dbg	line, "quarto.c", 1306
 L0005:	jsr     _ppu_wait_frame
 ;
 ; if( posy == 26 ){
 ;
-	.dbg	line, "quarto.c", 1304
+	.dbg	line, "quarto.c", 1309
 	ldy     #$03
 	lda     (sp),y
 	cmp     #$1A
@@ -6845,7 +6879,7 @@ L0005:	jsr     _ppu_wait_frame
 ;
 ; tmp = color & 0b11110000 | 0b00000101 ;
 ;
-	.dbg	line, "quarto.c", 1305
+	.dbg	line, "quarto.c", 1310
 	dey
 	lda     (sp),y
 	and     #$F0
@@ -6854,7 +6888,7 @@ L0005:	jsr     _ppu_wait_frame
 ;
 ; putKomaColor( posx, posy, tmp ) ;
 ;
-	.dbg	line, "quarto.c", 1309
+	.dbg	line, "quarto.c", 1314
 	jsr     decsp2
 	ldy     #$06
 	lda     (sp),y
@@ -6869,7 +6903,7 @@ L0005:	jsr     _ppu_wait_frame
 ;
 ; putKomaColor( posx, posy+2, color ) ;
 ;
-	.dbg	line, "quarto.c", 1310
+	.dbg	line, "quarto.c", 1315
 	jsr     decsp2
 	ldy     #$06
 	lda     (sp),y
@@ -6882,12 +6916,12 @@ L0005:	jsr     _ppu_wait_frame
 ;
 ; }else{
 ;
-	.dbg	line, "quarto.c", 1311
+	.dbg	line, "quarto.c", 1316
 	jmp     L001D
 ;
 ; putKomaColor( posx, posy, color) ;
 ;
-	.dbg	line, "quarto.c", 1312
+	.dbg	line, "quarto.c", 1317
 L000E:	jsr     decsp2
 	ldy     #$06
 	lda     (sp),y
@@ -6903,7 +6937,7 @@ L001D:	ldy     #$00
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1314
+	.dbg	line, "quarto.c", 1319
 	jmp     incsp5
 
 	.dbg	line
@@ -6924,7 +6958,7 @@ L001D:	ldy     #$00
 ;
 ; put_update_debug(1,24, 13, "             " );
 ;
-	.dbg	line, "quarto.c", 1339
+	.dbg	line, "quarto.c", 1344
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -6941,7 +6975,7 @@ L001D:	ldy     #$00
 ;
 ; put_update_debug(1,5, 13, "             " );
 ;
-	.dbg	line, "quarto.c", 1340
+	.dbg	line, "quarto.c", 1345
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -6978,19 +7012,19 @@ L001D:	ldy     #$00
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1352
+	.dbg	line, "quarto.c", 1357
 	jsr     pushax
 ;
 ; putStageKomaColor( color ) ;
 ;
-	.dbg	line, "quarto.c", 1353
+	.dbg	line, "quarto.c", 1358
 	ldy     #$02
 	lda     (sp),y
 	jsr     _putStageKomaColor
 ;
 ; getStagePos(posx, posy) ;
 ;
-	.dbg	line, "quarto.c", 1355
+	.dbg	line, "quarto.c", 1360
 	ldy     #$04
 	lda     (sp),y
 	jsr     pusha
@@ -7000,33 +7034,33 @@ L001D:	ldy     #$00
 ;
 ; update_koma[0]=set_posh|NT_UPD_VERT;
 ;
-	.dbg	line, "quarto.c", 1356
+	.dbg	line, "quarto.c", 1361
 	lda     _set_posh
 	ora     #$80
 	sta     _update_koma
 ;
 ; update_koma[1]=set_posl;
 ;
-	.dbg	line, "quarto.c", 1357
+	.dbg	line, "quarto.c", 1362
 	lda     _set_posl
 	sta     _update_koma+1
 ;
 ; update_koma[2]=4;
 ;
-	.dbg	line, "quarto.c", 1358
+	.dbg	line, "quarto.c", 1363
 	lda     #$04
 	sta     _update_koma+2
 ;
 ; update_koma[7]=set_posh|NT_UPD_VERT;
 ;
-	.dbg	line, "quarto.c", 1359
+	.dbg	line, "quarto.c", 1364
 	lda     _set_posh
 	ora     #$80
 	sta     _update_koma+7
 ;
 ; update_koma[8]=set_posl+1;
 ;
-	.dbg	line, "quarto.c", 1360
+	.dbg	line, "quarto.c", 1365
 	lda     _set_posl
 	clc
 	adc     #$01
@@ -7034,20 +7068,20 @@ L001D:	ldy     #$00
 ;
 ; update_koma[9]=4;
 ;
-	.dbg	line, "quarto.c", 1361
+	.dbg	line, "quarto.c", 1366
 	lda     #$04
 	sta     _update_koma+9
 ;
 ; update_koma[14]=set_posh|NT_UPD_VERT;
 ;
-	.dbg	line, "quarto.c", 1362
+	.dbg	line, "quarto.c", 1367
 	lda     _set_posh
 	ora     #$80
 	sta     _update_koma+14
 ;
 ; update_koma[15]=set_posl+2;
 ;
-	.dbg	line, "quarto.c", 1363
+	.dbg	line, "quarto.c", 1368
 	lda     _set_posl
 	clc
 	adc     #$02
@@ -7055,26 +7089,26 @@ L001D:	ldy     #$00
 ;
 ; update_koma[16]=4;
 ;
-	.dbg	line, "quarto.c", 1364
+	.dbg	line, "quarto.c", 1369
 	lda     #$04
 	sta     _update_koma+16
 ;
 ; update_koma[(3+4)*3]=NT_UPD_EOF;
 ;
-	.dbg	line, "quarto.c", 1365
+	.dbg	line, "quarto.c", 1370
 	lda     #$FF
 	sta     _update_koma+21
 ;
 ; set_vram_update(update_koma);
 ;
-	.dbg	line, "quarto.c", 1366
+	.dbg	line, "quarto.c", 1371
 	lda     #<(_update_koma)
 	ldx     #>(_update_koma)
 	jsr     _set_vram_update
 ;
 ; for( i=0; i<3; i++ ){
 ;
-	.dbg	line, "quarto.c", 1368
+	.dbg	line, "quarto.c", 1373
 	lda     #$00
 	sta     _i
 L0040:	lda     _i
@@ -7083,7 +7117,7 @@ L0040:	lda     _i
 ;
 ; for( j=0; j<4; j++ ){
 ;
-	.dbg	line, "quarto.c", 1369
+	.dbg	line, "quarto.c", 1374
 	lda     #$00
 	sta     _j
 L0041:	lda     _j
@@ -7092,7 +7126,7 @@ L0041:	lda     _j
 ;
 ; update_koma[7*i+j+3] = meta[4*(4*i+j)+2] ;
 ;
-	.dbg	line, "quarto.c", 1370
+	.dbg	line, "quarto.c", 1375
 	ldx     #$00
 	lda     _i
 	jsr     mulax7
@@ -7136,7 +7170,7 @@ L0035:	ldy     #$00
 ;
 ; if( x_index != 0 && y_index != 0){
 ;
-	.dbg	line, "quarto.c", 1375
+	.dbg	line, "quarto.c", 1380
 	lda     _x_index
 	jeq     L0054
 	lda     _y_index
@@ -7144,13 +7178,13 @@ L0035:	ldy     #$00
 ;
 ; if( j == 0 ){
 ;
-	.dbg	line, "quarto.c", 1376
+	.dbg	line, "quarto.c", 1381
 	lda     _j
 	jne     L0054
 ;
 ; if( ChooseKoma >= 4 && ChooseKoma <= 7 ){
 ;
-	.dbg	line, "quarto.c", 1377
+	.dbg	line, "quarto.c", 1382
 	lda     _ChooseKoma
 	cmp     #$04
 	bcc     L0048
@@ -7159,7 +7193,7 @@ L0035:	ldy     #$00
 ;
 ; update_koma[7*i+j+3] = 0xD1+i ;
 ;
-	.dbg	line, "quarto.c", 1379
+	.dbg	line, "quarto.c", 1384
 	ldx     #$00
 	lda     _i
 	jsr     mulax7
@@ -7183,19 +7217,19 @@ L0037:	adc     #<(_update_koma)
 ;
 ; }else{
 ;
-	.dbg	line, "quarto.c", 1380
+	.dbg	line, "quarto.c", 1385
 	jmp     L0059
 ;
 ; if( i == 1 ){ continue ; }
 ;
-	.dbg	line, "quarto.c", 1382
+	.dbg	line, "quarto.c", 1387
 L0048:	lda     _i
 	cmp     #$01
 	jeq     L0054
 ;
 ; if( ChooseKoma == 0 ){ update_koma[7*i+j+3] = i == 0 ? 0xAA : 0xAA+1 ;}
 ;
-	.dbg	line, "quarto.c", 1383
+	.dbg	line, "quarto.c", 1388
 	lda     _ChooseKoma
 	bne     L004B
 	tax
@@ -7224,7 +7258,7 @@ L0056:	sta     (ptr1),y
 ;
 ; if( ChooseKoma == 1 ){ update_koma[7*i+j+3] = i == 0 ? 0xBA : 0xBA+1 ;}
 ;
-	.dbg	line, "quarto.c", 1384
+	.dbg	line, "quarto.c", 1389
 L004B:	lda     _ChooseKoma
 	cmp     #$01
 	bne     L004E
@@ -7254,7 +7288,7 @@ L0057:	sta     (ptr1),y
 ;
 ; if( ChooseKoma == 2 ){ update_koma[7*i+j+3] = i == 0 ? 0xAC : 0xAC+1 ;}
 ;
-	.dbg	line, "quarto.c", 1385
+	.dbg	line, "quarto.c", 1390
 L004E:	lda     _ChooseKoma
 	cmp     #$02
 	bne     L0051
@@ -7284,7 +7318,7 @@ L0058:	sta     (ptr1),y
 ;
 ; if( ChooseKoma == 3 ){ update_koma[7*i+j+3] = i == 0 ? 0xBC : 0xBC+1 ;}
 ;
-	.dbg	line, "quarto.c", 1386
+	.dbg	line, "quarto.c", 1391
 L0051:	lda     _ChooseKoma
 	cmp     #$03
 	bne     L0054
@@ -7314,24 +7348,24 @@ L0059:	sta     (ptr1),y
 ;
 ; for( j=0; j<4; j++ ){
 ;
-	.dbg	line, "quarto.c", 1369
+	.dbg	line, "quarto.c", 1374
 L0054:	inc     _j
 	jmp     L0041
 ;
 ; for( i=0; i<3; i++ ){
 ;
-	.dbg	line, "quarto.c", 1368
+	.dbg	line, "quarto.c", 1373
 L0055:	inc     _i
 	jmp     L0040
 ;
 ; ppu_wait_frame();
 ;
-	.dbg	line, "quarto.c", 1392
+	.dbg	line, "quarto.c", 1397
 L0005:	jsr     _ppu_wait_frame
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1393
+	.dbg	line, "quarto.c", 1398
 	jmp     incsp5
 
 	.dbg	line
@@ -7352,13 +7386,13 @@ L0005:	jsr     _ppu_wait_frame
 ;
 ; spr = 0 ;
 ;
-	.dbg	line, "quarto.c", 1397
+	.dbg	line, "quarto.c", 1402
 	lda     #$00
 	sta     _spr
 ;
 ; spr = oam_meta_spr( ChooseKoma*32+8, 30+(selBW*170), spr, selBW==0 ? cursor : cursor2  ) ;
 ;
-	.dbg	line, "quarto.c", 1398
+	.dbg	line, "quarto.c", 1403
 	jsr     decsp3
 	lda     _ChooseKoma
 	asl     a
@@ -7393,7 +7427,7 @@ L0005:	jsr     _oam_meta_spr
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1399
+	.dbg	line, "quarto.c", 1404
 	rts
 
 	.dbg	line
@@ -7414,7 +7448,7 @@ L0005:	jsr     _oam_meta_spr
 ;
 ; if ( q_black == 4 || q_white == 4 || q_high == 4 || q_low == 4 || 
 ;
-	.dbg	line, "quarto.c", 1413
+	.dbg	line, "quarto.c", 1418
 	lda     _q_black
 	cmp     #$04
 	beq     L0005
@@ -7430,7 +7464,7 @@ L0005:	jsr     _oam_meta_spr
 ;
 ; q_square == 4 || q_circle == 4 || q_plane == 4 || q_dot == 4 ) {
 ;
-	.dbg	line, "quarto.c", 1414
+	.dbg	line, "quarto.c", 1419
 	lda     _q_square
 	cmp     #$04
 	beq     L0005
@@ -7449,7 +7483,7 @@ L0005:	jsr     _oam_meta_spr
 ;
 ; return 1 ;
 ;
-	.dbg	line, "quarto.c", 1415
+	.dbg	line, "quarto.c", 1420
 L0005:	ldx     #$00
 	lda     #$01
 	rts
@@ -7472,48 +7506,48 @@ L0005:	ldx     #$00
 ;
 ; q_black =0 ;
 ;
-	.dbg	line, "quarto.c", 1421
+	.dbg	line, "quarto.c", 1426
 	lda     #$00
 	sta     _q_black
 ;
 ; q_white = 0 ;
 ;
-	.dbg	line, "quarto.c", 1422
+	.dbg	line, "quarto.c", 1427
 	sta     _q_white
 ;
 ; q_high = 0 ;
 ;
-	.dbg	line, "quarto.c", 1423
+	.dbg	line, "quarto.c", 1428
 	sta     _q_high
 ;
 ; q_low = 0 ;
 ;
-	.dbg	line, "quarto.c", 1424
+	.dbg	line, "quarto.c", 1429
 	sta     _q_low
 ;
 ; q_square = 0 ;
 ;
-	.dbg	line, "quarto.c", 1425
+	.dbg	line, "quarto.c", 1430
 	sta     _q_square
 ;
 ; q_circle = 0 ;
 ;
-	.dbg	line, "quarto.c", 1426
+	.dbg	line, "quarto.c", 1431
 	sta     _q_circle
 ;
 ; q_plane = 0 ;
 ;
-	.dbg	line, "quarto.c", 1427
+	.dbg	line, "quarto.c", 1432
 	sta     _q_plane
 ;
 ; q_dot = 0 ;
 ;
-	.dbg	line, "quarto.c", 1428
+	.dbg	line, "quarto.c", 1433
 	sta     _q_dot
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1429
+	.dbg	line, "quarto.c", 1434
 	rts
 
 	.dbg	line
@@ -7536,12 +7570,12 @@ L0005:	ldx     #$00
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1431
+	.dbg	line, "quarto.c", 1436
 	jsr     pusha
 ;
 ; calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b10000000 ){ q_black++ ;}
 ;
-	.dbg	line, "quarto.c", 1432
+	.dbg	line, "quarto.c", 1437
 	ldy     #$01
 	lda     (sp),y
 	jsr     pusha0
@@ -7571,7 +7605,7 @@ L0005:	ldx     #$00
 ;
 ; calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b01000000 ){ q_high++ ;}
 ;
-	.dbg	line, "quarto.c", 1433
+	.dbg	line, "quarto.c", 1438
 L0002:	iny
 	lda     (sp),y
 	jsr     pusha0
@@ -7601,7 +7635,7 @@ L0002:	iny
 ;
 ; calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00100000 ){ q_square++ ;}
 ;
-	.dbg	line, "quarto.c", 1434
+	.dbg	line, "quarto.c", 1439
 L0003:	iny
 	lda     (sp),y
 	jsr     pusha0
@@ -7631,7 +7665,7 @@ L0003:	iny
 ;
 ; calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00010000 ){ q_plane++ ;}
 ;
-	.dbg	line, "quarto.c", 1435
+	.dbg	line, "quarto.c", 1440
 L0004:	iny
 	lda     (sp),y
 	jsr     pusha0
@@ -7661,7 +7695,7 @@ L0004:	iny
 ;
 ; calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00001000 ){ q_white++ ;}
 ;
-	.dbg	line, "quarto.c", 1436
+	.dbg	line, "quarto.c", 1441
 L0005:	iny
 	lda     (sp),y
 	jsr     pusha0
@@ -7691,7 +7725,7 @@ L0005:	iny
 ;
 ; calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00000100 ){ q_low++ ;}
 ;
-	.dbg	line, "quarto.c", 1437
+	.dbg	line, "quarto.c", 1442
 L0006:	iny
 	lda     (sp),y
 	jsr     pusha0
@@ -7721,7 +7755,7 @@ L0006:	iny
 ;
 ; calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00000010 ){ q_circle++ ;}
 ;
-	.dbg	line, "quarto.c", 1438
+	.dbg	line, "quarto.c", 1443
 L0007:	iny
 	lda     (sp),y
 	jsr     pusha0
@@ -7751,7 +7785,7 @@ L0007:	iny
 ;
 ; calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00000001 ){ q_dot++ ;}
 ;
-	.dbg	line, "quarto.c", 1439
+	.dbg	line, "quarto.c", 1444
 L0008:	iny
 	lda     (sp),y
 	jsr     pusha0
@@ -7781,7 +7815,7 @@ L0008:	iny
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1440
+	.dbg	line, "quarto.c", 1445
 L0009:	jmp     incsp2
 
 	.dbg	line
@@ -7802,30 +7836,30 @@ L0009:	jmp     incsp2
 ;
 ; for( i = 0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1443
+	.dbg	line, "quarto.c", 1448
 	lda     #$00
 	sta     _i
-L001E:	lda     _i
+L0042:	lda     _i
 	cmp     #$04
-	bcs     L0020
+	bcs     L0046
 ;
 ; initQuartoFlg() ;
 ;
-	.dbg	line, "quarto.c", 1444
+	.dbg	line, "quarto.c", 1449
 	jsr     _initQuartoFlg
 ;
 ; for( j = 0; j < 4; j++ ){
 ;
-	.dbg	line, "quarto.c", 1445
+	.dbg	line, "quarto.c", 1450
 	lda     #$00
 	sta     _j
-L001F:	lda     _j
+L0043:	lda     _j
 	cmp     #$04
 	bcs     L0007
 ;
 ; bitCalc(i,j) ;
 ;
-	.dbg	line, "quarto.c", 1446
+	.dbg	line, "quarto.c", 1451
 	lda     _i
 	jsr     pusha
 	lda     _j
@@ -7833,141 +7867,294 @@ L001F:	lda     _j
 ;
 ; for( j = 0; j < 4; j++ ){
 ;
-	.dbg	line, "quarto.c", 1445
+	.dbg	line, "quarto.c", 1450
 	inc     _j
-	jmp     L001F
+	jmp     L0043
 ;
 ; if( checkLineQuarto() == 1 ){
 ;
-	.dbg	line, "quarto.c", 1448
+	.dbg	line, "quarto.c", 1453
 L0007:	jsr     _checkLineQuarto
 	cmp     #$01
 	bne     L0004
 ;
+; for( j = 0; j < 4; j++ ){
+;
+	.dbg	line, "quarto.c", 1454
+	lda     #$00
+	sta     _j
+	tax
+L0044:	lda     _j
+	cmp     #$04
+	bcs     L0045
+;
+; quarto_line[j][0] = i ;
+;
+	.dbg	line, "quarto.c", 1455
+	asl     a
+	bcc     L003A
+	inx
+	clc
+L003A:	adc     #<(_quarto_line)
+	sta     ptr1
+	txa
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	lda     _i
+	ldy     #$00
+	sta     (ptr1),y
+;
+; quarto_line[j][1] = j ;
+;
+	.dbg	line, "quarto.c", 1456
+	ldx     #$00
+	lda     _j
+	asl     a
+	bcc     L003B
+	inx
+	clc
+L003B:	adc     #<(_quarto_line)
+	sta     ptr1
+	txa
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	iny
+	lda     _j
+	sta     (ptr1),y
+;
+; for( j = 0; j < 4; j++ ){
+;
+	.dbg	line, "quarto.c", 1454
+	ldx     #$00
+	inc     _j
+	jmp     L0044
+;
 ; return 1 ;
 ;
-	.dbg	line, "quarto.c", 1449
-	ldx     #$00
+	.dbg	line, "quarto.c", 1458
+L0045:	lda     #$01
 	rts
 ;
 ; for( i = 0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1443
+	.dbg	line, "quarto.c", 1448
 L0004:	inc     _i
-	jmp     L001E
+	jmp     L0042
 ;
 ; for( j = 0; j < 4; j++ ){
 ;
-	.dbg	line, "quarto.c", 1452
-L0020:	lda     #$00
+	.dbg	line, "quarto.c", 1461
+L0046:	lda     #$00
 	sta     _j
-L0021:	lda     _j
+L0047:	lda     _j
 	cmp     #$04
-	bcs     L000C
+	bcs     L0011
 ;
 ; initQuartoFlg() ;
 ;
-	.dbg	line, "quarto.c", 1453
+	.dbg	line, "quarto.c", 1462
 	jsr     _initQuartoFlg
 ;
 ; for( i = 0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1454
+	.dbg	line, "quarto.c", 1463
 	lda     #$00
 	sta     _i
-L0022:	lda     _i
+L0048:	lda     _i
 	cmp     #$04
-	bcs     L0010
+	bcs     L0015
 ;
 ; bitCalc(i,j) ;
 ;
-	.dbg	line, "quarto.c", 1455
+	.dbg	line, "quarto.c", 1464
 	jsr     pusha
 	lda     _j
 	jsr     _bitCalc
 ;
 ; for( i = 0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1454
+	.dbg	line, "quarto.c", 1463
 	inc     _i
-	jmp     L0022
+	jmp     L0048
 ;
 ; if( checkLineQuarto() == 1 ){
 ;
-	.dbg	line, "quarto.c", 1469
-L0010:	jsr     _checkLineQuarto
+	.dbg	line, "quarto.c", 1478
+L0015:	jsr     _checkLineQuarto
 	cmp     #$01
-	bne     L000D
+	bne     L0012
+;
+; for( i = 0; i < 4; i++ ){
+;
+	.dbg	line, "quarto.c", 1479
+	lda     #$00
+	sta     _i
+	tax
+L0049:	lda     _i
+	cmp     #$04
+	bcs     L004A
+;
+; quarto_line[i][0] = i ;
+;
+	.dbg	line, "quarto.c", 1480
+	asl     a
+	bcc     L003C
+	inx
+	clc
+L003C:	adc     #<(_quarto_line)
+	sta     ptr1
+	txa
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	lda     _i
+	ldy     #$00
+	sta     (ptr1),y
+;
+; quarto_line[i][1] = j ;
+;
+	.dbg	line, "quarto.c", 1481
+	ldx     #$00
+	lda     _i
+	asl     a
+	bcc     L003D
+	inx
+	clc
+L003D:	adc     #<(_quarto_line)
+	sta     ptr1
+	txa
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	iny
+	lda     _j
+	sta     (ptr1),y
+;
+; for( i = 0; i < 4; i++ ){
+;
+	.dbg	line, "quarto.c", 1479
+	ldx     #$00
+	inc     _i
+	jmp     L0049
 ;
 ; return 1 ;
 ;
-	.dbg	line, "quarto.c", 1470
-	ldx     #$00
+	.dbg	line, "quarto.c", 1483
+L004A:	lda     #$01
 	rts
 ;
 ; for( j = 0; j < 4; j++ ){
 ;
-	.dbg	line, "quarto.c", 1452
-L000D:	inc     _j
-	jmp     L0021
+	.dbg	line, "quarto.c", 1461
+L0012:	inc     _j
+	jmp     L0047
 ;
 ; initQuartoFlg() ;
 ;
-	.dbg	line, "quarto.c", 1475
-L000C:	jsr     _initQuartoFlg
+	.dbg	line, "quarto.c", 1488
+L0011:	jsr     _initQuartoFlg
 ;
 ; for( i = 0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1476
+	.dbg	line, "quarto.c", 1489
 	lda     #$00
 	sta     _i
-L0023:	lda     _i
+L004B:	lda     _i
 	cmp     #$04
-	bcs     L0015
+	bcs     L001F
 ;
 ; bitCalc(i,i) ;
 ;
-	.dbg	line, "quarto.c", 1477
+	.dbg	line, "quarto.c", 1490
 	jsr     pusha
 	lda     _i
 	jsr     _bitCalc
 ;
 ; for( i = 0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1476
+	.dbg	line, "quarto.c", 1489
 	inc     _i
-	jmp     L0023
+	jmp     L004B
 ;
 ; if( checkLineQuarto() == 1 ){
 ;
-	.dbg	line, "quarto.c", 1479
-L0015:	jsr     _checkLineQuarto
+	.dbg	line, "quarto.c", 1492
+L001F:	jsr     _checkLineQuarto
 	cmp     #$01
-	bne     L0018
+	bne     L0022
+;
+; for( i = 0; i < 4; i++ ){
+;
+	.dbg	line, "quarto.c", 1493
+	lda     #$00
+	sta     _i
+	tax
+L004C:	lda     _i
+	cmp     #$04
+	bcs     L004D
+;
+; quarto_line[i][0] = i ;
+;
+	.dbg	line, "quarto.c", 1494
+	asl     a
+	bcc     L003E
+	inx
+	clc
+L003E:	adc     #<(_quarto_line)
+	sta     ptr1
+	txa
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	lda     _i
+	ldy     #$00
+	sta     (ptr1),y
+;
+; quarto_line[i][1] = i ;
+;
+	.dbg	line, "quarto.c", 1495
+	ldx     #$00
+	lda     _i
+	asl     a
+	bcc     L003F
+	inx
+	clc
+L003F:	adc     #<(_quarto_line)
+	sta     ptr1
+	txa
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	iny
+	lda     _i
+	sta     (ptr1),y
+;
+; for( i = 0; i < 4; i++ ){
+;
+	.dbg	line, "quarto.c", 1493
+	ldx     #$00
+	inc     _i
+	jmp     L004C
 ;
 ; return 1 ;
 ;
-	.dbg	line, "quarto.c", 1480
-	ldx     #$00
+	.dbg	line, "quarto.c", 1497
+L004D:	lda     #$01
 	rts
 ;
 ; initQuartoFlg() ;
 ;
-	.dbg	line, "quarto.c", 1484
-L0018:	jsr     _initQuartoFlg
+	.dbg	line, "quarto.c", 1501
+L0022:	jsr     _initQuartoFlg
 ;
 ; for( i = 0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1485
+	.dbg	line, "quarto.c", 1502
 	lda     #$00
 	sta     _i
-L0024:	lda     _i
+L004E:	lda     _i
 	cmp     #$04
-	bcs     L001A
+	bcs     L0029
 ;
 ; bitCalc(i,3-i) ;
 ;
-	.dbg	line, "quarto.c", 1486
+	.dbg	line, "quarto.c", 1503
 	jsr     pusha
 	lda     #$03
 	sec
@@ -7976,32 +8163,92 @@ L0024:	lda     _i
 ;
 ; for( i = 0; i < 4; i++ ){
 ;
-	.dbg	line, "quarto.c", 1485
+	.dbg	line, "quarto.c", 1502
 	inc     _i
-	jmp     L0024
+	jmp     L004E
 ;
 ; if( checkLineQuarto() == 1 ){
 ;
-	.dbg	line, "quarto.c", 1488
-L001A:	jsr     _checkLineQuarto
+	.dbg	line, "quarto.c", 1505
+L0029:	jsr     _checkLineQuarto
 	cmp     #$01
-	bne     L001D
+	bne     L002C
+;
+; for( i = 0; i < 4; i++ ){
+;
+	.dbg	line, "quarto.c", 1506
+	lda     #$00
+	sta     _i
+	tax
+L004F:	lda     _i
+	cmp     #$04
+	bcs     L0050
+;
+; quarto_line[i][0] = i ;
+;
+	.dbg	line, "quarto.c", 1507
+	asl     a
+	bcc     L0040
+	inx
+	clc
+L0040:	adc     #<(_quarto_line)
+	sta     ptr1
+	txa
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	lda     _i
+	ldy     #$00
+	sta     (ptr1),y
+;
+; quarto_line[i][1] = 3-i ;
+;
+	.dbg	line, "quarto.c", 1508
+	ldx     #$00
+	lda     _i
+	asl     a
+	bcc     L0041
+	inx
+	clc
+L0041:	adc     #<(_quarto_line)
+	tay
+	txa
+	adc     #>(_quarto_line)
+	tax
+	tya
+	clc
+	adc     #$01
+	bcc     L0031
+	inx
+L0031:	sta     ptr1
+	stx     ptr1+1
+	ldx     #$00
+	lda     #$03
+	sec
+	sbc     _i
+	ldy     #$00
+	sta     (ptr1),y
+;
+; for( i = 0; i < 4; i++ ){
+;
+	.dbg	line, "quarto.c", 1506
+	inc     _i
+	jmp     L004F
 ;
 ; return 1 ;
 ;
-	.dbg	line, "quarto.c", 1489
-	ldx     #$00
+	.dbg	line, "quarto.c", 1510
+L0050:	lda     #$01
 	rts
 ;
 ; return 0 ;
 ;
-	.dbg	line, "quarto.c", 1492
-L001D:	ldx     #$00
+	.dbg	line, "quarto.c", 1513
+L002C:	ldx     #$00
 	txa
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1493
+	.dbg	line, "quarto.c", 1514
 	rts
 
 	.dbg	line
@@ -8027,31 +8274,31 @@ L001D:	ldx     #$00
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1496
+	.dbg	line, "quarto.c", 1517
 	jsr     pushax
 ;
 ; koma_x[0] = src_x ;
 ;
-	.dbg	line, "quarto.c", 1497
+	.dbg	line, "quarto.c", 1518
 	ldy     #$05
 	lda     (sp),y
 	sta     _koma_x
 ;
 ; koma_y[0] = src_y ;
 ;
-	.dbg	line, "quarto.c", 1498
+	.dbg	line, "quarto.c", 1519
 	dey
 	lda     (sp),y
 	sta     _koma_y
 ;
 ; koma_frame++ ;
 ;
-	.dbg	line, "quarto.c", 1501
+	.dbg	line, "quarto.c", 1522
 L0013:	inc     _koma_frame
 ;
 ; if( koma_frame % 5 != 0 ){ continue ; }
 ;
-	.dbg	line, "quarto.c", 1502
+	.dbg	line, "quarto.c", 1523
 	lda     _koma_frame
 	jsr     pusha0
 	lda     #$05
@@ -8063,12 +8310,12 @@ L0013:	inc     _koma_frame
 ;
 ; spr = 0 ;
 ;
-	.dbg	line, "quarto.c", 1504
+	.dbg	line, "quarto.c", 1525
 	sta     _spr
 ;
 ; spr = oam_meta_spr( koma_x[0], koma_y[0], spr, meta ) ;
 ;
-	.dbg	line, "quarto.c", 1505
+	.dbg	line, "quarto.c", 1526
 	jsr     decsp3
 	lda     _koma_x
 	ldy     #$02
@@ -8089,7 +8336,7 @@ L0013:	inc     _koma_frame
 ;
 ; if( koma_y[0] > dst_y ){ koma_y[0]-=2; }
 ;
-	.dbg	line, "quarto.c", 1507
+	.dbg	line, "quarto.c", 1528
 	lda     _koma_y
 	ldy     #$02
 	cmp     (sp),y
@@ -8102,7 +8349,7 @@ L0013:	inc     _koma_frame
 ;
 ; else if( koma_y[0] < dst_y ){ koma_y[0]+=2; }
 ;
-	.dbg	line, "quarto.c", 1508
+	.dbg	line, "quarto.c", 1529
 	jmp     L0017
 L0014:	lda     _koma_y
 	cmp     (sp),y
@@ -8114,7 +8361,7 @@ L0014:	lda     _koma_y
 ;
 ; else if( koma_x[0] > dst_x ){ koma_x[0]-=2; }
 ;
-	.dbg	line, "quarto.c", 1509
+	.dbg	line, "quarto.c", 1530
 	jmp     L0017
 L0015:	lda     _koma_x
 	iny
@@ -8127,7 +8374,7 @@ L0015:	lda     _koma_x
 ;
 ; else if( koma_x[0] < dst_x ){ koma_x[0]+=2; }
 ;
-	.dbg	line, "quarto.c", 1510
+	.dbg	line, "quarto.c", 1531
 	jmp     L0012
 L0016:	lda     _koma_x
 	cmp     (sp),y
@@ -8139,7 +8386,7 @@ L0012:	sta     _koma_x
 ;
 ; if( koma_x[0] == dst_x && koma_y[0] == dst_y ){ 
 ;
-	.dbg	line, "quarto.c", 1512
+	.dbg	line, "quarto.c", 1533
 L0017:	lda     _koma_x
 	ldy     #$03
 	cmp     (sp),y
@@ -8151,26 +8398,26 @@ L0017:	lda     _koma_x
 ;
 ; x = dst_x ;
 ;
-	.dbg	line, "quarto.c", 1517
+	.dbg	line, "quarto.c", 1538
 	iny
 	lda     (sp),y
 	sta     _x
 ;
 ; y = dst_y ;
 ;
-	.dbg	line, "quarto.c", 1518
+	.dbg	line, "quarto.c", 1539
 	dey
 	lda     (sp),y
 	sta     _y
 ;
 ; ppu_wait_frame();
 ;
-	.dbg	line, "quarto.c", 1519
+	.dbg	line, "quarto.c", 1540
 	jsr     _ppu_wait_frame
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1520
+	.dbg	line, "quarto.c", 1541
 	jmp     incsp6
 
 	.dbg	line
@@ -8191,13 +8438,13 @@ L0017:	lda     _koma_x
 ;
 ; bank_bg(0);
 ;
-	.dbg	line, "quarto.c", 1561
+	.dbg	line, "quarto.c", 1582
 	lda     #$00
 	jsr     _bank_bg
 ;
 ; pal_bg((char*)bg_palettes[bgpl]);
 ;
-	.dbg	line, "quarto.c", 1562
+	.dbg	line, "quarto.c", 1583
 	ldx     #$00
 	lda     _bgpl
 	asl     a
@@ -8235,31 +8482,31 @@ L0003:	adc     #<(_bg_palettes)
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1566
+	.dbg	line, "quarto.c", 1587
 	jsr     pusha
 ;
 ; if( frame % 4 == 0 ){
 ;
-	.dbg	line, "quarto.c", 1573
+	.dbg	line, "quarto.c", 1594
 	lda     _frame
 	and     #$03
 	bne     L000A
 ;
 ; bank_bg(0);
 ;
-	.dbg	line, "quarto.c", 1574
+	.dbg	line, "quarto.c", 1595
 	jsr     _bank_bg
 ;
 ; pal_bg((char*)bg_palettes2[0]);
 ;
-	.dbg	line, "quarto.c", 1575
+	.dbg	line, "quarto.c", 1596
 	lda     _bg_palettes2
 	ldx     _bg_palettes2+1
 	jsr     _pal_bg
 ;
 ; if( frame % 4 == 1 ){
 ;
-	.dbg	line, "quarto.c", 1577
+	.dbg	line, "quarto.c", 1598
 L000A:	lda     _frame
 	and     #$03
 	cmp     #$01
@@ -8267,19 +8514,19 @@ L000A:	lda     _frame
 ;
 ; bank_bg(1);
 ;
-	.dbg	line, "quarto.c", 1578
+	.dbg	line, "quarto.c", 1599
 	jsr     _bank_bg
 ;
 ; pal_bg((char*)bg_palettes2[1]);
 ;
-	.dbg	line, "quarto.c", 1579
+	.dbg	line, "quarto.c", 1600
 	lda     _bg_palettes2+2
 	ldx     _bg_palettes2+2+1
 	jsr     _pal_bg
 ;
 ; if( frame % 4 == 2 ){
 ;
-	.dbg	line, "quarto.c", 1582
+	.dbg	line, "quarto.c", 1603
 L000B:	lda     _frame
 	and     #$03
 	cmp     #$02
@@ -8287,14 +8534,14 @@ L000B:	lda     _frame
 ;
 ; pal_bg((char*)bg_palettes2[2]);
 ;
-	.dbg	line, "quarto.c", 1583
+	.dbg	line, "quarto.c", 1604
 	lda     _bg_palettes2+4
 	ldx     _bg_palettes2+4+1
 	jsr     _pal_bg
 ;
 ; if( frame % 4 == 3 ){
 ;
-	.dbg	line, "quarto.c", 1586
+	.dbg	line, "quarto.c", 1607
 L000C:	lda     _frame
 	and     #$03
 	cmp     #$03
@@ -8302,21 +8549,21 @@ L000C:	lda     _frame
 ;
 ; pal_bg((char*)bg_palettes2[3]);
 ;
-	.dbg	line, "quarto.c", 1587
+	.dbg	line, "quarto.c", 1608
 	lda     _bg_palettes2+6
 	ldx     _bg_palettes2+6+1
 	jsr     _pal_bg
 ;
 ; delay(speed) ;
 ;
-	.dbg	line, "quarto.c", 1590
+	.dbg	line, "quarto.c", 1611
 L0008:	ldy     #$00
 	lda     (sp),y
 	jsr     _delay
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1595
+	.dbg	line, "quarto.c", 1616
 	jmp     incsp1
 
 	.dbg	line
@@ -8337,7 +8584,7 @@ L0008:	ldy     #$00
 ;
 ; put_update_debug(1,23, 14, (const char*)msgBlank );
 ;
-	.dbg	line, "quarto.c", 1598
+	.dbg	line, "quarto.c", 1619
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -8354,7 +8601,7 @@ L0008:	ldy     #$00
 ;
 ; put_update_debug(1,6, 14, (const char*)msgBlank );
 ;
-	.dbg	line, "quarto.c", 1599
+	.dbg	line, "quarto.c", 1620
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -8388,19 +8635,19 @@ L0008:	ldy     #$00
 ;
 ; {
 ;
-	.dbg	line, "quarto.c", 1602
+	.dbg	line, "quarto.c", 1623
 	jsr     pusha
 ;
 ; if( action == 0 ){
 ;
-	.dbg	line, "quarto.c", 1603
+	.dbg	line, "quarto.c", 1624
 	ldy     #$00
 	lda     (sp),y
 	bne     L0014
 ;
 ; put_update_debug(1,23, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
 ;
-	.dbg	line, "quarto.c", 1604
+	.dbg	line, "quarto.c", 1625
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -8422,7 +8669,7 @@ L0004:	jsr     _put_update_debug
 ;
 ; put_update_debug(1,6, 14, whichTurn==0?"P2:SELECT NEXT":(const char*)msgBlank );
 ;
-	.dbg	line, "quarto.c", 1605
+	.dbg	line, "quarto.c", 1626
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -8441,14 +8688,14 @@ L0004:	jsr     _put_update_debug
 ;
 ; }else if( action == 1 ){
 ;
-	.dbg	line, "quarto.c", 1607
+	.dbg	line, "quarto.c", 1628
 L0014:	lda     (sp),y
 	cmp     #$01
 	bne     L0016
 ;
 ; put_update_debug(1,23, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
 ;
-	.dbg	line, "quarto.c", 1608
+	.dbg	line, "quarto.c", 1629
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -8470,7 +8717,7 @@ L000A:	jsr     _put_update_debug
 ;
 ; put_update_debug(1,6, 14, whichTurn==0?"P2:PLAYING    ":(const char*)msgBlank );
 ;
-	.dbg	line, "quarto.c", 1609
+	.dbg	line, "quarto.c", 1630
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -8489,14 +8736,14 @@ L000A:	jsr     _put_update_debug
 ;
 ; }else if( action == 2 ){
 ;
-	.dbg	line, "quarto.c", 1611
+	.dbg	line, "quarto.c", 1632
 L0016:	lda     (sp),y
 	cmp     #$02
 	bne     L000E
 ;
 ; put_update_debug(1,23, 14, whichTurn!=0?"P1:WIN!       ":(const char*)msgBlank );
 ;
-	.dbg	line, "quarto.c", 1612
+	.dbg	line, "quarto.c", 1633
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -8518,7 +8765,7 @@ L0010:	jsr     _put_update_debug
 ;
 ; put_update_debug(1,6, 14, whichTurn==0?"P2:WIN!       ":(const char*)msgBlank );
 ;
-	.dbg	line, "quarto.c", 1613
+	.dbg	line, "quarto.c", 1634
 	jsr     decsp3
 	lda     #$01
 	ldy     #$02
@@ -8540,7 +8787,7 @@ L0012:	jsr     _put_update_debug
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1616
+	.dbg	line, "quarto.c", 1637
 L000E:	jmp     incsp1
 
 	.dbg	line
@@ -8561,7 +8808,7 @@ L000E:	jmp     incsp1
 ;
 ; put_update_debug(26,23, 3, "   " );
 ;
-	.dbg	line, "quarto.c", 1619
+	.dbg	line, "quarto.c", 1640
 	jsr     decsp3
 	lda     #$1A
 	ldy     #$02
@@ -8578,7 +8825,7 @@ L000E:	jmp     incsp1
 ;
 ; put_update_debug(26,6, 3,  "   " );
 ;
-	.dbg	line, "quarto.c", 1620
+	.dbg	line, "quarto.c", 1641
 	jsr     decsp3
 	lda     #$1A
 	ldy     #$02
@@ -8611,7 +8858,7 @@ L000E:	jmp     incsp1
 ;
 ; put_update_debug(26,23, 3, err[1] == 0 ? "   ": err[1] == 1 ?"X  ": err[1] == 2 ?"XX ": "XXX" );
 ;
-	.dbg	line, "quarto.c", 1624
+	.dbg	line, "quarto.c", 1645
 	jsr     decsp3
 	lda     #$1A
 	ldy     #$02
@@ -8645,7 +8892,7 @@ L0007:	jsr     _put_update_debug
 ;
 ; put_update_debug(26,6, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
 ;
-	.dbg	line, "quarto.c", 1625
+	.dbg	line, "quarto.c", 1646
 	jsr     decsp3
 	lda     #$1A
 	ldy     #$02
@@ -8695,78 +8942,78 @@ L000D:	jmp     _put_update_debug
 ;
 ; oam_clear() ;
 ;
-	.dbg	line, "quarto.c", 1629
+	.dbg	line, "quarto.c", 1650
 	jsr     _oam_clear
 ;
 ; ppu_off() ;
 ;
-	.dbg	line, "quarto.c", 1630
+	.dbg	line, "quarto.c", 1651
 	jsr     _ppu_off
 ;
 ; delay(60) ;
 ;
-	.dbg	line, "quarto.c", 1631
+	.dbg	line, "quarto.c", 1652
 	lda     #$3C
 	jsr     _delay
 ;
 ; bank_bg(1);
 ;
-	.dbg	line, "quarto.c", 1633
+	.dbg	line, "quarto.c", 1654
 	lda     #$01
 	jsr     _bank_bg
 ;
 ; vram_adr(NAMETABLE_A);//set VRAM address
 ;
-	.dbg	line, "quarto.c", 1634
+	.dbg	line, "quarto.c", 1655
 	ldx     #$20
 	lda     #$00
 	jsr     _vram_adr
 ;
 ; vram_unrle((unsigned char*)jeesus);
 ;
-	.dbg	line, "quarto.c", 1635
+	.dbg	line, "quarto.c", 1656
 	lda     #<(_jeesus)
 	ldx     #>(_jeesus)
 	jsr     _vram_unrle
 ;
 ; pal_bg(palette_jeesus);
 ;
-	.dbg	line, "quarto.c", 1636
+	.dbg	line, "quarto.c", 1657
 	lda     #<(_palette_jeesus)
 	ldx     #>(_palette_jeesus)
 	jsr     _pal_bg
 ;
 ; ppu_on_all();//enable rendering
 ;
-	.dbg	line, "quarto.c", 1637
+	.dbg	line, "quarto.c", 1658
 	jsr     _ppu_on_all
 ;
 ; music_play(3) ;
 ;
-	.dbg	line, "quarto.c", 1639
+	.dbg	line, "quarto.c", 1660
 	lda     #$03
 	jsr     _music_play
 ;
 ; delay(90);
 ;
-	.dbg	line, "quarto.c", 1640
+	.dbg	line, "quarto.c", 1661
 	lda     #$5A
 	jsr     _delay
 ;
 ; music_stop() ;
 ;
-	.dbg	line, "quarto.c", 1641
+	.dbg	line, "quarto.c", 1662
 	jsr     _music_stop
 ;
 ; bank_bg(0);
 ;
-	.dbg	line, "quarto.c", 1642
+	.dbg	line, "quarto.c", 1663
 	lda     #$00
 	jsr     _bank_bg
 ;
 ; reset() ;
 ;
-	.dbg	line, "quarto.c", 1644
+	.dbg	line, "quarto.c", 1665
 	jmp     _reset
 
 	.dbg	line
@@ -8787,23 +9034,23 @@ L000D:	jmp     _put_update_debug
 ;
 ; initMsg() ;
 ;
-	.dbg	line, "quarto.c", 1648
+	.dbg	line, "quarto.c", 1669
 	jsr     _initMsg
 ;
 ; initLife() ;
 ;
-	.dbg	line, "quarto.c", 1649
+	.dbg	line, "quarto.c", 1670
 	jsr     _initLife
 ;
 ; music_play(2) ;
 ;
-	.dbg	line, "quarto.c", 1651
+	.dbg	line, "quarto.c", 1672
 	lda     #$02
 	jsr     _music_play
 ;
 ; for( i=0 ; i< 20; i++ ){
 ;
-	.dbg	line, "quarto.c", 1652
+	.dbg	line, "quarto.c", 1673
 	lda     #$00
 	sta     _i
 L0006:	lda     _i
@@ -8812,35 +9059,35 @@ L0006:	lda     _i
 ;
 ; animeKomaTurn(2) ;
 ;
-	.dbg	line, "quarto.c", 1653
+	.dbg	line, "quarto.c", 1674
 	lda     #$02
 	jsr     _animeKomaTurn
 ;
 ; frame++ ;
 ;
-	.dbg	line, "quarto.c", 1654
+	.dbg	line, "quarto.c", 1675
 	inc     _frame
 ;
 ; for( i=0 ; i< 20; i++ ){
 ;
-	.dbg	line, "quarto.c", 1652
+	.dbg	line, "quarto.c", 1673
 	inc     _i
 	jmp     L0006
 ;
 ; animeKomaTurnOff() ;
 ;
-	.dbg	line, "quarto.c", 1656
+	.dbg	line, "quarto.c", 1677
 L0003:	jsr     _animeKomaTurnOff
 ;
 ; delay(20) ;
 ;
-	.dbg	line, "quarto.c", 1657
+	.dbg	line, "quarto.c", 1678
 	lda     #$14
 	jsr     _delay
 ;
 ; music_stop() ;
 ;
-	.dbg	line, "quarto.c", 1658
+	.dbg	line, "quarto.c", 1679
 	jmp     _music_stop
 
 	.dbg	line
@@ -8861,36 +9108,36 @@ L0003:	jsr     _animeKomaTurnOff
 ;
 ; printCursor() ;
 ;
-	.dbg	line, "quarto.c", 1663
+	.dbg	line, "quarto.c", 1684
 	jsr     _printCursor
 ;
 ; printMsg(0) ;
 ;
-	.dbg	line, "quarto.c", 1664
+	.dbg	line, "quarto.c", 1685
 	lda     #$00
 	jsr     _printMsg
 ;
 ; printLife() ;
 ;
-	.dbg	line, "quarto.c", 1665
+	.dbg	line, "quarto.c", 1686
 	jsr     _printLife
 ;
 ; pad=pad_poll(0) ;
 ;
-	.dbg	line, "quarto.c", 1686
+	.dbg	line, "quarto.c", 1707
 L0051:	lda     #$00
 L0076:	jsr     _pad_poll
 	sta     _pad
 ;
 ; if(pad&PAD_LEFT){
 ;
-	.dbg	line, "quarto.c", 1687
+	.dbg	line, "quarto.c", 1708
 	and     #$02
 	beq     L005A
 ;
 ; ChooseKoma = ChooseKoma <= 0 ? 7 : --ChooseKoma ;
 ;
-	.dbg	line, "quarto.c", 1688
+	.dbg	line, "quarto.c", 1709
 	lda     _ChooseKoma
 	bne     L0052
 	lda     #$07
@@ -8901,12 +9148,12 @@ L0053:	sta     _ChooseKoma
 ;
 ; printCursor() ;
 ;
-	.dbg	line, "quarto.c", 1689
+	.dbg	line, "quarto.c", 1710
 	jsr     _printCursor
 ;
 ; if( moving == 0 || moving == 2 ){
 ;
-	.dbg	line, "quarto.c", 1690
+	.dbg	line, "quarto.c", 1711
 	lda     _moving
 	beq     L0077
 	cmp     #$02
@@ -8914,7 +9161,7 @@ L0053:	sta     _ChooseKoma
 ;
 ; for( i = 0; i < 25 &&  pad&PAD_LEFT ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1692
+	.dbg	line, "quarto.c", 1713
 	lda     #$00
 L0077:	sta     _i
 L000B:	lda     _i
@@ -8926,18 +9173,18 @@ L000B:	lda     _i
 ;
 ; i++ ;
 ;
-	.dbg	line, "quarto.c", 1693
+	.dbg	line, "quarto.c", 1714
 	inc     _i
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1694
+	.dbg	line, "quarto.c", 1715
 	lda     #$01
 	jsr     _delay
 ;
 ; for( i = 0; i < 25 &&  pad&PAD_LEFT ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1692
+	.dbg	line, "quarto.c", 1713
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
@@ -8945,26 +9192,26 @@ L000B:	lda     _i
 ;
 ; delay(5) ;
 ;
-	.dbg	line, "quarto.c", 1697
+	.dbg	line, "quarto.c", 1718
 L0058:	lda     #$05
 	jsr     _delay
 ;
 ; moving = 1 ;
 ;
-	.dbg	line, "quarto.c", 1699
+	.dbg	line, "quarto.c", 1720
 L0059:	lda     #$01
 	sta     _moving
 ;
 ; if(pad&PAD_RIGHT){
 ;
-	.dbg	line, "quarto.c", 1702
+	.dbg	line, "quarto.c", 1723
 L005A:	lda     _pad
 	and     #$01
 	beq     L0065
 ;
 ; ChooseKoma = ChooseKoma >= 7 ? 0 : ++ChooseKoma ;
 ;
-	.dbg	line, "quarto.c", 1703
+	.dbg	line, "quarto.c", 1724
 	lda     _ChooseKoma
 	cmp     #$07
 	bcc     L005B
@@ -8976,12 +9223,12 @@ L005C:	sta     _ChooseKoma
 ;
 ; printCursor() ;
 ;
-	.dbg	line, "quarto.c", 1704
+	.dbg	line, "quarto.c", 1725
 	jsr     _printCursor
 ;
 ; if( moving == 0 || moving == 1 ){
 ;
-	.dbg	line, "quarto.c", 1705
+	.dbg	line, "quarto.c", 1726
 	lda     _moving
 	beq     L0078
 	cmp     #$01
@@ -8989,7 +9236,7 @@ L005C:	sta     _ChooseKoma
 ;
 ; for( i = 0; i < 25 && pad&PAD_RIGHT ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1707
+	.dbg	line, "quarto.c", 1728
 	lda     #$00
 L0078:	sta     _i
 L0019:	lda     _i
@@ -9001,18 +9248,18 @@ L0019:	lda     _i
 ;
 ; i++ ;
 ;
-	.dbg	line, "quarto.c", 1708
+	.dbg	line, "quarto.c", 1729
 	inc     _i
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1709
+	.dbg	line, "quarto.c", 1730
 	lda     #$01
 	jsr     _delay
 ;
 ; for( i = 0; i < 25 && pad&PAD_RIGHT ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1707
+	.dbg	line, "quarto.c", 1728
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
@@ -9020,62 +9267,62 @@ L0019:	lda     _i
 ;
 ; delay(5) ;
 ;
-	.dbg	line, "quarto.c", 1712
+	.dbg	line, "quarto.c", 1733
 L0063:	lda     #$05
 	jsr     _delay
 ;
 ; moving = 2 ;
 ;
-	.dbg	line, "quarto.c", 1714
+	.dbg	line, "quarto.c", 1735
 L0064:	lda     #$02
 	sta     _moving
 ;
 ; if(pad&PAD_UP){
 ;
-	.dbg	line, "quarto.c", 1717
+	.dbg	line, "quarto.c", 1738
 L0065:	lda     _pad
 	and     #$08
 	beq     L0066
 ;
 ; selBW = 0 ;
 ;
-	.dbg	line, "quarto.c", 1718
+	.dbg	line, "quarto.c", 1739
 	lda     #$00
 	sta     _selBW
 ;
 ; printCursor() ;
 ;
-	.dbg	line, "quarto.c", 1719
+	.dbg	line, "quarto.c", 1740
 	jsr     _printCursor
 ;
 ; if(pad&PAD_DOWN){
 ;
-	.dbg	line, "quarto.c", 1721
+	.dbg	line, "quarto.c", 1742
 L0066:	lda     _pad
 	and     #$04
 	beq     L0067
 ;
 ; selBW = 1 ;
 ;
-	.dbg	line, "quarto.c", 1722
+	.dbg	line, "quarto.c", 1743
 	lda     #$01
 	sta     _selBW
 ;
 ; printCursor() ;
 ;
-	.dbg	line, "quarto.c", 1723
+	.dbg	line, "quarto.c", 1744
 	jsr     _printCursor
 ;
 ; if(pad&PAD_A){
 ;
-	.dbg	line, "quarto.c", 1726
+	.dbg	line, "quarto.c", 1747
 L0067:	lda     _pad
 	and     #$80
 	jeq     L0072
 ;
 ; if( koma_exist[selBW][ChooseKoma] == 0 ){
 ;
-	.dbg	line, "quarto.c", 1727
+	.dbg	line, "quarto.c", 1748
 	ldx     #$00
 	lda     _selBW
 	jsr     aslax3
@@ -9092,7 +9339,7 @@ L0067:	lda     _pad
 ;
 ; sfx_play(3,0);
 ;
-	.dbg	line, "quarto.c", 1728
+	.dbg	line, "quarto.c", 1749
 	lda     #$03
 	jsr     pusha
 	txa
@@ -9100,20 +9347,20 @@ L0067:	lda     _pad
 ;
 ; for( ; pad&PAD_A ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1730
+	.dbg	line, "quarto.c", 1751
 L0025:	lda     _pad
 	and     #$80
 	jeq     L0076
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1731
+	.dbg	line, "quarto.c", 1752
 	lda     #$01
 	jsr     _delay
 ;
 ; for( ; pad&PAD_A ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1730
+	.dbg	line, "quarto.c", 1751
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
@@ -9121,7 +9368,7 @@ L0025:	lda     _pad
 ;
 ; koma_exist[selBW][ChooseKoma] = 0 ;
 ;
-	.dbg	line, "quarto.c", 1736
+	.dbg	line, "quarto.c", 1757
 L0068:	lda     _selBW
 	jsr     aslax3
 	clc
@@ -9136,7 +9383,7 @@ L0068:	lda     _selBW
 ;
 ; putStockKoma((ChooseKoma*4),selBW==0?0:26, selBW==0?0x00:0xFF,  (unsigned char*)koma_list[0][0][ChooseKoma]) ;
 ;
-	.dbg	line, "quarto.c", 1737
+	.dbg	line, "quarto.c", 1758
 	jsr     decsp3
 	lda     _ChooseKoma
 	asl     a
@@ -9173,12 +9420,12 @@ L004D:	adc     #<(_koma_list)
 ;
 ; oam_clear() ;
 ;
-	.dbg	line, "quarto.c", 1739
+	.dbg	line, "quarto.c", 1760
 	jsr     _oam_clear
 ;
 ; x = ChooseKoma*32 ;
 ;
-	.dbg	line, "quarto.c", 1741
+	.dbg	line, "quarto.c", 1762
 	lda     _ChooseKoma
 	asl     a
 	asl     a
@@ -9189,7 +9436,7 @@ L004D:	adc     #<(_koma_list)
 ;
 ; y = 10+selBW*180 ;
 ;
-	.dbg	line, "quarto.c", 1742
+	.dbg	line, "quarto.c", 1763
 	lda     _selBW
 	jsr     pusha0
 	lda     #$B4
@@ -9200,7 +9447,7 @@ L004D:	adc     #<(_koma_list)
 ;
 ; moveKoma( x, y, 24, whichTurn!=0?60:146, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
 ;
-	.dbg	line, "quarto.c", 1743
+	.dbg	line, "quarto.c", 1764
 	jsr     decsp4
 	lda     _x
 	ldy     #$03
@@ -9251,12 +9498,12 @@ L004E:	adc     ptr1
 ;
 ; ppu_wait_frame(); // wait for next TV frame
 ;
-	.dbg	line, "quarto.c", 1745
+	.dbg	line, "quarto.c", 1766
 	jsr     _ppu_wait_frame
 ;
 ; sfx_play(5,1);
 ;
-	.dbg	line, "quarto.c", 1747
+	.dbg	line, "quarto.c", 1768
 	lda     #$05
 	jsr     pusha
 	lda     #$01
@@ -9264,7 +9511,7 @@ L004E:	adc     ptr1
 ;
 ; whichTurn = whichTurn == 0? 1:0 ;
 ;
-	.dbg	line, "quarto.c", 1749
+	.dbg	line, "quarto.c", 1770
 	lda     _whichTurn
 	bne     L0070
 	lda     #$01
@@ -9274,25 +9521,25 @@ L0071:	sta     _whichTurn
 ;
 ; printMsg(1);
 ;
-	.dbg	line, "quarto.c", 1750
+	.dbg	line, "quarto.c", 1771
 	lda     #$01
 	jmp     _printMsg
 ;
 ; if(pad&PAD_SELECT){
 ;
-	.dbg	line, "quarto.c", 1756
+	.dbg	line, "quarto.c", 1777
 L0072:	lda     _pad
 	and     #$20
 	beq     L0075
 ;
 ; bgpl++ ;
 ;
-	.dbg	line, "quarto.c", 1757
+	.dbg	line, "quarto.c", 1778
 	inc     _bgpl
 ;
 ; bgpl = bgpl > 3 ? 0 : bgpl ;
 ;
-	.dbg	line, "quarto.c", 1758
+	.dbg	line, "quarto.c", 1779
 	lda     _bgpl
 	cmp     #$04
 	bcc     L0073
@@ -9303,7 +9550,7 @@ L0074:	sta     _bgpl
 ;
 ; pal_spr((char*)bg_palettes[bgpl]);
 ;
-	.dbg	line, "quarto.c", 1761
+	.dbg	line, "quarto.c", 1782
 	ldx     #$00
 	lda     _bgpl
 	asl     a
@@ -9324,7 +9571,7 @@ L004F:	adc     #<(_bg_palettes)
 ;
 ; pal_bg((char*)bg_palettes[bgpl]);
 ;
-	.dbg	line, "quarto.c", 1762
+	.dbg	line, "quarto.c", 1783
 	ldx     #$00
 	lda     _bgpl
 	asl     a
@@ -9345,20 +9592,20 @@ L0050:	adc     #<(_bg_palettes)
 ;
 ; for( ; pad&PAD_SELECT ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1764
+	.dbg	line, "quarto.c", 1785
 L0037:	lda     _pad
 	and     #$20
 	beq     L0075
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1765
+	.dbg	line, "quarto.c", 1786
 	lda     #$01
 	jsr     _delay
 ;
 ; for( ; pad&PAD_SELECT ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1764
+	.dbg	line, "quarto.c", 1785
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
@@ -9366,50 +9613,50 @@ L0037:	lda     _pad
 ;
 ; if(pad&PAD_START){
 ;
-	.dbg	line, "quarto.c", 1770
+	.dbg	line, "quarto.c", 1791
 L0075:	lda     _pad
 	and     #$10
 	beq     L003B
 ;
 ; procSayQuarto() ;
 ;
-	.dbg	line, "quarto.c", 1771
+	.dbg	line, "quarto.c", 1792
 	jsr     _procSayQuarto
 ;
 ; if( checkQuarto() == 1 ){
 ;
-	.dbg	line, "quarto.c", 1773
+	.dbg	line, "quarto.c", 1794
 	jsr     _checkQuarto
 	cmp     #$01
 	bne     L003C
 ;
 ; quarto = 1 ;
 ;
-	.dbg	line, "quarto.c", 1774
+	.dbg	line, "quarto.c", 1795
 	sta     _quarto
 ;
 ; return ;
 ;
-	.dbg	line, "quarto.c", 1775
+	.dbg	line, "quarto.c", 1796
 	rts
 ;
 ; sfx_play(3,1);
 ;
-	.dbg	line, "quarto.c", 1777
+	.dbg	line, "quarto.c", 1798
 L003C:	lda     #$03
 	jsr     pusha
 	lda     #$01
 	jsr     _sfx_play
 ;
-; music_play(1) ;
+; music_play(game_music) ;
 ;
-	.dbg	line, "quarto.c", 1778
-	lda     #$01
+	.dbg	line, "quarto.c", 1799
+	lda     _game_music
 	jsr     _music_play
 ;
 ; err[whichTurn]++ ;
 ;
-	.dbg	line, "quarto.c", 1779
+	.dbg	line, "quarto.c", 1800
 	lda     #<(_err)
 	ldx     #>(_err)
 	clc
@@ -9428,7 +9675,7 @@ L003E:	sta     sreg
 ;
 ; if( err[whichTurn] == 3 ){
 ;
-	.dbg	line, "quarto.c", 1780
+	.dbg	line, "quarto.c", 1801
 	ldy     _whichTurn
 	lda     _err,y
 	cmp     #$03
@@ -9436,36 +9683,36 @@ L003E:	sta     sreg
 ;
 ; loseAnime() ;
 ;
-	.dbg	line, "quarto.c", 1781
+	.dbg	line, "quarto.c", 1802
 	jsr     _loseAnime
 ;
 ; printLife() ;
 ;
-	.dbg	line, "quarto.c", 1785
+	.dbg	line, "quarto.c", 1806
 L003F:	jsr     _printLife
 ;
 ; printMsg(0) ;
 ;
-	.dbg	line, "quarto.c", 1786
+	.dbg	line, "quarto.c", 1807
 	lda     #$00
 	jsr     _printMsg
 ;
 ; for( ; pad&PAD_START ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1787
+	.dbg	line, "quarto.c", 1808
 L0041:	lda     _pad
 	and     #$10
 	jeq     L0076
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1788
+	.dbg	line, "quarto.c", 1809
 	lda     #$01
 	jsr     _delay
 ;
 ; for( ; pad&PAD_START ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1787
+	.dbg	line, "quarto.c", 1808
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
@@ -9473,18 +9720,321 @@ L0041:	lda     _pad
 ;
 ; ppu_wait_frame(); // wait for next TV frame
 ;
-	.dbg	line, "quarto.c", 1793
+	.dbg	line, "quarto.c", 1814
 L003B:	jsr     _ppu_wait_frame
 ;
 ; frame++;
 ;
-	.dbg	line, "quarto.c", 1794
+	.dbg	line, "quarto.c", 1815
 	inc     _frame
 ;
 ; while(1)
 ;
-	.dbg	line, "quarto.c", 1669
+	.dbg	line, "quarto.c", 1690
 	jmp     L0051
+
+	.dbg	line
+.endproc
+
+; ---------------------------------------------------------------
+; void __near__ checkReach (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_checkReach: near
+
+	.dbg	func, "checkReach", "00", extern, "_checkReach"
+
+.segment	"CODE"
+
+;
+; for( k = 0; k < 4; k++ ){
+;
+	.dbg	line, "quarto.c", 1820
+	lda     #$00
+	sta     _k
+L001A:	lda     _k
+	cmp     #$04
+	jcs     L001F
+;
+; tmp = 0 ;
+;
+	.dbg	line, "quarto.c", 1821
+	lda     #$00
+	sta     _tmp
+;
+; tmp2 = 0 ;
+;
+	.dbg	line, "quarto.c", 1822
+	sta     _tmp2
+;
+; for( l = 0; l < 4; l++ ){
+;
+	.dbg	line, "quarto.c", 1823
+	sta     _l
+L001B:	lda     _l
+	cmp     #$04
+	jcs     L001E
+;
+; if( stage_stat[k][l][_KOMA_TYPE] != 0 ){
+;
+	.dbg	line, "quarto.c", 1824
+	lda     _k
+	jsr     pusha0
+	lda     #$0C
+	jsr     tosmula0
+	clc
+	adc     #<(_stage_stat)
+	sta     sreg
+	txa
+	adc     #>(_stage_stat)
+	sta     sreg+1
+	ldx     #$00
+	lda     _l
+	jsr     mulax3
+	clc
+	adc     sreg
+	sta     ptr1
+	txa
+	adc     sreg+1
+	sta     ptr1+1
+	ldx     #$00
+	lda     (ptr1,x)
+	beq     L001C
+;
+; tmp++ ;
+;
+	.dbg	line, "quarto.c", 1825
+	inc     _tmp
+;
+; if( tmp >= 3 ){
+;
+	.dbg	line, "quarto.c", 1826
+	lda     _tmp
+	cmp     #$03
+	bcc     L001C
+;
+; reach = 1 ;
+;
+	.dbg	line, "quarto.c", 1827
+	lda     #$01
+	sta     _reach
+;
+; if( stage_stat[l][k][_KOMA_TYPE] != 0 ){
+;
+	.dbg	line, "quarto.c", 1830
+L001C:	lda     _l
+	jsr     pusha0
+	lda     #$0C
+	jsr     tosmula0
+	clc
+	adc     #<(_stage_stat)
+	sta     sreg
+	txa
+	adc     #>(_stage_stat)
+	sta     sreg+1
+	ldx     #$00
+	lda     _k
+	jsr     mulax3
+	clc
+	adc     sreg
+	sta     ptr1
+	txa
+	adc     sreg+1
+	sta     ptr1+1
+	ldy     #$00
+	lda     (ptr1),y
+	beq     L001D
+;
+; tmp2++ ;
+;
+	.dbg	line, "quarto.c", 1831
+	inc     _tmp2
+;
+; if( tmp2 >= 3 ){
+;
+	.dbg	line, "quarto.c", 1832
+	lda     _tmp2
+	cmp     #$03
+	bcc     L001D
+;
+; reach = 1 ;
+;
+	.dbg	line, "quarto.c", 1833
+	lda     #$01
+	sta     _reach
+;
+; for( l = 0; l < 4; l++ ){
+;
+	.dbg	line, "quarto.c", 1823
+L001D:	inc     _l
+	jmp     L001B
+;
+; for( k = 0; k < 4; k++ ){
+;
+	.dbg	line, "quarto.c", 1820
+L001E:	inc     _k
+	jmp     L001A
+;
+; tmp = 0 ;
+;
+	.dbg	line, "quarto.c", 1839
+L001F:	lda     #$00
+	sta     _tmp
+;
+; tmp2 = 0 ;
+;
+	.dbg	line, "quarto.c", 1840
+	sta     _tmp2
+;
+; for( k = 0; k < 4; k++ ){
+;
+	.dbg	line, "quarto.c", 1841
+	sta     _k
+L0020:	lda     _k
+	cmp     #$04
+	jcs     L0023
+;
+; if( stage_stat[k][k][_KOMA_TYPE] != 0 ){
+;
+	.dbg	line, "quarto.c", 1842
+	lda     _k
+	jsr     pusha0
+	lda     #$0C
+	jsr     tosmula0
+	clc
+	adc     #<(_stage_stat)
+	sta     sreg
+	txa
+	adc     #>(_stage_stat)
+	sta     sreg+1
+	ldx     #$00
+	lda     _k
+	jsr     mulax3
+	clc
+	adc     sreg
+	sta     ptr1
+	txa
+	adc     sreg+1
+	sta     ptr1+1
+	ldx     #$00
+	lda     (ptr1,x)
+	beq     L0021
+;
+; tmp++ ;
+;
+	.dbg	line, "quarto.c", 1843
+	inc     _tmp
+;
+; if( tmp >= 3 ){
+;
+	.dbg	line, "quarto.c", 1844
+	lda     _tmp
+	cmp     #$03
+	bcc     L0021
+;
+; reach = 1 ;
+;
+	.dbg	line, "quarto.c", 1845
+	lda     #$01
+	sta     _reach
+;
+; if( stage_stat[k][3-k][_KOMA_TYPE] != 0 ){
+;
+	.dbg	line, "quarto.c", 1848
+L0021:	lda     _k
+	jsr     pusha0
+	lda     #$0C
+	jsr     tosmula0
+	clc
+	adc     #<(_stage_stat)
+	sta     sreg
+	txa
+	adc     #>(_stage_stat)
+	sta     sreg+1
+	lda     #$03
+	sec
+	sbc     _k
+	pha
+	lda     #$00
+	sbc     #$00
+	tax
+	pla
+	jsr     mulax3
+	clc
+	adc     sreg
+	sta     ptr1
+	txa
+	adc     sreg+1
+	sta     ptr1+1
+	ldy     #$00
+	lda     (ptr1),y
+	beq     L0022
+;
+; tmp2++ ;
+;
+	.dbg	line, "quarto.c", 1849
+	inc     _tmp2
+;
+; if( tmp2 >= 3 ){
+;
+	.dbg	line, "quarto.c", 1850
+	lda     _tmp2
+	cmp     #$03
+	bcc     L0022
+;
+; reach = 1 ;
+;
+	.dbg	line, "quarto.c", 1851
+	lda     #$01
+	sta     _reach
+;
+; for( k = 0; k < 4; k++ ){
+;
+	.dbg	line, "quarto.c", 1841
+L0022:	inc     _k
+	jmp     L0020
+;
+; if( reach == 1 && game_music != 4 ){
+;
+	.dbg	line, "quarto.c", 1855
+L0023:	lda     _reach
+	cmp     #$01
+	bne     L0024
+	lda     _game_music
+	cmp     #$04
+	bne     L0025
+L0024:	rts
+;
+; game_music = 4 ;
+;
+	.dbg	line, "quarto.c", 1856
+L0025:	lda     #$04
+	sta     _game_music
+;
+; music_stop() ;
+;
+	.dbg	line, "quarto.c", 1857
+	jsr     _music_stop
+;
+; bgFlash(8) ;
+;
+	.dbg	line, "quarto.c", 1858
+	lda     #$08
+	jsr     _bgFlash
+;
+; delay(30) ;
+;
+	.dbg	line, "quarto.c", 1859
+	lda     #$1E
+	jsr     _delay
+;
+; music_play(game_music) ;
+;
+	.dbg	line, "quarto.c", 1860
+	lda     _game_music
+	jmp     _music_play
 
 	.dbg	line
 .endproc
@@ -9504,20 +10054,20 @@ L003B:	jsr     _ppu_wait_frame
 ;
 ; for( ; pad&PAD_A ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1800
+	.dbg	line, "quarto.c", 1867
 L0002:	lda     _pad
 	and     #$80
 	beq     L006A
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1801
+	.dbg	line, "quarto.c", 1868
 	lda     #$01
 	jsr     _delay
 ;
 ; for( ; pad&PAD_A ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1800
+	.dbg	line, "quarto.c", 1867
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
@@ -9525,27 +10075,27 @@ L0002:	lda     _pad
 ;
 ; pad=pad_poll(0) ;
 ;
-	.dbg	line, "quarto.c", 1823
+	.dbg	line, "quarto.c", 1890
 L004C:	lda     #$00
 L006A:	jsr     _pad_poll
 	sta     _pad
 ;
 ; if(pad&PAD_LEFT){
 ;
-	.dbg	line, "quarto.c", 1824
+	.dbg	line, "quarto.c", 1891
 	and     #$02
 	beq     L0050
 ;
 ; if( x > 4 ){
 ;
-	.dbg	line, "quarto.c", 1825
+	.dbg	line, "quarto.c", 1892
 	lda     _x
 	cmp     #$05
 	bcc     L0050
 ;
 ; x-= pad&PAD_B ? 4 : 2 ;
 ;
-	.dbg	line, "quarto.c", 1826
+	.dbg	line, "quarto.c", 1893
 	lda     _pad
 	and     #$40
 	beq     L004D
@@ -9559,21 +10109,21 @@ L004F:	eor     #$FF
 ;
 ; if(pad&PAD_RIGHT){
 ;
-	.dbg	line, "quarto.c", 1829
+	.dbg	line, "quarto.c", 1896
 L0050:	lda     _pad
 	and     #$01
 	beq     L0054
 ;
 ; if( x < 232){
 ;
-	.dbg	line, "quarto.c", 1830
+	.dbg	line, "quarto.c", 1897
 	lda     _x
 	cmp     #$E8
 	bcs     L0054
 ;
 ; x+= pad&PAD_B ? 4 : 2 ;
 ;
-	.dbg	line, "quarto.c", 1831
+	.dbg	line, "quarto.c", 1898
 	lda     _pad
 	and     #$40
 	beq     L0051
@@ -9586,21 +10136,21 @@ L0053:	clc
 ;
 ; if(pad&PAD_UP){
 ;
-	.dbg	line, "quarto.c", 1834
+	.dbg	line, "quarto.c", 1901
 L0054:	lda     _pad
 	and     #$08
 	beq     L0058
 ;
 ; if( y > 4 ){
 ;
-	.dbg	line, "quarto.c", 1835
+	.dbg	line, "quarto.c", 1902
 	lda     _y
 	cmp     #$05
 	bcc     L0058
 ;
 ; y-= pad&PAD_B ? 2 : 1 ;
 ;
-	.dbg	line, "quarto.c", 1836
+	.dbg	line, "quarto.c", 1903
 	lda     _pad
 	and     #$40
 	beq     L0055
@@ -9614,21 +10164,21 @@ L0057:	eor     #$FF
 ;
 ; if(pad&PAD_DOWN){
 ;
-	.dbg	line, "quarto.c", 1840
+	.dbg	line, "quarto.c", 1907
 L0058:	lda     _pad
 	and     #$04
 	beq     L005C
 ;
 ; if( y < 212){
 ;
-	.dbg	line, "quarto.c", 1841
+	.dbg	line, "quarto.c", 1908
 	lda     _y
 	cmp     #$D4
 	bcs     L005C
 ;
 ; y+= pad&PAD_B ? 2 : 1 ;
 ;
-	.dbg	line, "quarto.c", 1842
+	.dbg	line, "quarto.c", 1909
 	lda     _pad
 	and     #$40
 	beq     L0059
@@ -9641,14 +10191,14 @@ L005B:	clc
 ;
 ; if(pad&PAD_A){
 ;
-	.dbg	line, "quarto.c", 1845
+	.dbg	line, "quarto.c", 1912
 L005C:	lda     _pad
 	and     #$80
 	jeq     L0060
 ;
 ; if( checkPutPos(x/8, y/8) == 1 ){
 ;
-	.dbg	line, "quarto.c", 1846
+	.dbg	line, "quarto.c", 1913
 	lda     _x
 	lsr     a
 	lsr     a
@@ -9664,7 +10214,7 @@ L005C:	lda     _pad
 ;
 ; sfx_play(3,0);
 ;
-	.dbg	line, "quarto.c", 1847
+	.dbg	line, "quarto.c", 1914
 	lda     #$03
 	jsr     pusha
 	lda     #$00
@@ -9672,20 +10222,20 @@ L005C:	lda     _pad
 ;
 ; for( ; pad&PAD_A ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1849
+	.dbg	line, "quarto.c", 1916
 L001B:	lda     _pad
 	and     #$80
 	jeq     L006A
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1850
+	.dbg	line, "quarto.c", 1917
 	lda     #$01
 	jsr     _delay
 ;
 ; for( ; pad&PAD_A ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1849
+	.dbg	line, "quarto.c", 1916
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
@@ -9693,7 +10243,7 @@ L001B:	lda     _pad
 ;
 ; putKoma( x/8, y/8, selBW==0?0xAA:0x55, (unsigned char*)koma_list[0][0][ChooseKoma] ) ;
 ;
-	.dbg	line, "quarto.c", 1856
+	.dbg	line, "quarto.c", 1923
 L001A:	jsr     decsp3
 	lda     _x
 	lsr     a
@@ -9734,7 +10284,7 @@ L0047:	adc     #<(_koma_list)
 ;
 ; stage_stat[x_index][y_index][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
 ;
-	.dbg	line, "quarto.c", 1861
+	.dbg	line, "quarto.c", 1928
 	lda     _x_index
 	jsr     pusha0
 	lda     #$0C
@@ -9782,7 +10332,7 @@ L0025:	sta     ptr1
 ;
 ; stage_stat[x_index][y_index][_CHOOSE_KOMA] = ChooseKoma ;
 ;
-	.dbg	line, "quarto.c", 1862
+	.dbg	line, "quarto.c", 1929
 	lda     _x_index
 	jsr     pusha0
 	lda     #$0C
@@ -9808,7 +10358,7 @@ L0025:	sta     ptr1
 ;
 ; stage_stat[x_index][y_index][_SEL_BW] = selBW ;
 ;
-	.dbg	line, "quarto.c", 1863
+	.dbg	line, "quarto.c", 1930
 	lda     _x_index
 	jsr     pusha0
 	lda     #$0C
@@ -9834,43 +10384,48 @@ L0025:	sta     ptr1
 ;
 ; oam_clear() ;
 ;
-	.dbg	line, "quarto.c", 1864
+	.dbg	line, "quarto.c", 1931
 	jsr     _oam_clear
 ;
-; sfx_play(7,1);
+; sfx_play(4,1);
 ;
-	.dbg	line, "quarto.c", 1869
-	lda     #$07
+	.dbg	line, "quarto.c", 1936
+	lda     #$04
 	jsr     pusha
 	lda     #$01
 	jsr     _sfx_play
 ;
 ; printMsg(0) ;
 ;
-	.dbg	line, "quarto.c", 1872
+	.dbg	line, "quarto.c", 1939
 	lda     #$00
-	jmp     _printMsg
+	jsr     _printMsg
+;
+; checkReach() ;
+;
+	.dbg	line, "quarto.c", 1941
+	jmp     _checkReach
 ;
 ; if(pad&PAD_SELECT){
 ;
-	.dbg	line, "quarto.c", 1878
+	.dbg	line, "quarto.c", 1947
 L0060:	lda     _pad
 	and     #$20
-	beq     L0067
+	jeq     L0067
 ;
 ; oam_clear() ;
 ;
-	.dbg	line, "quarto.c", 1879
+	.dbg	line, "quarto.c", 1948
 	jsr     _oam_clear
 ;
 ; printCursor() ;
 ;
-	.dbg	line, "quarto.c", 1886
+	.dbg	line, "quarto.c", 1955
 	jsr     _printCursor
 ;
 ; koma_exist[selBW][ChooseKoma] = 1 ;
 ;
-	.dbg	line, "quarto.c", 1888
+	.dbg	line, "quarto.c", 1957
 	ldx     #$00
 	lda     _selBW
 	jsr     aslax3
@@ -9886,7 +10441,7 @@ L0060:	lda     _pad
 ;
 ; putStockKoma((ChooseKoma*4),selBW==0?0:26, selBW==0?0xAA:0x55, (unsigned char*)koma_list[0][0][ChooseKoma]) ;
 ;
-	.dbg	line, "quarto.c", 1889
+	.dbg	line, "quarto.c", 1958
 	jsr     decsp3
 	lda     _ChooseKoma
 	asl     a
@@ -9925,7 +10480,7 @@ L0049:	adc     #<(_koma_list)
 ;
 ; whichTurn = whichTurn == 0? 1:0 ;
 ;
-	.dbg	line, "quarto.c", 1890
+	.dbg	line, "quarto.c", 1959
 	lda     _whichTurn
 	bne     L0065
 	lda     #$01
@@ -9933,58 +10488,66 @@ L0049:	adc     #<(_koma_list)
 L0065:	lda     #$00
 L0066:	sta     _whichTurn
 ;
+; sfx_play(6,0);
+;
+	.dbg	line, "quarto.c", 1961
+	lda     #$06
+	jsr     pusha
+	lda     #$00
+	jsr     _sfx_play
+;
 ; printMsg(0) ;
 ;
-	.dbg	line, "quarto.c", 1893
+	.dbg	line, "quarto.c", 1964
 	lda     #$00
 	jmp     _printMsg
 ;
 ; if(pad&PAD_START){
 ;
-	.dbg	line, "quarto.c", 1897
+	.dbg	line, "quarto.c", 1968
 L0067:	lda     _pad
 	and     #$10
 	beq     L002F
 ;
 ; procSayQuarto() ;
 ;
-	.dbg	line, "quarto.c", 1898
+	.dbg	line, "quarto.c", 1969
 	jsr     _procSayQuarto
 ;
 ; if( checkQuarto() == 1 ){
 ;
-	.dbg	line, "quarto.c", 1900
+	.dbg	line, "quarto.c", 1971
 	jsr     _checkQuarto
 	cmp     #$01
 	bne     L0030
 ;
 ; quarto = 1 ;
 ;
-	.dbg	line, "quarto.c", 1901
+	.dbg	line, "quarto.c", 1972
 	sta     _quarto
 ;
 ; return ;
 ;
-	.dbg	line, "quarto.c", 1902
+	.dbg	line, "quarto.c", 1973
 	rts
 ;
 ; sfx_play(3,1);
 ;
-	.dbg	line, "quarto.c", 1904
+	.dbg	line, "quarto.c", 1975
 L0030:	lda     #$03
 	jsr     pusha
 	lda     #$01
 	jsr     _sfx_play
 ;
-; music_play(1) ;
+; music_play(game_music) ;
 ;
-	.dbg	line, "quarto.c", 1905
-	lda     #$01
+	.dbg	line, "quarto.c", 1976
+	lda     _game_music
 	jsr     _music_play
 ;
 ; err[whichTurn]++ ;
 ;
-	.dbg	line, "quarto.c", 1906
+	.dbg	line, "quarto.c", 1977
 	lda     #<(_err)
 	ldx     #>(_err)
 	clc
@@ -10003,7 +10566,7 @@ L0032:	sta     sreg
 ;
 ; if( err[whichTurn] == 3 ){
 ;
-	.dbg	line, "quarto.c", 1907
+	.dbg	line, "quarto.c", 1978
 	ldy     _whichTurn
 	lda     _err,y
 	cmp     #$03
@@ -10011,36 +10574,36 @@ L0032:	sta     sreg
 ;
 ; loseAnime() ;
 ;
-	.dbg	line, "quarto.c", 1908
+	.dbg	line, "quarto.c", 1979
 	jsr     _loseAnime
 ;
 ; printLife() ;
 ;
-	.dbg	line, "quarto.c", 1911
+	.dbg	line, "quarto.c", 1982
 L0033:	jsr     _printLife
 ;
 ; printMsg(1) ;
 ;
-	.dbg	line, "quarto.c", 1912
+	.dbg	line, "quarto.c", 1983
 	lda     #$01
 	jsr     _printMsg
 ;
 ; for( ; pad&PAD_START ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1913
+	.dbg	line, "quarto.c", 1984
 L0035:	lda     _pad
 	and     #$10
 	jeq     L006A
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 1914
+	.dbg	line, "quarto.c", 1985
 	lda     #$01
 	jsr     _delay
 ;
 ; for( ; pad&PAD_START ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 1913
+	.dbg	line, "quarto.c", 1984
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
@@ -10048,18 +10611,18 @@ L0035:	lda     _pad
 ;
 ; oam_clear() ;
 ;
-	.dbg	line, "quarto.c", 1919
+	.dbg	line, "quarto.c", 1990
 L002F:	jsr     _oam_clear
 ;
 ; spr = 0 ;
 ;
-	.dbg	line, "quarto.c", 1920
+	.dbg	line, "quarto.c", 1991
 	lda     #$00
 	sta     _spr
 ;
 ; if( checkPutPos(x/8, y/8) != 1 ){
 ;
-	.dbg	line, "quarto.c", 1921
+	.dbg	line, "quarto.c", 1992
 	lda     _x
 	lsr     a
 	lsr     a
@@ -10075,7 +10638,7 @@ L002F:	jsr     _oam_clear
 ;
 ; spr = oam_meta_spr( set_posx*8+8, set_posy*8+(frame%8)+10, spr, selBW==0?meta_pos1: meta_pos2 ) ;
 ;
-	.dbg	line, "quarto.c", 1922
+	.dbg	line, "quarto.c", 1993
 	jsr     decsp3
 	lda     _set_posx
 	asl     a
@@ -10114,7 +10677,7 @@ L003D:	jsr     _oam_meta_spr
 ;
 ; spr = oam_meta_spr( x, y, spr, koma_list[koma_exist[selBW][ChooseKoma]][selBW==0?1:0][ChooseKoma] ) ;
 ;
-	.dbg	line, "quarto.c", 1924
+	.dbg	line, "quarto.c", 1995
 L0039:	jsr     decsp3
 	lda     _x
 	ldy     #$02
@@ -10181,17 +10744,17 @@ L004B:	adc     ptr1
 ;
 ; ppu_wait_frame(); // wait for next TV frame
 ;
-	.dbg	line, "quarto.c", 1926
+	.dbg	line, "quarto.c", 1997
 	jsr     _ppu_wait_frame
 ;
 ; frame++;
 ;
-	.dbg	line, "quarto.c", 1927
+	.dbg	line, "quarto.c", 1998
 	inc     _frame
 ;
 ; while(1)
 ;
-	.dbg	line, "quarto.c", 1806
+	.dbg	line, "quarto.c", 1873
 	jmp     L004C
 
 	.dbg	line
@@ -10212,100 +10775,100 @@ L004B:	adc     ptr1
 ;
 ; if( quarto != 0 ){
 ;
-	.dbg	line, "quarto.c", 1931
+	.dbg	line, "quarto.c", 2002
 	lda     _quarto
-	bne     L0021
+	bne     L0038
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 1983
+	.dbg	line, "quarto.c", 2071
 	rts
 ;
 ; music_stop() ;
 ;
-	.dbg	line, "quarto.c", 1932
-L0021:	jsr     _music_stop
+	.dbg	line, "quarto.c", 2003
+L0038:	jsr     _music_stop
 ;
 ; initLife() ;
 ;
-	.dbg	line, "quarto.c", 1933
+	.dbg	line, "quarto.c", 2004
 	jsr     _initLife
 ;
 ; initMsg() ;
 ;
-	.dbg	line, "quarto.c", 1934
+	.dbg	line, "quarto.c", 2005
 	jsr     _initMsg
 ;
 ; oam_clear() ;
 ;
-	.dbg	line, "quarto.c", 1935
+	.dbg	line, "quarto.c", 2006
 	jsr     _oam_clear
 ;
 ; delay(40) ;
 ;
-	.dbg	line, "quarto.c", 1936
+	.dbg	line, "quarto.c", 2007
 	lda     #$28
 	jsr     _delay
 ;
 ; bgFlash(8) ;
 ;
-	.dbg	line, "quarto.c", 1937
+	.dbg	line, "quarto.c", 2008
 	lda     #$08
 	jsr     _bgFlash
 ;
 ; delay(40) ;
 ;
-	.dbg	line, "quarto.c", 1938
+	.dbg	line, "quarto.c", 2009
 	lda     #$28
 	jsr     _delay
 ;
 ; music_play(0) ;
 ;
-	.dbg	line, "quarto.c", 1939
+	.dbg	line, "quarto.c", 2010
 	lda     #$00
 	jsr     _music_play
 ;
 ; tmp = rand8() ;
 ;
-	.dbg	line, "quarto.c", 1944
+	.dbg	line, "quarto.c", 2015
 	jsr     _rand8
 	sta     _tmp
 ;
 ; tmp2 = rand8() ;
 ;
-	.dbg	line, "quarto.c", 1945
+	.dbg	line, "quarto.c", 2016
 	jsr     _rand8
 	sta     _tmp2
 ;
 ; tmp3 = rand8() ;
 ;
-	.dbg	line, "quarto.c", 1946
+	.dbg	line, "quarto.c", 2017
 	jsr     _rand8
 	sta     _tmp3
 ;
 ; tmp4 = rand8() ;
 ;
-	.dbg	line, "quarto.c", 1947
+	.dbg	line, "quarto.c", 2018
 	jsr     _rand8
 	sta     _tmp4
 ;
 ; x-=4 ;
 ;
-	.dbg	line, "quarto.c", 1949
-L001B:	lda     _x
+	.dbg	line, "quarto.c", 2020
+L002D:	lda     _x
 	sec
 	sbc     #$04
 	sta     _x
 ;
 ; spr = 0 ;
 ;
-	.dbg	line, "quarto.c", 1950
+	.dbg	line, "quarto.c", 2021
 	lda     #$00
 	sta     _spr
 ;
 ; spr = oam_meta_spr( x + tmp, 80, spr, meta_quarto) ;
 ;
-	.dbg	line, "quarto.c", 1951
+	.dbg	line, "quarto.c", 2022
 	jsr     decsp3
 	lda     _x
 	clc
@@ -10323,9 +10886,9 @@ L001B:	lda     _x
 	jsr     _oam_meta_spr
 	sta     _spr
 ;
-; spr = oam_meta_spr( x + tmp2, 100, spr, whichTurn!=0?meta_p1win:meta_p2win) ;
+; spr = oam_meta_spr( x + tmp2, 100, spr, meta_quarto) ;
 ;
-	.dbg	line, "quarto.c", 1952
+	.dbg	line, "quarto.c", 2023
 	jsr     decsp3
 	lda     _x
 	clc
@@ -10338,19 +10901,14 @@ L001B:	lda     _x
 	lda     _spr
 	dey
 	sta     (sp),y
-	lda     _whichTurn
-	beq     L0006
-	lda     #<(_meta_p1win)
-	ldx     #>(_meta_p1win)
-	jmp     L0007
-L0006:	lda     #<(_meta_p2win)
-	ldx     #>(_meta_p2win)
-L0007:	jsr     _oam_meta_spr
+	lda     #<(_meta_quarto)
+	ldx     #>(_meta_quarto)
+	jsr     _oam_meta_spr
 	sta     _spr
 ;
 ; spr = oam_meta_spr( x + tmp3, 120, spr, meta_quarto) ;
 ;
-	.dbg	line, "quarto.c", 1953
+	.dbg	line, "quarto.c", 2024
 	jsr     decsp3
 	lda     _x
 	clc
@@ -10368,13 +10926,13 @@ L0007:	jsr     _oam_meta_spr
 	jsr     _oam_meta_spr
 	sta     _spr
 ;
-; spr = oam_meta_spr( x + tmp4, 140, spr, whichTurn!=0?meta_p1win:meta_p2win) ;
+; spr = oam_meta_spr( x + tmp3, 140, spr, meta_quarto) ;
 ;
-	.dbg	line, "quarto.c", 1954
+	.dbg	line, "quarto.c", 2025
 	jsr     decsp3
 	lda     _x
 	clc
-	adc     _tmp4
+	adc     _tmp3
 	ldy     #$02
 	sta     (sp),y
 	lda     #$8C
@@ -10383,148 +10941,334 @@ L0007:	jsr     _oam_meta_spr
 	lda     _spr
 	dey
 	sta     (sp),y
+	lda     #<(_meta_quarto)
+	ldx     #>(_meta_quarto)
+	jsr     _oam_meta_spr
+	sta     _spr
+;
+; for( i = 0; i < 4; i++ ){
+;
+	.dbg	line, "quarto.c", 2028
+	lda     #$00
+	sta     _i
+L002E:	lda     _i
+	cmp     #$04
+	jcs     L002F
+;
+; k = (quarto_line[i][0]*32)-(quarto_line[i][1]*32)+115+14 ;
+;
+	.dbg	line, "quarto.c", 2029
+	ldx     #$00
+	lda     _i
+	asl     a
+	bcc     L0027
+	inx
+L0027:	sta     ptr1
+	txa
+	clc
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	ldy     #<(_quarto_line)
+	ldx     #$00
+	lda     (ptr1),y
+	jsr     shlax4
+	stx     tmp1
+	asl     a
+	rol     tmp1
+	ldx     tmp1
+	jsr     pushax
+	ldx     #$00
+	lda     _i
+	asl     a
+	bcc     L002B
+	inx
+	clc
+L002B:	adc     #<(_quarto_line)
+	sta     ptr1
+	txa
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	ldy     #$01
+	ldx     #$00
+	lda     (ptr1),y
+	jsr     shlax4
+	stx     tmp1
+	asl     a
+	rol     tmp1
+	ldx     tmp1
+	jsr     tossubax
+	clc
+	adc     #$73
+	clc
+	adc     #$0E
+	sta     _k
+;
+; l = (quarto_line[i][1]*16)+(quarto_line[i][0]*16)+71-32 ;
+;
+	.dbg	line, "quarto.c", 2030
+	ldx     #$00
+	lda     _i
+	asl     a
+	bcc     L002C
+	inx
+	clc
+L002C:	adc     #<(_quarto_line)
+	sta     ptr1
+	txa
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	ldy     #$01
+	ldx     #$00
+	lda     (ptr1),y
+	jsr     shlax4
+	sta     sreg
+	stx     sreg+1
+	ldx     #$00
+	lda     _i
+	asl     a
+	bcc     L002A
+	inx
+L002A:	sta     ptr1
+	txa
+	clc
+	adc     #>(_quarto_line)
+	sta     ptr1+1
+	ldy     #<(_quarto_line)
+	ldx     #$00
+	lda     (ptr1),y
+	jsr     shlax4
+	clc
+	adc     sreg
+	pha
+	txa
+	adc     sreg+1
+	pla
+	clc
+	adc     #$47
+	sec
+	sbc     #$20
+	sta     _l
+;
+; spr = oam_meta_spr( k, l+frame%5, spr, meta_pos2) ;
+;
+	.dbg	line, "quarto.c", 2031
+	jsr     decsp3
+	lda     _k
+	ldy     #$02
+	sta     (sp),y
+	lda     _l
+	jsr     pusha0
+	lda     _frame
+	jsr     pusha0
+	lda     #$05
+	jsr     tosumoda0
+	jsr     tosaddax
+	ldy     #$01
+	sta     (sp),y
+	lda     _spr
+	dey
+	sta     (sp),y
+	lda     #<(_meta_pos2)
+	ldx     #>(_meta_pos2)
+	jsr     _oam_meta_spr
+	sta     _spr
+;
+; for( i = 0; i < 4; i++ ){
+;
+	.dbg	line, "quarto.c", 2028
+	inc     _i
+	jmp     L002E
+;
+; if( frame & 2 ){
+;
+	.dbg	line, "quarto.c", 2034
+L002F:	lda     _frame
+	and     #$02
+	beq     L0032
+;
+; spr = oam_meta_spr( 10 , whichTurn!=0?180:40, spr, whichTurn!=0?meta_p1win:meta_p2win);
+;
+	.dbg	line, "quarto.c", 2035
+	jsr     decsp3
+	lda     #$0A
+	ldy     #$02
+	sta     (sp),y
 	lda     _whichTurn
-	beq     L0008
+	beq     L0030
+	lda     #$B4
+	jmp     L0031
+L0030:	lda     #$28
+L0031:	dey
+	sta     (sp),y
+	lda     _spr
+	dey
+	sta     (sp),y
+	lda     _whichTurn
+	beq     L0013
 	lda     #<(_meta_p1win)
 	ldx     #>(_meta_p1win)
-	jmp     L0009
-L0008:	lda     #<(_meta_p2win)
+	jmp     L0014
+L0013:	lda     #<(_meta_p2win)
 	ldx     #>(_meta_p2win)
-L0009:	jsr     _oam_meta_spr
+L0014:	jsr     _oam_meta_spr
 	sta     _spr
+;
+; }else{ 
+;
+	.dbg	line, "quarto.c", 2036
+	jmp     L0015
+;
+; oam_hide_rest(spr) ; 
+;
+	.dbg	line, "quarto.c", 2037
+L0032:	lda     _spr
+	jsr     _oam_hide_rest
 ;
 ; cycleSprColor() ;
 ;
-	.dbg	line, "quarto.c", 1955
-	jsr     _cycleSprColor
+	.dbg	line, "quarto.c", 2040
+L0015:	jsr     _cycleSprColor
 ;
 ; animeKomaTurn(4) ;
 ;
-	.dbg	line, "quarto.c", 1958
+	.dbg	line, "quarto.c", 2043
 	lda     #$04
 	jsr     _animeKomaTurn
 ;
 ; frame++ ;
 ;
-	.dbg	line, "quarto.c", 1959
+	.dbg	line, "quarto.c", 2044
 	inc     _frame
 ;
 ; pad=pad_poll(0);
 ;
-	.dbg	line, "quarto.c", 1961
+	.dbg	line, "quarto.c", 2046
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
 ;
 ; if( pad&PAD_START ){
 ;
-	.dbg	line, "quarto.c", 1962
+	.dbg	line, "quarto.c", 2047
 	and     #$10
-	jeq     L001B
+	jeq     L002D
+;
+; oam_clear() ;
+;
+	.dbg	line, "quarto.c", 2048
+	jsr     _oam_clear
 ;
 ; for( i=0 ; i< 5; i++ ){
 ;
-	.dbg	line, "quarto.c", 1963
+	.dbg	line, "quarto.c", 2050
 	lda     #$00
 	sta     _i
-L001C:	lda     _i
+L0033:	lda     _i
 	cmp     #$05
-	bcs     L001D
+	bcs     L0034
 ;
 ; animeKomaTurn(4) ;
 ;
-	.dbg	line, "quarto.c", 1964
+	.dbg	line, "quarto.c", 2051
 	lda     #$04
 	jsr     _animeKomaTurn
 ;
 ; frame++ ;
 ;
-	.dbg	line, "quarto.c", 1965
+	.dbg	line, "quarto.c", 2052
 	inc     _frame
 ;
 ; for( i=0 ; i< 5; i++ ){
 ;
-	.dbg	line, "quarto.c", 1963
+	.dbg	line, "quarto.c", 2050
 	inc     _i
-	jmp     L001C
+	jmp     L0033
 ;
 ; music_play(2) ;
 ;
-	.dbg	line, "quarto.c", 1967
-L001D:	lda     #$02
+	.dbg	line, "quarto.c", 2054
+L0034:	lda     #$02
 	jsr     _music_play
 ;
 ; for( i=0 ; i< 10; i++ ){
 ;
-	.dbg	line, "quarto.c", 1968
+	.dbg	line, "quarto.c", 2055
 	lda     #$00
 	sta     _i
-L001E:	lda     _i
+L0035:	lda     _i
 	cmp     #$0A
-	bcs     L001F
+	bcs     L0036
 ;
 ; animeKomaTurn(2) ;
 ;
-	.dbg	line, "quarto.c", 1969
+	.dbg	line, "quarto.c", 2056
 	lda     #$02
 	jsr     _animeKomaTurn
 ;
 ; frame++ ;
 ;
-	.dbg	line, "quarto.c", 1970
+	.dbg	line, "quarto.c", 2057
 	inc     _frame
 ;
 ; for( i=0 ; i< 10; i++ ){
 ;
-	.dbg	line, "quarto.c", 1968
+	.dbg	line, "quarto.c", 2055
 	inc     _i
-	jmp     L001E
+	jmp     L0035
 ;
-; for( i=0 ; i< 20; i++ ){
+; for( i=0 ; i< 25; i++ ){
 ;
-	.dbg	line, "quarto.c", 1972
-L001F:	lda     #$00
+	.dbg	line, "quarto.c", 2059
+L0036:	lda     #$00
 	sta     _i
-L0020:	lda     _i
-	cmp     #$14
-	bcs     L0014
+L0037:	lda     _i
+	cmp     #$19
+	bcs     L0020
 ;
 ; animeKomaTurn(1) ;
 ;
-	.dbg	line, "quarto.c", 1973
+	.dbg	line, "quarto.c", 2060
 	lda     #$01
 	jsr     _animeKomaTurn
 ;
+; scroll(0,i*10) ;
+;
+	.dbg	line, "quarto.c", 2061
+	jsr     push0
+	lda     _i
+	jsr     mulax10
+	jsr     _scroll
+;
 ; frame++ ;
 ;
-	.dbg	line, "quarto.c", 1974
+	.dbg	line, "quarto.c", 2062
 	inc     _frame
 ;
-; for( i=0 ; i< 20; i++ ){
+; for( i=0 ; i< 25; i++ ){
 ;
-	.dbg	line, "quarto.c", 1972
+	.dbg	line, "quarto.c", 2059
 	inc     _i
-	jmp     L0020
+	jmp     L0037
 ;
 ; music_stop() ;
 ;
-	.dbg	line, "quarto.c", 1976
-L0014:	jsr     _music_stop
+	.dbg	line, "quarto.c", 2064
+L0020:	jsr     _music_stop
 ;
 ; animeKomaTurnOff() ;
 ;
-	.dbg	line, "quarto.c", 1977
+	.dbg	line, "quarto.c", 2065
 	jsr     _animeKomaTurnOff
 ;
 ; reset() ;
 ;
-	.dbg	line, "quarto.c", 1978
+	.dbg	line, "quarto.c", 2066
 	jsr     _reset
 ;
 ; continue ;
 ;
-	.dbg	line, "quarto.c", 1980
-	jmp     L001B
+	.dbg	line, "quarto.c", 2068
+	jmp     L002D
 
 	.dbg	line
 .endproc
@@ -10544,99 +11288,110 @@ L0014:	jsr     _music_stop
 ;
 ; setCount = 6 ;
 ;
-	.dbg	line, "quarto.c", 1988
+	.dbg	line, "quarto.c", 2076
 	lda     #$06
 	sta     _setCount
 ;
 ; quarto = 0 ;
 ;
-	.dbg	line, "quarto.c", 1989
+	.dbg	line, "quarto.c", 2077
 	lda     #$00
 	sta     _quarto
 ;
 ; bgpl = 0;
 ;
-	.dbg	line, "quarto.c", 1990
+	.dbg	line, "quarto.c", 2078
 	sta     _bgpl
 ;
 ; ChooseKoma = 0;
 ;
-	.dbg	line, "quarto.c", 1991
+	.dbg	line, "quarto.c", 2079
 	sta     _ChooseKoma
 ;
 ; whichTurn = 1;
 ;
-	.dbg	line, "quarto.c", 1992
+	.dbg	line, "quarto.c", 2080
 	lda     #$01
 	sta     _whichTurn
 ;
 ; selBW = 0;
 ;
-	.dbg	line, "quarto.c", 1993
+	.dbg	line, "quarto.c", 2081
 	lda     #$00
 	sta     _selBW
 ;
 ; koma_pos[0]=3;
 ;
-	.dbg	line, "quarto.c", 1994
+	.dbg	line, "quarto.c", 2082
 	lda     #$03
 	sta     _koma_pos
 ;
 ; koma_pos[1]=1;
 ;
-	.dbg	line, "quarto.c", 1995
+	.dbg	line, "quarto.c", 2083
 	lda     #$01
 	sta     _koma_pos+1
 ;
 ; x=0;
 ;
-	.dbg	line, "quarto.c", 1996
+	.dbg	line, "quarto.c", 2084
 	lda     #$00
 	sta     _x
 ;
 ; y=0;
 ;
-	.dbg	line, "quarto.c", 1997
+	.dbg	line, "quarto.c", 2085
 	sta     _y
 ;
 ; koma_x[0] = 72 ;
 ;
-	.dbg	line, "quarto.c", 1998
+	.dbg	line, "quarto.c", 2086
 	lda     #$48
 	sta     _koma_x
 ;
 ; koma_y[0] = 122 ;
 ;
-	.dbg	line, "quarto.c", 1999
+	.dbg	line, "quarto.c", 2087
 	lda     #$7A
 	sta     _koma_y
 ;
 ; koma_x[1] = 152 ;
 ;
-	.dbg	line, "quarto.c", 2000
+	.dbg	line, "quarto.c", 2088
 	lda     #$98
 	sta     _koma_x+1
 ;
 ; koma_y[1] = 122 ;
 ;
-	.dbg	line, "quarto.c", 2001
+	.dbg	line, "quarto.c", 2089
 	lda     #$7A
 	sta     _koma_y+1
 ;
+; game_music = 1; // 1:game1, 4:game2
+;
+	.dbg	line, "quarto.c", 2091
+	lda     #$01
+	sta     _game_music
+;
+; reach = 0 ;
+;
+	.dbg	line, "quarto.c", 2092
+	lda     #$00
+	sta     _reach
+;
 ; tmp = 0 ; //collision flag
 ;
-	.dbg	line, "quarto.c", 2005
-	lda     #$00
+	.dbg	line, "quarto.c", 2096
 	sta     _tmp
 ;
 ; frame = 0 ; //frame counter
 ;
-	.dbg	line, "quarto.c", 2006
+	.dbg	line, "quarto.c", 2097
 	sta     _frame
 ;
 ; for( i=0; i < 40; i++ ){
 ;
-	.dbg	line, "quarto.c", 2008
+	.dbg	line, "quarto.c", 2099
 	sta     _i
 L0007:	lda     _i
 	cmp     #$28
@@ -10644,31 +11399,31 @@ L0007:	lda     _i
 ;
 ; attr_stat[i] = 0x55 ;
 ;
-	.dbg	line, "quarto.c", 2009
+	.dbg	line, "quarto.c", 2100
 	ldy     _i
 	lda     #$55
 	sta     _attr_stat,y
 ;
 ; for( i=0; i < 40; i++ ){
 ;
-	.dbg	line, "quarto.c", 2008
+	.dbg	line, "quarto.c", 2099
 	inc     _i
 	jmp     L0007
 ;
 ; err[0]=0;
 ;
-	.dbg	line, "quarto.c", 2011
+	.dbg	line, "quarto.c", 2102
 L0008:	lda     #$00
 	sta     _err
 ;
 ; err[1]=0;
 ;
-	.dbg	line, "quarto.c", 2012
+	.dbg	line, "quarto.c", 2103
 	sta     _err+1
 ;
 ; }
 ;
-	.dbg	line, "quarto.c", 2015
+	.dbg	line, "quarto.c", 2106
 	rts
 
 	.dbg	line
@@ -10689,47 +11444,47 @@ L0008:	lda     #$00
 ;
 ; initVal() ;
 ;
-	.dbg	line, "quarto.c", 2102
+	.dbg	line, "quarto.c", 2195
 	jsr     _initVal
 ;
 ; pal_spr((char*)palette2);
 ;
-	.dbg	line, "quarto.c", 2105
+	.dbg	line, "quarto.c", 2198
 	lda     #<(_palette2)
 	ldx     #>(_palette2)
 	jsr     _pal_spr
 ;
 ; pal_bg((char*)open_palette1);//set background palette from an array
 ;
-	.dbg	line, "quarto.c", 2106
+	.dbg	line, "quarto.c", 2199
 	lda     #<(_open_palette1)
 	ldx     #>(_open_palette1)
 	jsr     _pal_bg
 ;
 ; vram_adr(NAMETABLE_A);//set VRAM address
 ;
-	.dbg	line, "quarto.c", 2108
+	.dbg	line, "quarto.c", 2201
 	ldx     #$20
 	lda     #$00
 	jsr     _vram_adr
 ;
 ; vram_unrle((unsigned char*)open_name);
 ;
-	.dbg	line, "quarto.c", 2109
+	.dbg	line, "quarto.c", 2202
 	lda     #<(_open_name)
 	ldx     #>(_open_name)
 	jsr     _vram_unrle
 ;
 ; vram_adr(NAMETABLE_A);//set VRAM address
 ;
-	.dbg	line, "quarto.c", 2110
+	.dbg	line, "quarto.c", 2203
 	ldx     #$20
 	lda     #$00
 	jsr     _vram_adr
 ;
 ; vram_fill(0x00, 0x0180);
 ;
-	.dbg	line, "quarto.c", 2111
+	.dbg	line, "quarto.c", 2204
 	lda     #$00
 	jsr     pusha
 	ldx     #$01
@@ -10738,46 +11493,46 @@ L0008:	lda     #$00
 ;
 ; spr = 0 ;
 ;
-	.dbg	line, "quarto.c", 2112
+	.dbg	line, "quarto.c", 2205
 	lda     #$00
 	sta     _spr
 ;
 ; pal_bright(0);
 ;
-	.dbg	line, "quarto.c", 2114
+	.dbg	line, "quarto.c", 2207
 	jsr     _pal_bright
 ;
 ; ppu_on_all();//enable rendering
 ;
-	.dbg	line, "quarto.c", 2115
+	.dbg	line, "quarto.c", 2208
 	jsr     _ppu_on_all
 ;
 ; delay(20) ;
 ;
-	.dbg	line, "quarto.c", 2116
+	.dbg	line, "quarto.c", 2209
 	lda     #$14
 	jsr     _delay
 ;
 ; bgUp() ;
 ;
-	.dbg	line, "quarto.c", 2118
+	.dbg	line, "quarto.c", 2211
 	jsr     _bgUp
 ;
 ; delay(20) ;
 ;
-	.dbg	line, "quarto.c", 2119
+	.dbg	line, "quarto.c", 2212
 	lda     #$14
 	jsr     _delay
 ;
 ; tmp = 0 ;
 ;
-	.dbg	line, "quarto.c", 2120
+	.dbg	line, "quarto.c", 2213
 	lda     #$00
 	sta     _tmp
 ;
 ; if(frame%20==0){ move_next(); };
 ;
-	.dbg	line, "quarto.c", 2123
+	.dbg	line, "quarto.c", 2216
 L0017:	lda     _frame
 	jsr     pusha0
 	lda     #$14
@@ -10790,80 +11545,80 @@ L0017:	lda     _frame
 ;
 ; frame++;
 ;
-	.dbg	line, "quarto.c", 2125
+	.dbg	line, "quarto.c", 2218
 L0005:	inc     _frame
 ;
 ; if( checkForceBreak() ){ break ; }
 ;
-	.dbg	line, "quarto.c", 2127
+	.dbg	line, "quarto.c", 2220
 	jsr     _checkForceBreak
 	tax
 	beq     L0017
 ;
 ; pad = pad_poll(0);
 ;
-	.dbg	line, "quarto.c", 2131
+	.dbg	line, "quarto.c", 2224
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
 ;
 ; if(pad&PAD_SELECT ){
 ;
-	.dbg	line, "quarto.c", 2132
+	.dbg	line, "quarto.c", 2225
 	and     #$20
 	beq     L0011
 ;
 ; ppu_off() ;
 ;
-	.dbg	line, "quarto.c", 2134
+	.dbg	line, "quarto.c", 2227
 	jsr     _ppu_off
 ;
 ; bank_bg(1);
 ;
-	.dbg	line, "quarto.c", 2135
+	.dbg	line, "quarto.c", 2228
 	lda     #$01
 	jsr     _bank_bg
 ;
 ; oam_clear() ;
 ;
-	.dbg	line, "quarto.c", 2136
+	.dbg	line, "quarto.c", 2229
 	jsr     _oam_clear
 ;
 ; vram_adr(NAMETABLE_A);//set VRAM address
 ;
-	.dbg	line, "quarto.c", 2137
+	.dbg	line, "quarto.c", 2230
 	ldx     #$20
 	lda     #$00
 	jsr     _vram_adr
 ;
 ; vram_unrle((unsigned char*)qr);
 ;
-	.dbg	line, "quarto.c", 2138
+	.dbg	line, "quarto.c", 2231
 	lda     #<(_qr)
 	ldx     #>(_qr)
 	jsr     _vram_unrle
 ;
 ; ppu_on_all();//enable rendering
 ;
-	.dbg	line, "quarto.c", 2139
+	.dbg	line, "quarto.c", 2232
 	jsr     _ppu_on_all
 ;
 ; for( ; pad&PAD_SELECT ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 2142
+	.dbg	line, "quarto.c", 2235
 L0009:	lda     _pad
 	and     #$20
 	beq     L0019
 ;
 ; delay(1) ;
 ;
-	.dbg	line, "quarto.c", 2143
+	.dbg	line, "quarto.c", 2236
 	lda     #$01
 	jsr     _delay
 ;
 ; for( ; pad&PAD_SELECT ;pad=pad_poll(0) ){
 ;
-	.dbg	line, "quarto.c", 2142
+	.dbg	line, "quarto.c", 2235
 	lda     #$00
 	jsr     _pad_poll
 	sta     _pad
@@ -10871,69 +11626,69 @@ L0009:	lda     _pad
 ;
 ; pad = pad_poll(0);
 ;
-	.dbg	line, "quarto.c", 2149
+	.dbg	line, "quarto.c", 2242
 L0010:	lda     #$00
 L0019:	jsr     _pad_poll
 	sta     _pad
 ;
 ; if(pad&PAD_SELECT ){
 ;
-	.dbg	line, "quarto.c", 2150
+	.dbg	line, "quarto.c", 2243
 	and     #$20
 	beq     L0019
 ;
 ; bank_bg(0);
 ;
-	.dbg	line, "quarto.c", 2151
+	.dbg	line, "quarto.c", 2244
 	lda     #$00
 	jsr     _bank_bg
 ;
 ; reset() ;
 ;
-	.dbg	line, "quarto.c", 2152
+	.dbg	line, "quarto.c", 2245
 	jsr     _reset
 ;
 ; while(1){
 ;
-	.dbg	line, "quarto.c", 2148
+	.dbg	line, "quarto.c", 2241
 	jmp     L0010
 ;
 ; ppu_off() ;
 ;
-	.dbg	line, "quarto.c", 2157
+	.dbg	line, "quarto.c", 2250
 L0011:	jsr     _ppu_off
 ;
 ; delay(10) ;
 ;
-	.dbg	line, "quarto.c", 2158
+	.dbg	line, "quarto.c", 2251
 	lda     #$0A
 	jsr     _delay
 ;
 ; music_play(2) ;
 ;
-	.dbg	line, "quarto.c", 2160
+	.dbg	line, "quarto.c", 2253
 	lda     #$02
 	jsr     _music_play
 ;
 ; delay(60) ;
 ;
-	.dbg	line, "quarto.c", 2161
+	.dbg	line, "quarto.c", 2254
 	lda     #$3C
 	jsr     _delay
 ;
 ; music_stop() ;
 ;
-	.dbg	line, "quarto.c", 2162
+	.dbg	line, "quarto.c", 2255
 	jsr     _music_stop
 ;
 ; reset() ;
 ;
-	.dbg	line, "quarto.c", 2175
+	.dbg	line, "quarto.c", 2268
 L0014:	jsr     _reset
 ;
 ; while(1){
 ;
-	.dbg	line, "quarto.c", 2174
+	.dbg	line, "quarto.c", 2267
 	jmp     L0014
 
 	.dbg	line
