@@ -14,9 +14,9 @@
 	.dbg		file, "lib/neslib.h", 8684, 1631688193
 	.dbg		file, "resource/test2_blank.h", 156, 1631791396
 	.dbg		file, "resource/open_name.h", 1681, 1631791333
-	.dbg		file, "resource/qr.h", 336, 1631791367
+	.dbg		file, "resource/qr.h", 583, 1631936245
 	.dbg		file, "resource/menu.h", 276, 1631791192
-	.dbg		file, "resource/jeesus.h", 761, 1631711988
+	.dbg		file, "resource/jeesus.h", 597, 1631936355
 	.dbg		file, "cc65/include/stdlib.h", 6147, 1631688192
 	.forceimport	__STARTUP__
 	.dbg		sym, "pal_bg", "00", extern, "_pal_bg"
@@ -570,64 +570,112 @@ _open_name:
 	.byte	$01
 	.byte	$00
 _qr:
-	.byte	$06
-	.byte	$00
-	.byte	$06
-	.byte	$FE
-	.byte	$00
-	.byte	$06
-	.byte	$6E
 	.byte	$01
-	.byte	$02
-	.byte	$03
-	.byte	$04
-	.byte	$05
+	.byte	$FF
+	.byte	$01
+	.byte	$82
 	.byte	$00
-	.byte	$06
+	.byte	$01
+	.byte	$C8
+	.byte	$08
+	.byte	$09
+	.byte	$0A
+	.byte	$0B
+	.byte	$0C
+	.byte	$0D
+	.byte	$0E
+	.byte	$0F
+	.byte	$00
+	.byte	$01
+	.byte	$17
+	.byte	$18
+	.byte	$19
 	.byte	$1A
-	.byte	$11
-	.byte	$12
-	.byte	$13
-	.byte	$14
-	.byte	$15
+	.byte	$1B
+	.byte	$1C
+	.byte	$1D
+	.byte	$1E
+	.byte	$1F
 	.byte	$00
-	.byte	$06
-	.byte	$1A
-	.byte	$21
-	.byte	$22
-	.byte	$23
-	.byte	$24
-	.byte	$25
+	.byte	$01
+	.byte	$17
+	.byte	$28
+	.byte	$29
+	.byte	$2A
+	.byte	$2B
+	.byte	$2C
+	.byte	$2D
+	.byte	$2E
+	.byte	$2F
 	.byte	$00
-	.byte	$06
-	.byte	$1A
-	.byte	$31
-	.byte	$32
-	.byte	$33
-	.byte	$34
-	.byte	$35
+	.byte	$01
+	.byte	$17
+	.byte	$38
+	.byte	$39
+	.byte	$3A
+	.byte	$3B
+	.byte	$3C
+	.byte	$3D
+	.byte	$3E
+	.byte	$3F
 	.byte	$00
-	.byte	$06
-	.byte	$1A
-	.byte	$41
-	.byte	$42
-	.byte	$43
-	.byte	$44
-	.byte	$45
+	.byte	$01
+	.byte	$17
+	.byte	$48
+	.byte	$49
+	.byte	$4A
+	.byte	$4B
+	.byte	$4C
+	.byte	$4D
+	.byte	$4E
+	.byte	$4F
 	.byte	$00
-	.byte	$06
+	.byte	$01
+	.byte	$17
+	.byte	$58
+	.byte	$59
+	.byte	$5A
+	.byte	$5B
+	.byte	$5C
+	.byte	$5D
+	.byte	$5E
+	.byte	$5F
+	.byte	$00
+	.byte	$01
+	.byte	$17
+	.byte	$68
+	.byte	$69
+	.byte	$6A
+	.byte	$6B
+	.byte	$6C
+	.byte	$6D
+	.byte	$6E
+	.byte	$6F
+	.byte	$00
+	.byte	$01
+	.byte	$17
+	.byte	$78
+	.byte	$79
+	.byte	$7A
+	.byte	$7B
+	.byte	$7C
+	.byte	$7D
+	.byte	$7E
+	.byte	$7F
+	.byte	$00
+	.byte	$01
 	.byte	$FE
 	.byte	$00
-	.byte	$06
-	.byte	$CD
+	.byte	$01
+	.byte	$8C
 	.byte	$55
-	.byte	$06
+	.byte	$01
 	.byte	$37
 	.byte	$05
-	.byte	$06
+	.byte	$01
 	.byte	$06
 	.byte	$05
-	.byte	$06
+	.byte	$01
 	.byte	$00
 _menu:
 	.byte	$01
@@ -678,92 +726,92 @@ _menu:
 	.byte	$01
 	.byte	$00
 _jeesus:
-	.byte	$01
+	.byte	$08
 	.byte	$00
-	.byte	$01
+	.byte	$08
 	.byte	$FE
 	.byte	$00
-	.byte	$01
-	.byte	$4C
 	.byte	$08
-	.byte	$09
-	.byte	$0A
-	.byte	$0B
-	.byte	$0C
-	.byte	$0D
-	.byte	$0E
-	.byte	$00
-	.byte	$01
-	.byte	$18
-	.byte	$18
-	.byte	$19
-	.byte	$1A
-	.byte	$1B
-	.byte	$1C
-	.byte	$1D
-	.byte	$1E
-	.byte	$00
-	.byte	$01
-	.byte	$18
-	.byte	$28
-	.byte	$29
-	.byte	$2A
-	.byte	$2B
-	.byte	$2C
-	.byte	$2D
-	.byte	$2E
-	.byte	$00
-	.byte	$01
-	.byte	$18
-	.byte	$38
-	.byte	$39
-	.byte	$3A
-	.byte	$3B
-	.byte	$3C
-	.byte	$3D
-	.byte	$3E
-	.byte	$00
-	.byte	$01
-	.byte	$18
-	.byte	$48
-	.byte	$49
-	.byte	$4A
-	.byte	$4B
 	.byte	$4C
-	.byte	$4D
-	.byte	$4E
-	.byte	$00
 	.byte	$01
+	.byte	$02
+	.byte	$03
+	.byte	$04
+	.byte	$05
+	.byte	$06
+	.byte	$07
+	.byte	$00
+	.byte	$08
 	.byte	$18
-	.byte	$58
-	.byte	$59
-	.byte	$5A
-	.byte	$5B
-	.byte	$5C
-	.byte	$5D
-	.byte	$5E
+	.byte	$11
+	.byte	$12
+	.byte	$13
+	.byte	$14
+	.byte	$15
+	.byte	$16
+	.byte	$17
 	.byte	$00
-	.byte	$01
+	.byte	$08
 	.byte	$18
-	.byte	$68
-	.byte	$69
-	.byte	$6A
-	.byte	$6B
-	.byte	$6C
-	.byte	$6D
-	.byte	$6E
+	.byte	$21
+	.byte	$22
+	.byte	$23
+	.byte	$24
+	.byte	$25
+	.byte	$26
+	.byte	$27
 	.byte	$00
-	.byte	$01
+	.byte	$08
 	.byte	$18
-	.byte	$78
-	.byte	$79
-	.byte	$7A
-	.byte	$7B
-	.byte	$7C
-	.byte	$7D
-	.byte	$7E
+	.byte	$31
+	.byte	$32
+	.byte	$33
+	.byte	$34
+	.byte	$35
+	.byte	$36
+	.byte	$37
 	.byte	$00
-	.byte	$01
+	.byte	$08
+	.byte	$18
+	.byte	$41
+	.byte	$42
+	.byte	$43
+	.byte	$44
+	.byte	$45
+	.byte	$46
+	.byte	$47
+	.byte	$00
+	.byte	$08
+	.byte	$18
+	.byte	$51
+	.byte	$52
+	.byte	$53
+	.byte	$54
+	.byte	$55
+	.byte	$56
+	.byte	$57
+	.byte	$00
+	.byte	$08
+	.byte	$18
+	.byte	$61
+	.byte	$62
+	.byte	$63
+	.byte	$64
+	.byte	$65
+	.byte	$66
+	.byte	$67
+	.byte	$00
+	.byte	$08
+	.byte	$18
+	.byte	$71
+	.byte	$72
+	.byte	$73
+	.byte	$74
+	.byte	$75
+	.byte	$76
+	.byte	$77
+	.byte	$00
+	.byte	$08
 	.byte	$38
 	.byte	$E8
 	.byte	$E9
@@ -773,51 +821,19 @@ _jeesus:
 	.byte	$EA
 	.byte	$EC
 	.byte	$00
-	.byte	$01
+	.byte	$08
 	.byte	$FE
 	.byte	$00
-	.byte	$01
+	.byte	$08
 	.byte	$4D
 	.byte	$55
-	.byte	$01
-	.byte	$03
-	.byte	$5F
-	.byte	$5B
-	.byte	$5A
-	.byte	$5A
-	.byte	$45
-	.byte	$55
-	.byte	$01
-	.byte	$06
-	.byte	$45
-	.byte	$55
-	.byte	$55
+	.byte	$08
+	.byte	$37
 	.byte	$05
-	.byte	$45
-	.byte	$55
-	.byte	$55
-	.byte	$59
-	.byte	$55
-	.byte	$01
-	.byte	$02
-	.byte	$00
-	.byte	$44
-	.byte	$45
-	.byte	$55
-	.byte	$01
-	.byte	$03
-	.byte	$15
-	.byte	$00
-	.byte	$44
-	.byte	$54
-	.byte	$55
-	.byte	$01
-	.byte	$11
-	.byte	$05
-	.byte	$01
+	.byte	$08
 	.byte	$06
 	.byte	$05
-	.byte	$01
+	.byte	$08
 	.byte	$00
 _attr_pos:
 	.byte	$CB
