@@ -82,7 +82,7 @@ static unsigned char koma_x[2];
 static unsigned char koma_y[2];
 static unsigned char ChooseKoma;
 static unsigned char koma_exist[2][8];
-static unsigned char killer_exist[2][8];
+static unsigned char tmp_line[8];
 
 static unsigned char bgpl;
 static unsigned char game_music;
@@ -95,6 +95,8 @@ static unsigned char attr_stat[40];
 
 static unsigned char rand_box1[4] ;
 static unsigned char rand_box2[4] ;
+static unsigned char rand_box3[2] ;
+static unsigned char rand_box4[8] ;
 
 
 const unsigned char attr_pos[4][4][4] ={
@@ -857,6 +859,9 @@ void seedRandBox()
 {
 	memfill( rand_box1, 9, 4 );
 	memfill( rand_box2, 9, 4 );
+	memfill( rand_box3, 9, 2 );
+	memfill( rand_box4, 9, 8 );
+
 	for( i=0; i < 4;){
 		tmp = (rand8()+frame)%4 ;
 		if( rand_box1[tmp] == i || rand_box1[tmp] != 9 ){
@@ -875,6 +880,26 @@ void seedRandBox()
 		rand_box2[tmp] = i ;
 		i++ ;
 	}
+
+	for( i=0; i < 2;){
+		tmp = (rand8()+frame)%2 ;
+		if( rand_box3[tmp] == i || rand_box3[tmp] != 9 ){
+			frame += open_palette1[tmp] ;
+			continue ;
+		}
+		rand_box3[tmp] = i ;
+		i++ ;
+	}
+	for( i=0; i < 8;){
+		tmp = (rand8()+frame)%8 ;
+		if( rand_box4[tmp] == i || rand_box4[tmp] != 9 ){
+			frame += open_palette1[tmp] ;
+			continue ;
+		}
+		rand_box4[tmp] = i ;
+		i++ ;
+	}
+
 }
 
 void put_update_debug(unsigned char x, unsigned char y, unsigned char len, const char *str)
@@ -1933,13 +1958,17 @@ void procChooseKoma(void)
 		}
 		if( autoChoose==1){
 			// 自動コマ選択.
+			seedRandBox() ;
+
 			if( koma_exist[selBW][ChooseKoma] == 0 ){
 				isForceFin = 1 ;
 				for( i=0; i<2; i++){
 					for( j=0; j<8; j++){
-						if( koma_exist[i][j] == 1 ){
-							selBW=i;
-							ChooseKoma=j;
+						tmp_line[0] = rand_box3[i] ;
+						tmp_line[1] = rand_box4[j] ;
+						if( koma_exist[tmp_line[0]][tmp_line[1]] == 1 ){
+							selBW=tmp_line[0];
+							ChooseKoma=tmp_line[1];
 							printCursor() ;
 							isForceFin=0 ;
 							//put_update_debug(1,10, 1, itoa(selBW, &strbuf[0], 10 ));
@@ -2312,6 +2341,7 @@ void procCheckQuarto(){
 void initVal(){
 	//update_init() ;
 	//set initial coords
+	autoChoose = 0 ;
 	p1only=1;
 	isVsCPU=1;
 	isForceFin = 0 ;
@@ -2391,7 +2421,7 @@ void reset(void)
 		frame++ ;
 	}
 	seedRandBox() ;
-
+/*
 	put_update_debug(1,50, 1, itoa(rand_box1[0], &strbuf[0], 10 ));
 	put_update_debug(3,50, 1, itoa(rand_box1[1], &strbuf[0], 10 ));
 	put_update_debug(5,50, 1, itoa(rand_box1[2], &strbuf[0], 10 ));
@@ -2400,7 +2430,7 @@ void reset(void)
 	put_update_debug(3,51, 1, itoa(rand_box2[1], &strbuf[0], 10 ));
 	put_update_debug(5,51, 1, itoa(rand_box2[2], &strbuf[0], 10 ));
 	put_update_debug(7,51, 1, itoa(rand_box2[3], &strbuf[0], 10 ));
-	
+*/	
 	spr = 0 ;
 	spr = oam_meta_spr( 70, 135, spr, meta_right_cursor) ;
 	while(1){
@@ -2490,7 +2520,6 @@ void reset(void)
 
 	memfill( stage_stat, 0x00, 48 );
 	memfill( koma_exist, 0x01, 16 );
-	memfill( killer_exist, 0x01, 16 );
 	memfill( quarto_line, 0x00, 8 );
 
 	music_play(game_music) ;
