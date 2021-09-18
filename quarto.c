@@ -29,9 +29,16 @@ static unsigned char j;
 
 static unsigned char k;
 static unsigned char l;
+static unsigned char m;
+static unsigned char n;
+
+static unsigned char o;
+static unsigned char p;
+
 
 static unsigned char x;
 static unsigned char y;
+
 static unsigned char x_index;
 static unsigned char y_index;
 
@@ -75,14 +82,21 @@ static unsigned char koma_x[2];
 static unsigned char koma_y[2];
 static unsigned char ChooseKoma;
 static unsigned char koma_exist[2][8];
+static unsigned char killer_exist[2][8];
 
 static unsigned char bgpl;
 static unsigned char game_music;
 static unsigned char reach;
 static unsigned char autoChoose;
 static unsigned char isForceFin;
+static unsigned char isVsCPU;
 
 static unsigned char attr_stat[40];
+
+static unsigned char rand_box1[4] ;
+static unsigned char rand_box2[4] ;
+
+
 const unsigned char attr_pos[4][4][4] ={
 	0xCB,	0xCC,	0xD3,	0xD4,
 	0xD2,	0xD3,	0xD2,	0xD3,
@@ -839,6 +853,30 @@ const unsigned char* koma_list[1][2][8]={
 */
 };
 
+void seedRandBox()
+{
+	memfill( rand_box1, 9, 4 );
+	memfill( rand_box2, 9, 4 );
+	for( i=0; i < 4;){
+		tmp = (rand8()+frame)%4 ;
+		if( rand_box1[tmp] == i || rand_box1[tmp] != 9 ){
+			frame += open_palette1[tmp] ;
+			continue ;
+		}
+		rand_box1[tmp] = i ;
+		i++ ;
+	}
+	for( i=0; i < 4;){
+		tmp = (rand8()+frame)%4 ;
+		if( rand_box2[tmp] == i || rand_box2[tmp] != 9 ){
+			frame += open_palette1[tmp] ;
+			continue ;
+		}
+		rand_box2[tmp] = i ;
+		i++ ;
+	}
+}
+
 void put_update_debug(unsigned char x, unsigned char y, unsigned char len, const char *str)
 {
 	
@@ -1538,8 +1576,11 @@ unsigned char checkQuarto()
 
 void moveKoma(unsigned char src_x, unsigned char src_y, unsigned char dst_x, unsigned char dst_y, unsigned char* meta )
 {
-	koma_x[0] = src_x ;
-	koma_y[0] = src_y ;
+	// 2単位で増減するので、src,dstどこかが奇数となると無限ループする.
+	koma_x[0] = src_x % 2 == 0 ? src_x : src_x-1 ;
+	koma_y[0] = src_y % 2 == 0 ? src_y : src_y-1 ;
+	dst_x = dst_x % 2 == 0 ? dst_x : dst_x-1 ;
+	dst_y = dst_y % 2 == 0 ? dst_y : dst_y-1 ;
 	
 	while(1){
 		koma_frame++ ;
@@ -1741,7 +1782,7 @@ void eventChooseButtonA(void)
 	//spr = 0 ;
 	x = ChooseKoma*32 ;
 	y = 10+selBW*180 ;
-	moveKoma( x, y, 24, whichTurn!=0?60:146, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
+	moveKoma( x, y, 24, whichTurn==0?60:146, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
 	//spr = oam_meta_spr( x, y, spr, koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
 	ppu_wait_frame();	// wait for next TV frame
 	
@@ -1768,6 +1809,11 @@ void procChooseKoma(void)
 		// カーソルセレクト
 		//isPadNull() ;
 		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
+		if( isVsCPU != 0 && whichTurn==0 ){
+			pad=0 ;
+			autoChoose = 1 ;
+		} ;
+
 		if(pad&PAD_LEFT){
 			//frame = 0 ;
 			ChooseKoma = ChooseKoma <= 0 ? 7 : --ChooseKoma ;
@@ -1907,6 +1953,7 @@ void procChooseKoma(void)
 					return ;
 				}
 			}
+			
 			eventChooseButtonA() ;
 			return ;
 			
@@ -1916,18 +1963,37 @@ void procChooseKoma(void)
 		frame++;
 	}
 }
-void checkReach()
+unsigned char preQuartoCheck(unsigned char x, unsigned char y )
+{
+	tmp3 = 0 ;
+	stage_stat[x][y][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
+	stage_stat[x][y][_CHOOSE_KOMA] = ChooseKoma ;
+	stage_stat[x][y][_SEL_BW] = selBW ;
+	if( checkQuarto() == 1 ){
+		tmp3 = 1 ;
+	}else{
+		tmp3 = 0 ;
+	}
+	stage_stat[x][y][_KOMA_TYPE] = 0 ;
+	stage_stat[x][y][_CHOOSE_KOMA] = 0 ;
+	stage_stat[x][y][_SEL_BW] = 0 ;
+	return tmp3 ;
+}
+
+unsigned char checkReach()
 {
 	for( k = 0; k < 4; k++ ){
-		tmp = 0 ;
-		tmp2 = 0 ;
+		tmp = 0 ; // X軸3連チェック用.
+		tmp2 = 0 ; // Y軸3連チェック用.
 		for( l = 0; l < 4; l++ ){
+			// X軸検索.
 			if( stage_stat[k][l][_KOMA_TYPE] != 0 ){
 				tmp++ ;
 				if( tmp >= 3 ){
 					reach = 1 ;
-				}
+				}	
 			}
+			// Y軸検索.
 			if( stage_stat[l][k][_KOMA_TYPE] != 0 ){
 				tmp2++ ;
 				if( tmp2 >= 3 ){
@@ -1940,25 +2006,20 @@ void checkReach()
 	tmp = 0 ;
 	tmp2 = 0 ;
 	for( k = 0; k < 4; k++ ){
+		// X軸クロス検索.
 		if( stage_stat[k][k][_KOMA_TYPE] != 0 ){
 			tmp++ ;
 			if( tmp >= 3 ){
 				reach = 1 ;
 			}
 		}
+		// Y軸クロス検索.
 		if( stage_stat[k][3-k][_KOMA_TYPE] != 0 ){
 			tmp2++ ;
 			if( tmp2 >= 3 ){
 				reach = 1 ;
 			}
 		}
-	}
-	if( reach == 1 && game_music != 4 ){
-		game_music = 4 ;
-		music_stop() ;
-		//bgFlash(8) ;
-		delay(30) ;
-		music_play(game_music) ;
 	}
 
 }
@@ -1983,22 +2044,52 @@ eventMoveButtonA()
 	printMsg(0) ;
 
 	checkReach() ;
+	if( reach == 1 && game_music != 4 ){
+		game_music = 4 ;
+		music_stop() ;
+		//bgFlash(8) ;
+		delay(30) ;
+		music_play(game_music) ;
+	}
+
 }
 void autoSetXY()
 {
+	m = 0 ;
+	n = 0 ;
+	
 	for( k=0; k<4; k++){
+		o = rand_box1[k] ;
 		for( l=0; l<4; l++){
-			x = (k*32)-(l*32)+115+16 ;
-			y = (l*16)+(k*16)+71-16 ;
+			p = rand_box2[l] ;
+
+			x = (o*32)-(p*32)+115+16 ;
+			y = (p*16)+(o*16)+71-16 ;
+			// 仮保存(全クアルトチェック後に返す奴).
 			//put_update_debug(1,10, 1, itoa(x, &strbuf[0], 10 ));
 			//put_update_debug(4,10, 1, itoa(y, &strbuf[0], 10 ));
 			if( checkPutPos(x/8, y/8) == 1 ){
 				continue ;
 			}
+			m = x ;
+			n = y ;
+
+			if( isVsCPU == 1 && preQuartoCheck(o, p) == 0 ){
+				continue ; 
+			}
 			return ;
 		}
+
 	}
-	isForceFin=1;
+	if( m == 0 && n == 0 ){
+		isForceFin = 1 ;
+		
+	}else{
+		// 仮保存の座標を戻す.
+		x = m ;
+		y = n ;
+		checkPutPos(x/8, y/8) ;
+	}
 }
 void procMoveKoma(void)
 {
@@ -2018,6 +2109,11 @@ void procMoveKoma(void)
 		//delay(1) ;
 		//isPadNull() ;
 		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
+		if( isVsCPU != 0 && whichTurn==0 ){
+			pad=0  ;
+			autoChoose = 1 ;
+		} ;
+
 		if(pad&PAD_LEFT){
 			if( x > 4 ){
 				x-= pad&PAD_B ? 4 : 2 ;
@@ -2099,13 +2195,33 @@ void procMoveKoma(void)
 			continue ;
 		}
 		if( autoChoose==1){
+			if( isVsCPU == 1 && checkQuarto() == 1 ){
+				procSayQuarto() ;
+				quarto = 1 ;
+				return ;
+			}
+
 			// 自動コマ配置.
+			tmp = x;
+			tmp2 = y ;
+
+			// CPU戦の場合ここでクアルトを狙う.
+			seedRandBox() ;
 			autoSetXY();
 			if( isForceFin == 1 ){
 				loseAnime() ;
 				return ;
 			}
+			oam_clear() ;
+			moveKoma( tmp, tmp2, x-9, y-12, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
+
 			eventMoveButtonA() ;
+			if( isVsCPU == 1 && checkQuarto() == 1 ){
+				procSayQuarto() ;
+				quarto = 1 ;
+				return ;
+			}
+
 			return ;
 			
 		}
@@ -2167,7 +2283,7 @@ void procCheckQuarto(){
 			animeKomaTurn(4) ;
 			frame++ ;
 
-			pad=pad_poll((whichTurn!=0 || p1only==1)?0:1);
+			pad=pad_poll(0);
 			if( pad&PAD_START ){
 				oam_clear() ;
 
@@ -2193,11 +2309,11 @@ void procCheckQuarto(){
 		}
 	}
 }
-
 void initVal(){
 	//update_init() ;
 	//set initial coords
 	p1only=1;
+	isVsCPU=1;
 	isForceFin = 0 ;
 	timerSetCount = 60 ;
 	quarto = 0 ;
@@ -2254,11 +2370,13 @@ void reset(void)
 		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
 		if(pad&PAD_UP && p1only == 0){
 			p1only = 1 ;
+			isVsCPU = 1 ;
 			sfx_play(2,0);
 		}
 
 		if(pad&PAD_DOWN && p1only == 1){
 			p1only = 0 ;
+			isVsCPU = 0 ;
 			sfx_play(2,0);
 		}
 		if(pad&PAD_A){
@@ -2270,7 +2388,19 @@ void reset(void)
 		}
 		spr = 0 ;
 		spr = oam_meta_spr( 70, 63+(p1only==1?0:1*16), spr, meta_right_cursor) ;
+		frame++ ;
 	}
+	seedRandBox() ;
+
+	put_update_debug(1,50, 1, itoa(rand_box1[0], &strbuf[0], 10 ));
+	put_update_debug(3,50, 1, itoa(rand_box1[1], &strbuf[0], 10 ));
+	put_update_debug(5,50, 1, itoa(rand_box1[2], &strbuf[0], 10 ));
+	put_update_debug(7,50, 1, itoa(rand_box1[3], &strbuf[0], 10 ));
+	put_update_debug(1,51, 1, itoa(rand_box2[0], &strbuf[0], 10 ));
+	put_update_debug(3,51, 1, itoa(rand_box2[1], &strbuf[0], 10 ));
+	put_update_debug(5,51, 1, itoa(rand_box2[2], &strbuf[0], 10 ));
+	put_update_debug(7,51, 1, itoa(rand_box2[3], &strbuf[0], 10 ));
+	
 	spr = 0 ;
 	spr = oam_meta_spr( 70, 135, spr, meta_right_cursor) ;
 	while(1){
@@ -2360,13 +2490,9 @@ void reset(void)
 
 	memfill( stage_stat, 0x00, 48 );
 	memfill( koma_exist, 0x01, 16 );
+	memfill( killer_exist, 0x01, 16 );
 	memfill( quarto_line, 0x00, 8 );
-/*
-	for( i = 0; i < 8; i++ ){
-		koma_exist[0][i] = 1 ;
-		koma_exist[1][i] = 1 ;
-	}
-*/
+
 	music_play(game_music) ;
 
 
@@ -2410,6 +2536,7 @@ void main(void)
 	bgUp() ;
 	delay(20) ;
 	tmp = 0 ;
+
 	while(1)
 	{
 		if(frame%20==0){ move_next(); };
@@ -2417,6 +2544,7 @@ void main(void)
 		frame++;
 
 		if( checkForceBreak() ){ break ; }
+
 	}
 
 	// QRコード処理.
