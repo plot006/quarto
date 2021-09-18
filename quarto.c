@@ -1580,14 +1580,14 @@ void stageAnime(unsigned char action)
 */
 void printTimerInit()
 {
-	put_update_debug(28,23, 3, "   " );
-	put_update_debug(28,6,  3, "   " );
+	put_update_debug(28,24, 3, "   " );
+	put_update_debug(28,5,  3, "   " );
 }
 void printTimer()
 {
 	printTimerInit() ;
 	if( timerSetCount != 0 ){
-		put_update_debug(28,whichTurn!=0?23:6, 3, itoa(timer, &strbuf[0], 10 ) );
+		put_update_debug(28,whichTurn!=0?24:5, 3, itoa(timer, &strbuf[0], 10 ) );
 	}
 }
 

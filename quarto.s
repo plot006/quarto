@@ -10,7 +10,7 @@
 	.importzp	sp, sreg, regsave, regbank
 	.importzp	tmp1, tmp2, tmp3, tmp4, ptr1, ptr2, ptr3, ptr4
 	.macpack	longbranch
-	.dbg		file, "quarto.c", 56331, 1631800820
+	.dbg		file, "quarto.c", 56331, 1631938050
 	.dbg		file, "lib/neslib.h", 8684, 1631688193
 	.dbg		file, "resource/test2_blank.h", 156, 1631791396
 	.dbg		file, "resource/open_name.h", 1681, 1631791333
@@ -9225,14 +9225,14 @@ L0017:	lda     _koma_x
 .segment	"CODE"
 
 ;
-; put_update_debug(28,23, 3, "   " );
+; put_update_debug(28,24, 3, "   " );
 ;
 	.dbg	line, "quarto.c", 1583
 	jsr     decsp3
 	lda     #$1C
 	ldy     #$02
 	sta     (sp),y
-	lda     #$17
+	lda     #$18
 	dey
 	sta     (sp),y
 	lda     #$03
@@ -9242,14 +9242,14 @@ L0017:	lda     _koma_x
 	ldx     #>(S0004)
 	jsr     _put_update_debug
 ;
-; put_update_debug(28,6,  3, "   " );
+; put_update_debug(28,5,  3, "   " );
 ;
 	.dbg	line, "quarto.c", 1584
 	jsr     decsp3
 	lda     #$1C
 	ldy     #$02
 	sta     (sp),y
-	lda     #$06
+	lda     #$05
 	dey
 	sta     (sp),y
 	lda     #$03
@@ -9286,7 +9286,7 @@ L0017:	lda     _koma_x
 	lda     _timerSetCount
 	beq     L0002
 ;
-; put_update_debug(28,whichTurn!=0?23:6, 3, itoa(timer, &strbuf[0], 10 ) );
+; put_update_debug(28,whichTurn!=0?24:5, 3, itoa(timer, &strbuf[0], 10 ) );
 ;
 	.dbg	line, "quarto.c", 1590
 	jsr     decsp3
@@ -9295,9 +9295,9 @@ L0017:	lda     _koma_x
 	sta     (sp),y
 	lda     _whichTurn
 	beq     L0005
-	lda     #$17
+	lda     #$18
 	jmp     L0006
-L0005:	lda     #$06
+L0005:	lda     #$05
 L0006:	dey
 	sta     (sp),y
 	lda     #$03
