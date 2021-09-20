@@ -1,7 +1,8 @@
 # quarto
 This is a NES game created with cc65.
 
-![quarto_01](https://user-images.githubusercontent.com/18201911/133384111-efef8792-9044-4b02-8b93-5742c6184955.png) ![quarto_005](https://user-images.githubusercontent.com/18201911/133872052-833d96e7-0356-438c-a068-ac58b4b3903f.png)
+![quarto_01](https://user-images.githubusercontent.com/18201911/133384111-efef8792-9044-4b02-8b93-5742c6184955.png) ![quarto_006](https://user-images.githubusercontent.com/18201911/133974952-5c41c100-77d1-4ec0-a253-4ac41d234343.png)
+
 
 
 ## Usage
@@ -16,5 +17,3 @@ make clean quarto_plus
 Basically the same as QUARTO rules.
 
 Press the Start button when declaring QUARTO.
-
-Only person-to-person.
