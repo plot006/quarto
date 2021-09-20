@@ -207,7 +207,8 @@ const unsigned char open_palette3[16]={ 0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a,
 const unsigned char open_palette4[16]={ 0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c };
 
 const unsigned char palette1[16]={ 0x0f,0x00,0x0f,0x0f,0x0f,0x0c,0x30,0x31,0x0f,0x0c,0x30,0x37,0x0f,0x0c,0x0f,0x0f };
-const unsigned char palette2[16]={ 0x0f,0x1c,0x3c,0x0f,0x0f,0x0f,0x30,0x05,0x0f,0x0f,0x30,0x0c,0x0f,0x15,0x35,0x0f };
+const unsigned char palette2[16]={ 0x0f,0x0c,0x3c,0x0f,0x0f,0x0f,0x30,0x15,0x0f,0x0f,0x30,0x1c,0x0f,0x05,0x35,0x0f };
+//const unsigned char palette2[16]={ 0x0f,0x1c,0x3c,0x0f,0x0f,0x0f,0x30,0x05,0x0f,0x0f,0x30,0x0c,0x0f,0x15,0x35,0x0f };
 const unsigned char palette3[16]={ 0x0c,0x0c,0x0c,0x0c,0x0c,0x00,0x30,0x30,0x0c,0x10,0x30,0x0f,0x0c,0x0c,0x0c,0x0c };
 const unsigned char palette4[16]={ 0x0b,0x0b,0x0b,0x0b,0x0b,0x26,0x30,0x07,0x0b,0x17,0x30,0x37,0x0b,0x0b,0x0b,0x0b };
 const unsigned char* bg_palettes[]={
@@ -1090,6 +1091,15 @@ void down_stage(unsigned char x, unsigned char y )
 	}
 }
 */
+void cycleNextColor(void)
+{
+	bgpl++ ;
+	bgpl = bgpl > 3 ? 0 : bgpl ;
+	//put_update_debug(NTADR_A(1,24), 5, itoa(bgpl, &strbuf[0], 10 ));
+
+	pal_spr((char*)bg_palettes[bgpl]);
+	pal_bg((char*)bg_palettes[bgpl]);
+}
 void cycleColor(void)
 {
 	if(frame%4==0){ pal_bg((char*)open_palette4);}
@@ -1983,6 +1993,13 @@ void procChooseKoma(void)
 			return ;
 			
 		}
+
+		if(pad&PAD_SELECT){
+			cycleNextColor() ;
+			for( ; pad&PAD_SELECT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				delay(1) ;
+			}
+		}
 		
 		if(pad&PAD_START){
 			procSayQuarto() ;
@@ -2033,10 +2050,10 @@ void procChooseKoma(void)
 							//put_update_debug(1,10, 1, itoa(selBW, &strbuf[0], 10 ));
 							//put_update_debug(4,10, 1, itoa(ChooseKoma, &strbuf[0], 10 ));
 							tmp = 1 ;
-
+							break ;
 						}
-						if( tmp == 1 ){ break ; }
 					}
+					if( tmp == 1 ){ break ; }
 				}
 				if( isForceFin == 1 ){
 					loseAnime() ;
@@ -2227,13 +2244,7 @@ void procMoveKoma(void)
 			
 		}
 		if(pad&PAD_SELECT){
-			bgpl++ ;
-			bgpl = bgpl > 3 ? 0 : bgpl ;
-			//put_update_debug(NTADR_A(1,24), 5, itoa(bgpl, &strbuf[0], 10 ));
-
-			pal_spr((char*)bg_palettes[bgpl]);
-			pal_bg((char*)bg_palettes[bgpl]);
-
+			cycleNextColor() ;
 			for( ; pad&PAD_SELECT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 				delay(1) ;
 			}
@@ -2355,7 +2366,7 @@ void procCheckQuarto(){
 			}
 
 			if( frame & 2 ){
-				spr = oam_meta_spr( whichTurn!=0?10:200 ,70, spr, whichTurn!=0?meta_p1win:meta_p2win);
+				spr = oam_meta_spr( whichTurn!=0?10:190 ,70, spr, whichTurn!=0?meta_p1win:meta_p2win);
 			}else{ 
 				oam_hide_rest(spr) ; 
 			}
@@ -2401,7 +2412,6 @@ void initVal(){
 	isForceFin = 0 ;
 	timerSetCount = 60 ;
 	quarto = 0 ;
-	bgpl = 0;
 	ChooseKoma = 0;
 	whichTurn = 1;
 	selBW = 0;
@@ -2631,6 +2641,7 @@ void main(void)
 		if( checkForceBreak() ){ break ; }
 
 	}
+	bgpl = 0;
 
 	// QRコード処理.
 	pad = pad_poll(0);
