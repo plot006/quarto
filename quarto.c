@@ -1870,8 +1870,10 @@ unsigned char procAutoChoose( unsigned char isCheckOnly )
 				//printCursor() ;
 				//sfx_play(3,1) ;
 
+				if( isVsCPU == 1 && whichTurn==0 && frame & 8 ){sfx_play(3,1) ; }
+				frame++;
+				
 				if( isVsCPU == 1 && reach == 1 && whichTurn == 0 && dieCheck() == 1){
-					sfx_play(6,1) ;
 					continue ;
 				}
 				//put_update_debug(1,10, 1, itoa(selBW, &strbuf[0], 10 ));
@@ -2040,7 +2042,7 @@ void procChooseKoma(void)
 				sfx_play(3,0);
 
 				for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-					delay(1) ;
+					//delay(1) ;
 				}
 				continue ;
 			}
@@ -2058,7 +2060,7 @@ void procChooseKoma(void)
 		if(pad&PAD_SELECT){
 			cycleNextColor() ;
 			for( ; pad&PAD_SELECT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-				delay(1) ;
+				//delay(1) ;
 			}
 		}
 		
@@ -2080,7 +2082,7 @@ void procChooseKoma(void)
 			printLife() ;
 			printMsg(0) ;
 			for( ; pad&PAD_START ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-				delay(1) ;
+				//delay(1) ;
 			}
 			continue ;
 		}
@@ -2203,9 +2205,12 @@ void autoSetXY()
 			if( checkPutPos(x/8, y/8) == 1 ){
 				continue ;
 			}
+
+			if( isVsCPU == 1 && whichTurn==0 && frame & 8 ){sfx_play(3,1) ;}
+			frame++; 
+
 			dbgcnt = 1 ;
 			if( isVsCPU == 1 && whichTurn==0 && preQuartoCheck(o, p) == 1 ){
-				sfx_play(6,0);
 				return ;
 //				continue ; 
 			}
@@ -2235,7 +2240,7 @@ void procMoveKoma(void)
 {
 	
 	for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-		delay(1) ;
+		//delay(1) ;
 	}
 
 //	timer = setCount ;
@@ -2280,8 +2285,8 @@ void procMoveKoma(void)
 				sfx_play(3,0);
 				
 				for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-					ppu_wait_frame();
-					frame++ ;
+					//ppu_wait_frame();
+					//frame++ ;
 					//delay(1) ;
 				}
 			}else{
@@ -2303,7 +2308,7 @@ void procMoveKoma(void)
 		if(pad&PAD_SELECT){
 			cycleNextColor() ;
 			for( ; pad&PAD_SELECT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-				delay(1) ;
+				//delay(1) ;
 			}
 
 			/*
@@ -2341,7 +2346,7 @@ void procMoveKoma(void)
 			printLife() ;
 			printMsg(1) ;
 			for( ; pad&PAD_START ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-				delay(1) ;
+				//delay(1) ;
 			}
 			continue ;
 		}
@@ -2400,7 +2405,7 @@ void procCheckQuarto(){
 		printTimerInit() ;
 
 		oam_clear() ;
-		delay(40) ;
+		//delay(40) ;
 		bgFlash(8) ;
 		delay(40) ;
 		music_play(0) ;
@@ -2537,7 +2542,7 @@ void reset(void)
 		if(pad&PAD_A){
 			sfx_play(5,0);
 			for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-				delay(1) ;
+				//delay(1) ;
 			}
 			break ;
 		}
@@ -2652,7 +2657,7 @@ void reset(void)
 	music_play(game_music) ;
 
 
-	delay(10) ;
+	//delay(10) ;
 /*
 	spr = 0 ;
 	spr = oam_meta_spr( ChooseKoma*32+8, 40+selBW*50, spr, selBW==0 ? cursor : cursor2 ) ;
@@ -2687,7 +2692,7 @@ void main(void)
 
 	pal_bright(0);
 	ppu_on_all();//enable rendering
-	delay(20) ;
+	//delay(20) ;
 
 	bgUp() ;
 	delay(20) ;
