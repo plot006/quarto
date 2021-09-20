@@ -38,6 +38,8 @@ static unsigned char p;
 
 static unsigned char x;
 static unsigned char y;
+static unsigned char tmp_x;
+static unsigned char tmp_y;
 
 static unsigned char x_index;
 static unsigned char y_index;
@@ -1798,6 +1800,35 @@ void timerSet()
 		frame=0 ;
 	}
 }
+unsigned char preQuartoCheck(unsigned char x, unsigned char y )
+{
+	tmp3 = 0 ;
+	stage_stat[x][y][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
+	stage_stat[x][y][_CHOOSE_KOMA] = ChooseKoma ;
+	stage_stat[x][y][_SEL_BW] = selBW ;
+	if( checkQuarto() == 1 ){
+		tmp3 = 1 ;
+	}else{
+		tmp3 = 0 ;
+	}
+	stage_stat[x][y][_KOMA_TYPE] = 0 ;
+	stage_stat[x][y][_CHOOSE_KOMA] = 0 ;
+	stage_stat[x][y][_SEL_BW] = 0 ;
+	return tmp3 ;
+}
+unsigned char dieCheck(){
+	for( k = 0; k < 4; k++ ){
+		for( l = 0; l < 4; l++ ){
+			if( stage_stat[k][l][_KOMA_TYPE] == 0 ){
+				if( preQuartoCheck( k, l ) == 1 ){
+					return 1 ;
+				}
+			}
+		}
+	}
+	return 0 ;
+}
+
 void eventChooseButtonA(void)
 {
 	koma_exist[selBW][ChooseKoma] = 0 ;
@@ -1914,26 +1945,17 @@ void procChooseKoma(void)
 				}
 				continue ;
 			}
-
+			
+			tmp = pad_poll(1) ;
+			if( tmp&PAD_SELECT && dieCheck() == 1 ){
+				sfx_play(3,0);
+				continue ;
+			}
 			eventChooseButtonA() ;
 			return ;
 			
 		}
 		
-		if(pad&PAD_SELECT){
-				bgpl++ ;
-				bgpl = bgpl > 3 ? 0 : bgpl ;
-				//put_update_debug(NTADR_A(1,24), 5, itoa(bgpl, &strbuf[0], 10 ));
-
-				pal_spr((char*)bg_palettes[bgpl]);
-				pal_bg((char*)bg_palettes[bgpl]);
-
-				for( ; pad&PAD_SELECT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-					delay(1) ;
-				}
-
-		}
-
 		if(pad&PAD_START){
 			procSayQuarto() ;
 
@@ -1960,21 +1982,27 @@ void procChooseKoma(void)
 			// 自動コマ選択.
 			seedRandBox() ;
 
-			if( koma_exist[selBW][ChooseKoma] == 0 ){
+			if( isVsCPU != 1 && koma_exist[selBW][ChooseKoma] != 0 ){
+				
+			}else{
 				isForceFin = 1 ;
-				for( i=0; i<2; i++){
-					for( j=0; j<8; j++){
-						tmp_line[0] = rand_box3[i] ;
-						tmp_line[1] = rand_box4[j] ;
-						if( koma_exist[tmp_line[0]][tmp_line[1]] == 1 ){
-							selBW=tmp_line[0];
-							ChooseKoma=tmp_line[1];
-							printCursor() ;
-							isForceFin=0 ;
+				tmp = 0 ;
+				for( m=0; m<2; m++){
+					for( n=0; n<8; n++){
+						if( koma_exist[rand_box3[m]][rand_box4[n]] == 1 ){
+							selBW = rand_box3[m];
+							ChooseKoma = rand_box4[n];
+							isForceFin = 0 ;
+
+							if( isVsCPU == 1 && reach == 1 && dieCheck() == 1){
+								continue ;
+							}
 							//put_update_debug(1,10, 1, itoa(selBW, &strbuf[0], 10 ));
 							//put_update_debug(4,10, 1, itoa(ChooseKoma, &strbuf[0], 10 ));
+							tmp = 1 ;
 
 						}
+						if( tmp == 1 ){ break ; }
 					}
 				}
 				if( isForceFin == 1 ){
@@ -1982,6 +2010,7 @@ void procChooseKoma(void)
 					return ;
 				}
 			}
+			printCursor() ;
 			
 			eventChooseButtonA() ;
 			return ;
@@ -1991,22 +2020,6 @@ void procChooseKoma(void)
 		ppu_wait_frame();	// wait for next TV frame
 		frame++;
 	}
-}
-unsigned char preQuartoCheck(unsigned char x, unsigned char y )
-{
-	tmp3 = 0 ;
-	stage_stat[x][y][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
-	stage_stat[x][y][_CHOOSE_KOMA] = ChooseKoma ;
-	stage_stat[x][y][_SEL_BW] = selBW ;
-	if( checkQuarto() == 1 ){
-		tmp3 = 1 ;
-	}else{
-		tmp3 = 0 ;
-	}
-	stage_stat[x][y][_KOMA_TYPE] = 0 ;
-	stage_stat[x][y][_CHOOSE_KOMA] = 0 ;
-	stage_stat[x][y][_SEL_BW] = 0 ;
-	return tmp3 ;
 }
 
 unsigned char checkReach()
@@ -2120,6 +2133,7 @@ void autoSetXY()
 		checkPutPos(x/8, y/8) ;
 	}
 }
+
 void procMoveKoma(void)
 {
 	
@@ -2179,15 +2193,20 @@ void procMoveKoma(void)
 			}
 			
 		}
-
 		if(pad&PAD_SELECT){
+			bgpl++ ;
+			bgpl = bgpl > 3 ? 0 : bgpl ;
+			//put_update_debug(NTADR_A(1,24), 5, itoa(bgpl, &strbuf[0], 10 ));
+
+			pal_spr((char*)bg_palettes[bgpl]);
+			pal_bg((char*)bg_palettes[bgpl]);
+
+			for( ; pad&PAD_SELECT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				delay(1) ;
+			}
+
+			/*
 			oam_clear() ;
-/*
-			spr = 0 ;
-			x = ChooseKoma*32+8 ;
-			y = 40+(selBW*150) ;
-			spr = oam_meta_spr( x, y, spr, selBW==0 ? cursor : cursor2 ) ;
-*/
 			printCursor() ;
 
 			koma_exist[selBW][ChooseKoma] = 1 ;
@@ -2201,7 +2220,9 @@ void procMoveKoma(void)
 			printMsg(0) ;
 
 			return ;
+			*/
 		}
+
 		if(pad&PAD_START){
 			procSayQuarto() ;
 
@@ -2224,15 +2245,15 @@ void procMoveKoma(void)
 			continue ;
 		}
 		if( autoChoose==1){
+			// 自動コマ配置.
 			if( isVsCPU == 1 && checkQuarto() == 1 ){
 				procSayQuarto() ;
 				quarto = 1 ;
 				return ;
 			}
 
-			// 自動コマ配置.
-			tmp = x;
-			tmp2 = y ;
+			tmp_x = x;
+			tmp_y = y ;
 
 			// CPU戦の場合ここでクアルトを狙う.
 			seedRandBox() ;
@@ -2242,7 +2263,7 @@ void procMoveKoma(void)
 				return ;
 			}
 			oam_clear() ;
-			moveKoma( tmp, tmp2, x-9, y-12, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
+			moveKoma( tmp_x, tmp_y, x-9, y-12, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
 
 			eventMoveButtonA() ;
 			if( isVsCPU == 1 && checkQuarto() == 1 ){
