@@ -1420,11 +1420,11 @@ void printBar(unsigned int adr, unsigned char action )
 {
 	update_debug[0]=MSB(adr)|NT_UPD_HORZ;
 	update_debug[1]=LSB(adr);
-	update_debug[2]=32;
-	update_debug[3+32]=NT_UPD_EOF;
+	update_debug[2]=16;
+	update_debug[3+16]=NT_UPD_EOF;
 	set_vram_update(update_debug);
 
-	memfill( &update_debug[3], 0x00, 32 );
+	memfill( &update_debug[3], 0x00, 16 );
 	if( action == 1 ){
 		for( i=0; i<16; i++ ){
 			if( i == 0 ){ update_debug[i+3] = action == 1 ? 0xDD: 0xED ; }
@@ -1435,16 +1435,17 @@ void printBar(unsigned int adr, unsigned char action )
 	ppu_wait_frame();
 }
 
-
+/*
 void initBar()
 {
-	printBar( NTADR_A(0,28), 0 );
+	printBar( NTADR_A(0,29), 0 );
 }
-
+*/
 void autoPrintBar()
 {
-	printBar( NTADR_A(0,28), 0);
-	printBar( NTADR_A(whichTurn==1?0:16,28), 1);
+//	printBar( NTADR_A(0,29), 0);
+	printBar( NTADR_A(whichTurn==0?0:16,29), 0);
+	printBar( NTADR_A(whichTurn==1?0:16,29), 1);
 }
 
 void putKoma(unsigned char posx, unsigned char posy, unsigned char color, unsigned char* meta)
@@ -1659,14 +1660,14 @@ void stageAnime(unsigned char action)
 */
 void printTimerInit()
 {
-	put_update_debug(2,24, 3, "   " );
-	put_update_debug(28,24,  3, "   " );
+	put_update_debug(2,25, 3, "   " );
+	put_update_debug(28,25,  3, "   " );
 }
 void printTimer()
 {
 	printTimerInit() ;
 	if( timerSetCount != 0 ){
-		put_update_debug(whichTurn!=0?2:28,24, 3, itoa(timer, &strbuf[0], 10 ) );
+		put_update_debug(whichTurn!=0?2:28,25, 3, itoa(timer, &strbuf[0], 10 ) );
 	}
 }
 
@@ -1726,21 +1727,22 @@ void animeKomaTurn(unsigned char speed)
 }
 void initMsg()
 {
-	initBar() ;
+	//initBar() ;
 	//printTimerInit() ;
-	put_update_debug(1,27, 14, (const char*)msgBlank );
-	put_update_debug(17,27, 14, (const char*)msgBlank );
+	put_update_debug(1,28, 14, (const char*)msgBlank );
+	put_update_debug(17,28, 14, (const char*)msgBlank );
 }
 void printMsg(unsigned char action)
 {
+	autoPrintBar();
 
 	if( action == 0 ){
-		put_update_debug(1,27, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
-		put_update_debug(17,27, 14, whichTurn==0?"P2:SELECT NEXT":(const char*)msgBlank );
+		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
+		put_update_debug(17,28, 14, whichTurn==0?"P2:SELECT NEXT":(const char*)msgBlank );
 
 	}else if( action == 1 ){
-		put_update_debug(1,27, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
-		put_update_debug(17,27, 14, whichTurn==0?"P2:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(17,28, 14, whichTurn==0?"P2:PLAYING    ":(const char*)msgBlank );
 		printTimer() ;
 	}
 /*
@@ -1749,19 +1751,17 @@ void printMsg(unsigned char action)
 		put_update_debug(1,5, 14, whichTurn==0?"P2:WIN!       ":(const char*)msgBlank );
 	}
 */
-	autoPrintBar();
-	
 
 }
 void initLife()
 {
-	put_update_debug(1,26, 3, "   " );
-	put_update_debug(25,26, 3,  "   " );
+	put_update_debug(1,27, 3, "   " );
+	put_update_debug(25,27, 3,  "   " );
 }
 void printLife()
 {
-	put_update_debug(1,26, 3, err[1] == 0 ? "   ": err[1] == 1 ?"X  ": err[1] == 2 ?"XX ": "XXX" );
-	put_update_debug(25,26, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
+	put_update_debug(1,27, 3, err[1] == 0 ? "   ": err[1] == 1 ?"X  ": err[1] == 2 ?"XX ": "XXX" );
+	put_update_debug(25,27, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
 }
 void loseAnime()
 {
