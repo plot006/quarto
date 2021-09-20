@@ -76,7 +76,7 @@ static unsigned char err[2] ;
 static unsigned char set_posx;
 static unsigned char set_posy;
 
-static unsigned char moving;
+//static unsigned char moving;
 static unsigned char p1only;
 
 static unsigned char koma_pos[2];
@@ -84,13 +84,12 @@ static unsigned char koma_x[2];
 static unsigned char koma_y[2];
 static unsigned char ChooseKoma;
 static unsigned char koma_exist[2][8];
-static unsigned char tmp_line[8];
+//static unsigned char tmp_line[8];
 
 static unsigned char bgpl;
 static unsigned char game_music;
 static unsigned char reach;
 static unsigned char autoChoose;
-static unsigned char isForceFin;
 static unsigned char isVsCPU;
 
 static unsigned char attr_stat[40];
@@ -314,7 +313,7 @@ const unsigned char meta_pos2_reverse[]={
 	0,	0,	0xCF,	0x82,
 	128
 };
-
+/*
 const unsigned char cursor[]={
 	0,	0,	0x44,	1,
 	128
@@ -323,7 +322,7 @@ const unsigned char cursor2[]={
 	0,	0,	0x44,	0x81,
 	128
 };
-
+*/
 const unsigned char koma_1[]={
 	0,	0,	0x80,	1,
 	0,	8,	0x90,	1,
@@ -1179,6 +1178,7 @@ void move_next(void)
 			cycleColor() ;
 
 			if( koma_frame == 0 ){
+
 				// 初回アニメ処理.
 				if( tmp < 10 ){ 
 					delay(1) ;
@@ -1186,6 +1186,7 @@ void move_next(void)
 					continue ;
 				}
 				if( tmp == 10 ){
+
 					tmp++ ;
 					delay(20) ;
 
@@ -1199,14 +1200,14 @@ void move_next(void)
 
 					delay(20) ;
 					spr = 0 ;
-					spr = oam_meta_spr( koma_x[0], koma_y[0], spr, koma_list[0][0][0] ) ;
-					spr = oam_meta_spr( koma_x[1], koma_y[1], spr, koma_list[0][1][0] ) ;
+					//spr = oam_meta_spr( koma_x[0], koma_y[0], spr, koma_list[0][0][0] ) ;
+					//spr = oam_meta_spr( koma_x[1], koma_y[1], spr, koma_list[0][1][0] ) ;
 
 					bgUp() ;
 
 					put_update_debug(10,25, 13, "PRESS BUTTON!" );
 					put_update_debug(11,27, 10, "006 * 2021" );
-					delay(20) ;
+					//delay(20) ;
 					pal_bright(4);
 					music_play(0);
 				}
@@ -1810,7 +1811,7 @@ void procSayQuarto(){
 
 		//x-=4 ;
 		spr = 0 ;
-		spr = oam_meta_spr( 100, 80, spr, meta_quarto) ;
+//		spr = oam_meta_spr( 100, 80, spr, meta_quarto) ;
 //		spr = oam_meta_spr( x + 0, 80, spr, meta_quarto) ;
 //		spr = oam_meta_spr( x + 30, 60, spr, meta_quarto) ;
 //		spr = oam_meta_spr( x + 60, 80, spr, meta_quarto) ;
@@ -1838,20 +1839,80 @@ void timerSet()
 		frame=0 ;
 	}
 }
+unsigned char checkIsFin()
+{
+	unsigned char q = 0 ;
+	unsigned char r = 0 ;
+	for( q=0; q<4; q++){
+		for( r=0; r<4; r++){
+			if( stage_stat[q][r][_KOMA_TYPE] == 0 ){
+				return 0 ;
+			}
+		}
+	}
+	return 1 ;
+}
+unsigned char dieCheck() ;
+unsigned char procAutoChoose( unsigned char isCheckOnly )
+{
+	unsigned char q = 0 ;
+	unsigned char r = 0 ;
+	strbuf[0] = selBW;
+	strbuf[1] = ChooseKoma;
+
+	for( q=0; q<2; q++){
+		for( r=0; r<8; r++){
+			if( koma_exist[rand_box3[q]][rand_box4[r]] == 1 ){
+
+				selBW = rand_box3[q];
+				ChooseKoma = rand_box4[r];
+
+				//printCursor() ;
+				//sfx_play(3,1) ;
+
+				if( isVsCPU == 1 && reach == 1 && whichTurn == 0 && dieCheck() == 1){
+					sfx_play(6,1) ;
+					continue ;
+				}
+				//put_update_debug(1,10, 1, itoa(selBW, &strbuf[0], 10 ));
+				//put_update_debug(4,10, 1, itoa(ChooseKoma, &strbuf[0], 10 ));
+
+				if( isCheckOnly == 1 ){
+					selBW = strbuf[0] ;
+					ChooseKoma = strbuf[1];
+				}
+				return 0;
+			}
+		}
+	}
+	if( isCheckOnly == 1 ){
+		selBW = strbuf[0] ;
+		ChooseKoma = strbuf[1];
+	}
+	return 1 ;
+}
+void preSetStage( unsigned char x, unsigned char y )
+{
+	stage_stat[x][y][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
+	stage_stat[x][y][_CHOOSE_KOMA] = ChooseKoma ;
+	stage_stat[x][y][_SEL_BW] = selBW ;	
+}
+void preSetStageReset( unsigned char x, unsigned char y )
+{
+	stage_stat[x][y][_KOMA_TYPE] = 0 ;
+	stage_stat[x][y][_CHOOSE_KOMA] = 0 ;
+	stage_stat[x][y][_SEL_BW] = 0 ;	
+}
 unsigned char preQuartoCheck(unsigned char x, unsigned char y )
 {
 	tmp3 = 0 ;
-	stage_stat[x][y][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
-	stage_stat[x][y][_CHOOSE_KOMA] = ChooseKoma ;
-	stage_stat[x][y][_SEL_BW] = selBW ;
-	if( checkQuarto() == 1 ){
+	preSetStage(x,y) ;
+	if( checkQuarto() == 1){
 		tmp3 = 1 ;
 	}else{
 		tmp3 = 0 ;
 	}
-	stage_stat[x][y][_KOMA_TYPE] = 0 ;
-	stage_stat[x][y][_CHOOSE_KOMA] = 0 ;
-	stage_stat[x][y][_SEL_BW] = 0 ;
+	preSetStageReset(x,y) ;
 	return tmp3 ;
 }
 unsigned char dieCheck(){
@@ -2031,31 +2092,8 @@ void procChooseKoma(void)
 			if( isVsCPU != 1 && koma_exist[selBW][ChooseKoma] != 0 ){
 				
 			}else{
-				isForceFin = 1 ;
-				tmp = 0 ;
-				for( m=0; m<2; m++){
-					for( n=0; n<8; n++){
-						if( koma_exist[rand_box3[m]][rand_box4[n]] == 1 ){
-
-							selBW = rand_box3[m];
-							ChooseKoma = rand_box4[n];
-							isForceFin = 0 ;
-
-							//printCursor() ;
-							//sfx_play(3,1) ;
-
-							if( isVsCPU == 1 && reach == 1 && dieCheck() == 1){
-								continue ;
-							}
-							//put_update_debug(1,10, 1, itoa(selBW, &strbuf[0], 10 ));
-							//put_update_debug(4,10, 1, itoa(ChooseKoma, &strbuf[0], 10 ));
-							tmp = 1 ;
-							break ;
-						}
-					}
-					if( tmp == 1 ){ break ; }
-				}
-				if( isForceFin == 1 ){
+				procAutoChoose(0) ;
+				if( checkIsFin() == 1 ){
 					loseAnime() ;
 					return ;
 				}
@@ -2071,7 +2109,6 @@ void procChooseKoma(void)
 		frame++;
 	}
 }
-
 unsigned char checkReach()
 {
 	for( k = 0; k < 4; k++ ){
@@ -2147,13 +2184,15 @@ eventMoveButtonA()
 }
 void autoSetXY()
 {
+	unsigned char k2 ;
+	unsigned char l2 ;
 	m = 0 ;
 	n = 0 ;
-	
-	for( k=0; k<4; k++){
-		o = rand_box1[k] ;
-		for( l=0; l<4; l++){
-			p = rand_box2[l] ;
+	dbgcnt = 0 ;
+	for( k2=0; k2<4; k2++){
+		o = rand_box1[k2] ;
+		for( l2=0; l2<4; l2++){
+			p = rand_box2[l2] ;
 
 			x = (o*32)-(p*32)+115+16 ;
 			y = (p*16)+(o*16)+101-16 ;
@@ -2164,24 +2203,32 @@ void autoSetXY()
 			if( checkPutPos(x/8, y/8) == 1 ){
 				continue ;
 			}
+			dbgcnt = 1 ;
+			if( isVsCPU == 1 && whichTurn==0 && preQuartoCheck(o, p) == 1 ){
+				sfx_play(6,0);
+				return ;
+//				continue ; 
+			}
+
+			// 次の渡し死ぬ場所かのチェック
+			preSetStage(o,p) ;
+			if( isVsCPU == 1 && whichTurn==0 && procAutoChoose(1) == 1 ){
+				preSetStageReset(o,p) ;
+				continue ;
+			}
+			preSetStageReset(o,p) ;
+
 			m = x ;
 			n = y ;
+			continue ;
 
-			if( isVsCPU == 1 && whichTurn==0 && preQuartoCheck(o, p) == 0 ){
-				continue ; 
-			}
-			return ;
+			//return ;
 		}
 	}
-	if( m == 0 && n == 0 ){
-		isForceFin = 1 ;
-		
-	}else{
-		// 仮保存の座標を戻す.
-		x = m ;
-		y = n ;
-		checkPutPos(x/8, y/8) ;
-	}
+	// 仮保存の座標を戻す.
+	x = m ;
+	y = n ;
+	checkPutPos(x/8, y/8) ;
 }
 
 void procMoveKoma(void)
@@ -2239,6 +2286,16 @@ void procMoveKoma(void)
 				}
 			}else{
 				eventMoveButtonA();
+
+				if( checkIsFin() == 1 ){
+					if( checkQuarto() == 1 ){
+						quarto = 1 ;
+						return ;
+					}else{
+						loseAnime() ;
+					}
+				}
+
 				return ;
 			}
 			
@@ -2300,9 +2357,12 @@ void procMoveKoma(void)
 			tmp_y = y ;
 
 			// CPU戦の場合ここでクアルトを狙う.
+			printTimerInit() ;
+
 			seedRandBox() ;
 			autoSetXY();
-			if( isForceFin == 1 ){
+			if( checkIsFin() == 1 ){
+				//while(1){continue;}
 				loseAnime() ;
 				return ;
 			}
@@ -2337,6 +2397,8 @@ void procCheckQuarto(){
 		music_stop() ;
 		initLife() ;
 		initMsg() ;
+		printTimerInit() ;
+
 		oam_clear() ;
 		delay(40) ;
 		bgFlash(8) ;
@@ -2409,7 +2471,6 @@ void initVal(){
 	autoChoose = 0 ;
 	p1only=1;
 	isVsCPU=1;
-	isForceFin = 0 ;
 	timerSetCount = 60 ;
 	quarto = 0 ;
 	ChooseKoma = 0;
@@ -2671,7 +2732,7 @@ void main(void)
 	}
 
 	ppu_off() ;
-	delay(10) ;
+	//delay(10) ;
 
 	music_play(2) ;
 	delay(60) ;
