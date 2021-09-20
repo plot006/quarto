@@ -178,6 +178,7 @@ static unsigned char dbgcnt;
 //first player metasprite, data structure explained in neslib.h
 const unsigned char msgBlank[]= "              " ;
 
+#define stage_y_offset 0x80
 const unsigned char stage_pos[4][4][6]={
 	0x01,	0x0e,	0x01,	0x2E,	0x01,	0x4E,
 	0x01,	0x4A,	0x01,	0x6A,	0x01,	0x8A,
@@ -306,6 +307,10 @@ const unsigned char meta_pos2[]={
 
 const unsigned char meta_pos1_reverse[]={
 	0,	0,	0xCF,	0x81,
+	128
+};
+const unsigned char meta_pos2_reverse[]={
+	0,	0,	0xCF,	0x82,
 	128
 };
 
@@ -1001,12 +1006,18 @@ void upProc(unsigned char x, unsigned char y )
 }
 void setStageAdr(unsigned char x, unsigned char y )
 {
-	update_list[0]=0x20+stage_pos[x][y][0]|NT_UPD_HORZ;//horizontal update sequence, dummy address
-	update_list[1]=stage_pos[x][y][1]+1;
-	update_list[(6)]=0x20+stage_pos[x][y][2]|NT_UPD_HORZ;//horizontal update sequence, dummy address
-	update_list[(6)+1]=stage_pos[x][y][3];
-	update_list[(6+8)]=0x20+stage_pos[x][y][4]|NT_UPD_HORZ;//horizontal update sequence, dummy address
-	update_list[(6+8)+1]=stage_pos[x][y][5];
+	unsigned char calcAdr = 0x00 ;
+	calcAdr = stage_pos[x][y][1]+1+stage_y_offset > 0xFF ? stage_pos[x][y][0]+1 : stage_pos[x][y][0];
+	update_list[0]=(0x20+calcAdr)&0xFF|NT_UPD_HORZ;//horizontal update sequence, dummy address
+	update_list[1]=stage_pos[x][y][1]+1+stage_y_offset;
+
+	calcAdr = stage_pos[x][y][3]+stage_y_offset > 0xFF ? stage_pos[x][y][2]+1 : stage_pos[x][y][2];
+	update_list[(6)]=(0x20+calcAdr)&0xFF|NT_UPD_HORZ;//horizontal update sequence, dummy address
+	update_list[(6)+1]=stage_pos[x][y][3]+stage_y_offset;
+
+	calcAdr = stage_pos[x][y][5]+stage_y_offset > 0xFF ? stage_pos[x][y][4]+1 : stage_pos[x][y][4];
+	update_list[(6+8)]=(0x20+calcAdr)&0xFF|NT_UPD_HORZ;//horizontal update sequence, dummy address
+	update_list[(6+8)+1]=stage_pos[x][y][5]+stage_y_offset;
 }
 void up_stage(unsigned char x, unsigned char y )
 {
@@ -1249,41 +1260,40 @@ void move_next(void)
 	}
 }
 #endif
-
+#define posy_offset 4
 void getStagePos(unsigned char posx, unsigned char posy)
 {
 	//位置補正.
 	j = 0 ;
-
 	if(posx >= 2 && posx <= 5){
-		if( posy >= 10 && posy <= 12 ){ posx = 3 ;posy = 12 ; j++; x_index=0 ; y_index=3 ;}
+		if( posy >= 10+posy_offset && posy <= 12+posy_offset ){ posx = 3 ;posy = 12+posy_offset ; j++; x_index=0 ; y_index=3 ;}
 	}	
 	if(posx >= 6 && posx <= 9){
-		if( posy >= 8 && posy <= 10 ){ posx = 7 ;posy = 10 ; j++; x_index=0 ; y_index=2 ;}
-		if( posy >= 12 && posy <= 14 ){ posx = 7 ;posy = 14 ; j++; x_index=1 ; y_index=3 ;}
+		if( posy >= 8+posy_offset && posy <= 10+posy_offset ){ posx = 7 ;posy = 10+posy_offset ; j++; x_index=0 ; y_index=2 ;}
+		if( posy >= 12+posy_offset && posy <= 14+posy_offset ){ posx = 7 ;posy = 14+posy_offset ; j++; x_index=1 ; y_index=3 ;}
 	}	
 	if(posx >= 10 && posx <= 13){
-		if( posy >= 6 && posy <= 8 ){ posx = 11 ;posy = 8 ; j++; x_index=0 ; y_index=1 ;}
-		if( posy >= 10 && posy <= 12 ){ posx = 11 ;posy = 12 ; j++; x_index=1 ; y_index=2 ;}
-		if( posy >= 14 && posy <= 16 ){ posx = 11 ;posy = 16 ; j++; x_index=2 ; y_index=3 ;}
+		if( posy >= 6+posy_offset && posy <= 8+posy_offset ){ posx = 11 ;posy = 8+posy_offset ; j++; x_index=0 ; y_index=1 ;}
+		if( posy >= 10+posy_offset && posy <= 12+posy_offset ){ posx = 11 ;posy = 12+posy_offset ; j++; x_index=1 ; y_index=2 ;}
+		if( posy >= 14+posy_offset && posy <= 16+posy_offset ){ posx = 11 ;posy = 16+posy_offset ; j++; x_index=2 ; y_index=3 ;}
 	}
 	if(posx >= 14 && posx <= 17){
-		if( posy >= 4 && posy <= 7 ){ posx = 15 ;posy = 6 ; j++; x_index=0 ; y_index=0 ; }
-		if( posy >= 8 && posy <= 10 ){ posx = 15 ;posy = 10 ; j++; x_index=1 ; y_index=1 ;}
-		if( posy >= 12 && posy <= 14 ){ posx = 15 ;posy = 14 ; j++; x_index=2 ; y_index=2 ;}
-		if( posy >= 16 && posy <= 18 ){ posx = 15 ;posy = 18 ; j++; x_index=3 ; y_index=3 ;}
+		if( posy >= 4+posy_offset && posy <= 7+posy_offset ){ posx = 15 ;posy = 6+posy_offset ; j++; x_index=0 ; y_index=0 ; }
+		if( posy >= 8+posy_offset && posy <= 10+posy_offset ){ posx = 15 ;posy = 10+posy_offset ; j++; x_index=1 ; y_index=1 ;}
+		if( posy >= 12+posy_offset && posy <= 14+posy_offset ){ posx = 15 ;posy = 14+posy_offset ; j++; x_index=2 ; y_index=2 ;}
+		if( posy >= 16+posy_offset && posy <= 18+posy_offset ){ posx = 15 ;posy = 18+posy_offset ; j++; x_index=3 ; y_index=3 ;}
 	}
 	if(posx >= 18 && posx <= 21){
-		if( posy >= 6 && posy <= 8 ){ posx = 19 ;posy = 8 ; j++; x_index=1 ; y_index=0 ;}
-		if( posy >= 10 && posy <= 12 ){ posx = 19 ;posy = 12 ; j++; x_index=2 ; y_index=1 ;}
-		if( posy >= 14 && posy <= 16 ){ posx = 19 ;posy = 16 ; j++; x_index=3 ; y_index=2 ;}
+		if( posy >= 6+posy_offset && posy <= 8+posy_offset ){ posx = 19 ;posy = 8+posy_offset ; j++; x_index=1 ; y_index=0 ;}
+		if( posy >= 10+posy_offset && posy <= 12+posy_offset ){ posx = 19 ;posy = 12+posy_offset ; j++; x_index=2 ; y_index=1 ;}
+		if( posy >= 14+posy_offset && posy <= 16+posy_offset ){ posx = 19 ;posy = 16+posy_offset ; j++; x_index=3 ; y_index=2 ;}
 	}
 	if(posx >= 22 && posx <= 25){
-		if( posy >= 8 && posy <= 10 ){ posx = 23 ;posy = 10 ; j++; x_index=2 ; y_index=0 ;}
-		if( posy >= 12 && posy <= 14 ){ posx = 23 ;posy = 14 ; j++; x_index=3 ; y_index=1 ;}
+		if( posy >= 8+posy_offset && posy <= 10+posy_offset ){ posx = 23 ;posy = 10+posy_offset ; j++; x_index=2 ; y_index=0 ;}
+		if( posy >= 12+posy_offset && posy <= 14+posy_offset ){ posx = 23 ;posy = 14+posy_offset ; j++; x_index=3 ; y_index=1 ;}
 	}
 	if(posx >= 26 && posx <= 29){
-		if( posy >= 10 && posy <= 12 ){ posx = 27 ;posy = 12 ; j++;x_index=3 ; y_index=0 ;}
+		if( posy >= 10+posy_offset && posy <= 12+posy_offset ){ posx = 27 ;posy = 12+posy_offset ; j++;x_index=3 ; y_index=0 ;}
 	}
 	
 	if( posy < 8 ){
@@ -1304,6 +1314,7 @@ void getAttrPos(unsigned char posx, unsigned char posy)
 	//set_posl = 0xC0 ;
 }
 
+#define attr_pos_offset 0x08
 void putStageKomaColor(unsigned char color)
 {
 	//getStageAttrPos() ;
@@ -1315,7 +1326,7 @@ void putStageKomaColor(unsigned char color)
 
 	for( i=0; i < 4; i++ ){
 		update_koma_color[0]=0x23|NT_UPD_HORZ;
-		update_koma_color[1]=attr_pos[x_index][y_index][i];
+		update_koma_color[1]=attr_pos[x_index][y_index][i]+attr_pos_offset;
 		if( (x_index - y_index) % 2 == 0 ){
 			if( i == 0 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b01000000:0b10000000 ; tmp3 = 0b00111111 ;}
 			if( i == 1 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00010000:0b00100000 ; tmp3 = 0b11001111 ;}
@@ -1390,7 +1401,7 @@ void putStockKoma(unsigned char posx, unsigned char posy, unsigned char color, u
 	}
 	ppu_wait_frame();
 	// 手持ちコマ用
-
+/*
 	if( posy == 26 ){
 		tmp = color & 0b11110000 | 0b00000101 ;
 		//put_update_debug(NTADR_A(1,24), 3, itoa(posx, &strbuf[0], 10 ));
@@ -1401,39 +1412,40 @@ void putStockKoma(unsigned char posx, unsigned char posy, unsigned char color, u
 	}else{
 		putKomaColor( posx, posy, color) ;
 	}
+*/
+	putKomaColor( posx, posy, color) ;
 }
 
 void printBar(unsigned int adr, unsigned char action )
 {
 	update_debug[0]=MSB(adr)|NT_UPD_HORZ;
 	update_debug[1]=LSB(adr);
-	update_debug[2]=32;
-	update_debug[3+32]=NT_UPD_EOF;
+	update_debug[2]=16;
+	update_debug[3+16]=NT_UPD_EOF;
 	set_vram_update(update_debug);
 
-	if( action == 0 ){
-		memfill( &update_debug[3], 0x00, 32 );
-	}else{
-		for( i=0; i<32; i++ ){
+	memfill( &update_debug[3], 0x00, 16 );
+	if( action == 1 ){
+		for( i=0; i<16; i++ ){
 			if( i == 0 ){ update_debug[i+3] = action == 1 ? 0xDD: 0xED ; }
-			else if( i ==31 ){ update_debug[i+3] = action == 1 ? 0xDF: 0xEF ; }
+			else if( i ==15 ){ update_debug[i+3] = action == 1 ? 0xDF: 0xEF ; }
 			else { update_debug[i+3] = action == 1 ? 0xDE: 0xEE ; }
 		}
 	}
 	ppu_wait_frame();
 }
 
-
+/*
 void initBar()
 {
-	printBar( NTADR_A(0,4), 0 );
-	printBar( NTADR_A(0,25), 0 );
+	printBar( NTADR_A(0,29), 0 );
 }
-
+*/
 void autoPrintBar()
 {
-	printBar( NTADR_A(0,4), whichTurn==0?1:0 );
-	printBar( NTADR_A(0,25), whichTurn==0?0:1 );
+//	printBar( NTADR_A(0,29), 0);
+	printBar( NTADR_A(whichTurn==0?0:16,29), 0);
+	printBar( NTADR_A(whichTurn==1?0:16,29), 1);
 }
 
 void putKoma(unsigned char posx, unsigned char posy, unsigned char color, unsigned char* meta)
@@ -1485,7 +1497,7 @@ void printCursor()
 	spr = 0 ;
 //	spr = oam_meta_spr( ChooseKoma*32+8, 30+(selBW*170), spr, selBW==0 ? cursor : cursor2  ) ;
 //	spr = oam_meta_spr( ChooseKoma*32+8, selBW==0? 30 : 30+170, spr, selBW==0 ? meta_pos1 : meta_pos2  ) ;
-	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 28-frame%6 : 200+frame%6, spr, selBW==0 ? meta_pos1_reverse : meta_pos2  ) ;
+	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 28-frame%6 : 60-frame%6, spr, selBW==0 ? meta_pos1_reverse : meta_pos2_reverse) ;
 	//if( frame&2 ){ oam_hide_rest(spr) ; return ; }
 //	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 0-frame%6 : 202+frame%6, spr, selBW==0 ? meta_pos1 : meta_pos2  ) ;
 
@@ -1648,14 +1660,14 @@ void stageAnime(unsigned char action)
 */
 void printTimerInit()
 {
-	put_update_debug(28,24, 3, "   " );
-	put_update_debug(28,5,  3, "   " );
+	put_update_debug(2,25, 3, "   " );
+	put_update_debug(28,25,  3, "   " );
 }
 void printTimer()
 {
 	printTimerInit() ;
 	if( timerSetCount != 0 ){
-		put_update_debug(28,whichTurn!=0?24:5, 3, itoa(timer, &strbuf[0], 10 ) );
+		put_update_debug(whichTurn!=0?2:28,25, 3, itoa(timer, &strbuf[0], 10 ) );
 	}
 }
 
@@ -1679,7 +1691,8 @@ void animeKomaTurnOff()
 {
 	bank_bg(0);
 	pal_bg((char*)bg_palettes[bgpl]);
-	
+	pal_spr((char*)bg_palettes[bgpl]);
+
 }
 void animeKomaTurn(unsigned char speed)
 {
@@ -1714,20 +1727,22 @@ void animeKomaTurn(unsigned char speed)
 }
 void initMsg()
 {
-	initBar() ;
+	//initBar() ;
 	//printTimerInit() ;
-	put_update_debug(1,24, 14, (const char*)msgBlank );
-	put_update_debug(1,5, 14, (const char*)msgBlank );
+	put_update_debug(1,28, 14, (const char*)msgBlank );
+	put_update_debug(17,28, 14, (const char*)msgBlank );
 }
 void printMsg(unsigned char action)
 {
+	autoPrintBar();
+
 	if( action == 0 ){
-		put_update_debug(1,24, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
-		put_update_debug(1,5, 14, whichTurn==0?"P2:SELECT NEXT":(const char*)msgBlank );
+		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
+		put_update_debug(17,28, 14, whichTurn==0?"P2:SELECT NEXT":(const char*)msgBlank );
 
 	}else if( action == 1 ){
-		put_update_debug(1,24, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
-		put_update_debug(1,5, 14, whichTurn==0?"P2:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(17,28, 14, whichTurn==0?"P2:PLAYING    ":(const char*)msgBlank );
 		printTimer() ;
 	}
 /*
@@ -1736,19 +1751,17 @@ void printMsg(unsigned char action)
 		put_update_debug(1,5, 14, whichTurn==0?"P2:WIN!       ":(const char*)msgBlank );
 	}
 */
-	autoPrintBar();
-	
 
 }
 void initLife()
 {
-	put_update_debug(25,23, 3, "   " );
-	put_update_debug(25,6, 3,  "   " );
+	put_update_debug(1,27, 3, "   " );
+	put_update_debug(25,27, 3,  "   " );
 }
 void printLife()
 {
-	put_update_debug(25,23, 3, err[1] == 0 ? "   ": err[1] == 1 ?"X  ": err[1] == 2 ?"XX ": "XXX" );
-	put_update_debug(25,6, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
+	put_update_debug(1,27, 3, err[1] == 0 ? "   ": err[1] == 1 ?"X  ": err[1] == 2 ?"XX ": "XXX" );
+	put_update_debug(25,27, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
 }
 void loseAnime()
 {
@@ -1777,10 +1790,25 @@ void procSayQuarto(){
 	printTimerInit() ;
 	
 	music_play(2) ;
+
+//	tmp = rand8() ;
+//	tmp2 = rand8() ;
+//	tmp3 = rand8() ;
+//	tmp4 = rand8() ;
 	for( i=0 ; i< 20; i++ ){
 		animeKomaTurn(2) ;
+
+		//x-=4 ;
+		spr = 0 ;
+		spr = oam_meta_spr( 100, 80, spr, meta_quarto) ;
+//		spr = oam_meta_spr( x + 0, 80, spr, meta_quarto) ;
+//		spr = oam_meta_spr( x + 30, 60, spr, meta_quarto) ;
+//		spr = oam_meta_spr( x + 60, 80, spr, meta_quarto) ;
+//		spr = oam_meta_spr( x + 90, 100, spr, meta_quarto) ;
+		cycleSprColor() ;
 		frame++ ;
 	}
+	oam_clear() ;
 	animeKomaTurnOff() ;
 	delay(20) ;
 	music_stop() ;
@@ -1832,13 +1860,13 @@ unsigned char dieCheck(){
 void eventChooseButtonA(void)
 {
 	koma_exist[selBW][ChooseKoma] = 0 ;
-	putStockKoma((ChooseKoma*4),selBW==0?0:26, selBW==0?0x00:0xFF,  (unsigned char*)koma_list[0][0][ChooseKoma]) ;
+	putStockKoma((ChooseKoma*4),selBW==0?0:4, selBW==0?0x00:0xFF,  (unsigned char*)koma_list[0][0][ChooseKoma]) ;
 
 	oam_clear() ;
 	//spr = 0 ;
 	x = ChooseKoma*32 ;
-	y = 10+selBW*180 ;
-	moveKoma( x, y, 24, whichTurn==0?60:146, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
+	y = 10+selBW*32 ;
+	moveKoma( x, y, whichTurn==0?24:200, 70, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
 	//spr = oam_meta_spr( x, y, spr, koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
 	ppu_wait_frame();	// wait for next TV frame
 	
@@ -1979,6 +2007,7 @@ void procChooseKoma(void)
 			continue ;
 		}
 		if( autoChoose==1){
+			oam_clear() ;
 			// 自動コマ選択.
 			seedRandBox() ;
 
@@ -1990,9 +2019,13 @@ void procChooseKoma(void)
 				for( m=0; m<2; m++){
 					for( n=0; n<8; n++){
 						if( koma_exist[rand_box3[m]][rand_box4[n]] == 1 ){
+
 							selBW = rand_box3[m];
 							ChooseKoma = rand_box4[n];
 							isForceFin = 0 ;
+
+							//printCursor() ;
+							//sfx_play(3,1) ;
 
 							if( isVsCPU == 1 && reach == 1 && dieCheck() == 1){
 								continue ;
@@ -2106,7 +2139,8 @@ void autoSetXY()
 			p = rand_box2[l] ;
 
 			x = (o*32)-(p*32)+115+16 ;
-			y = (p*16)+(o*16)+71-16 ;
+			y = (p*16)+(o*16)+101-16 ;
+			
 			// 仮保存(全クアルトチェック後に返す奴).
 			//put_update_debug(1,10, 1, itoa(x, &strbuf[0], 10 ));
 			//put_update_debug(4,10, 1, itoa(y, &strbuf[0], 10 ));
@@ -2116,12 +2150,11 @@ void autoSetXY()
 			m = x ;
 			n = y ;
 
-			if( isVsCPU == 1 && preQuartoCheck(o, p) == 0 ){
+			if( isVsCPU == 1 && whichTurn==0 && preQuartoCheck(o, p) == 0 ){
 				continue ; 
 			}
 			return ;
 		}
-
 	}
 	if( m == 0 && n == 0 ){
 		isForceFin = 1 ;
@@ -2246,7 +2279,7 @@ void procMoveKoma(void)
 		}
 		if( autoChoose==1){
 			// 自動コマ配置.
-			if( isVsCPU == 1 && checkQuarto() == 1 ){
+			if( isVsCPU == 1 && whichTurn==0 && checkQuarto() == 1 ){
 				procSayQuarto() ;
 				quarto = 1 ;
 				return ;
@@ -2266,7 +2299,7 @@ void procMoveKoma(void)
 			moveKoma( tmp_x, tmp_y, x-9, y-12, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
 
 			eventMoveButtonA() ;
-			if( isVsCPU == 1 && checkQuarto() == 1 ){
+			if( isVsCPU == 1 && whichTurn==0 && checkQuarto() == 1 ){
 				procSayQuarto() ;
 				quarto = 1 ;
 				return ;
@@ -2307,7 +2340,7 @@ void procCheckQuarto(){
 		tmp3 = rand8() ;
 		tmp4 = rand8() ;
 		while(1){
-			x-=4 ;
+			//x-=4 ;
 			spr = 0 ;
 			//spr = oam_meta_spr( x + tmp, 20, spr, meta_quarto) ;
 			//spr = oam_meta_spr( x + tmp2, 40, spr, meta_quarto) ;
@@ -2317,12 +2350,12 @@ void procCheckQuarto(){
 			//spr = oam_meta_spr( x + tmp4, 140, spr, whichTurn!=0?meta_p1win:meta_p2win) ;
 			for( i = 0; i < 4; i++ ){
 				k = (quarto_line[i][0]*32)-(quarto_line[i][1]*32)+115+14 ;
-				l = (quarto_line[i][1]*16)+(quarto_line[i][0]*16)+71-32 ;
+				l = (quarto_line[i][1]*16)+(quarto_line[i][0]*16)+101-32 ;
 				spr = oam_meta_spr( k, l+frame%5, spr, meta_pos2) ;
 			}
 
 			if( frame & 2 ){
-				spr = oam_meta_spr( 10 , whichTurn!=0?180:40, spr, whichTurn!=0?meta_p1win:meta_p2win);
+				spr = oam_meta_spr( whichTurn!=0?10:200 ,70, spr, whichTurn!=0?meta_p1win:meta_p2win);
 			}else{ 
 				oam_hide_rest(spr) ; 
 			}
@@ -2522,21 +2555,23 @@ void reset(void)
 	oam_clear() ;
 */
 	
-	update_init() ;
-	for( tmp=0; tmp < 16; tmp++ ){
-		up_stage(stage_anime_index[tmp][0], stage_anime_index[tmp][1] );
-	}
 
 	delay(15) ;
 	for( x = 0; x < 8; x++ ){
 		sfx_play(2,0);
 		// P1
-		putStockKoma((x*4),0,0xAA, (unsigned char*)koma_list[0][0][x]) ;
+		putStockKoma(x*4,0,0xAA, (unsigned char*)koma_list[0][0][x]) ;
 		sfx_play(2,1);
 		// P2
-		putStockKoma(28-(x*4),26,0x55, (unsigned char*)koma_list[0][1][7-x]) ;
+//		putStockKoma(28-(x*4),26,0x55, (unsigned char*)koma_list[0][1][7-x]) ;
+		//if( x == 4 ){continue; }
+		putStockKoma(x*4,4,0x55, (unsigned char*)koma_list[0][1][x]) ;
 
 
+	}
+	update_init() ;
+	for( tmp=0; tmp < 16; tmp++ ){
+		up_stage(stage_anime_index[tmp][0], stage_anime_index[tmp][1] );
 	}
 
 	memfill( stage_stat, 0x00, 48 );
