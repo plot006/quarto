@@ -91,6 +91,7 @@ static unsigned char game_music;
 static unsigned char reach;
 static unsigned char autoChoose;
 static unsigned char isVsCPU;
+static unsigned char isAdvanced;
 
 static unsigned char attr_stat[40];
 
@@ -1621,6 +1622,30 @@ unsigned char checkQuarto()
 		return 1 ;
 	}
 
+	// ボックス(上級ルール).
+	if( isAdvanced == 1 ){
+		for( i = 0; i < 3; i++ ){
+			for( j = 0; j < 3; j++ ){
+				initQuartoFlg() ;
+				bitCalc(i,j) ;
+				bitCalc(i,j+1) ;
+				bitCalc(i+1,j) ;
+				bitCalc(i+1,j+1) ;
+				if( checkLineQuarto() == 1 ){
+					quarto_line[0][0] = i ;
+					quarto_line[0][1] = j ;
+					quarto_line[1][0] = i ;
+					quarto_line[1][1] = j+1 ;
+					quarto_line[2][0] = i+1 ;
+					quarto_line[2][1] = j ;
+					quarto_line[3][0] = i+1 ;
+					quarto_line[3][1] = j+1 ;
+					return 1 ;
+				}
+			}
+		}
+	}
+
 	return 0 ;
 }
 
@@ -1747,13 +1772,18 @@ void printMsg(unsigned char action)
 {
 	autoPrintBar();
 
+	//initMsg() ;
 	if( action == 0 ){
+//		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":"" );
+//		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 && frame&4? "P2:SELECT NEXT":"" );
 		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
-		put_update_debug(17,28, 14, whichTurn==0?"P2:SELECT NEXT":(const char*)msgBlank );
+		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 ? "P2:SELECT NEXT":(const char*)msgBlank );
 
 	}else if( action == 1 ){
+//		put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":"" );
+//		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 && frame&4?"P2:PLAYING    ":"" );
 		put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
-		put_update_debug(17,28, 14, whichTurn==0?"P2:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 ?"P2:PLAYING    ":(const char*)msgBlank );
 		printTimer() ;
 	}
 /*
@@ -1786,8 +1816,9 @@ void loseAnime()
 	pal_bg(palette_jeesus);
 	ppu_on_all();//enable rendering
 
-	music_play(3) ;
-	delay(90);
+	//music_play(3) ;
+	sfx_play(3,0);
+	delay(60);
 	music_stop() ;
 	bank_bg(0);
 
@@ -1862,6 +1893,9 @@ unsigned char procAutoChoose( unsigned char isCheckOnly )
 
 	for( q=0; q<2; q++){
 		for( r=0; r<8; r++){
+//			if( isVsCPU == 1 && whichTurn==0 && frame & 16 ){sfx_play(3,1) ; }
+//			frame++;
+
 			if( koma_exist[rand_box3[q]][rand_box4[r]] == 1 ){
 
 				selBW = rand_box3[q];
@@ -1869,9 +1903,6 @@ unsigned char procAutoChoose( unsigned char isCheckOnly )
 
 				//printCursor() ;
 				//sfx_play(3,1) ;
-
-				if( isVsCPU == 1 && whichTurn==0 && frame & 8 ){sfx_play(3,1) ; }
-				frame++;
 				
 				if( isVsCPU == 1 && reach == 1 && whichTurn == 0 && dieCheck() == 1){
 					continue ;
@@ -1907,6 +1938,9 @@ void preSetStageReset( unsigned char x, unsigned char y )
 }
 unsigned char preQuartoCheck(unsigned char x, unsigned char y )
 {
+	if( isVsCPU == 1 && whichTurn==0 && frame & 16 ){sfx_play(3,1) ;}
+	frame++; 
+
 	tmp3 = 0 ;
 	preSetStage(x,y) ;
 	if( checkQuarto() == 1){
@@ -2153,6 +2187,22 @@ unsigned char checkReach()
 		}
 	}
 
+	if( isAdvanced == 1 ){
+		for( k = 0; k < 3; k++ ){
+			for( l = 0; l < 3; l++ ){
+				tmp = 0 ;
+				if( stage_stat[k][l][_KOMA_TYPE] != 0 ){ tmp++ ; }
+				if( stage_stat[k][l+1][_KOMA_TYPE] != 0 ){ tmp++ ; }
+				if( stage_stat[k+1][l][_KOMA_TYPE] != 0 ){ tmp++ ; }
+				if( stage_stat[k+1][l+1][_KOMA_TYPE] != 0 ){ tmp++ ; }
+
+				if( tmp >= 3 ){
+					reach = 1 ;
+				}
+			}
+		}
+	}
+
 }
 eventMoveButtonA()
 {
@@ -2175,8 +2225,8 @@ eventMoveButtonA()
 	printMsg(0) ;
 
 	checkReach() ;
-	if( reach == 1 && game_music != 4 ){
-		game_music = 4 ;
+	if( reach == 1 && game_music != 3 ){
+		game_music = 3 ;
 		music_stop() ;
 		//bgFlash(8) ;
 		delay(30) ;
@@ -2206,29 +2256,27 @@ void autoSetXY()
 				continue ;
 			}
 
-			if( isVsCPU == 1 && whichTurn==0 && frame & 8 ){sfx_play(3,1) ;}
-			frame++; 
-
-			dbgcnt = 1 ;
 			if( isVsCPU == 1 && whichTurn==0 && preQuartoCheck(o, p) == 1 ){
 				return ;
 //				continue ; 
 			}
 
-			// 次の渡し死ぬ場所かのチェック
+			m = x ;
+			n = y ;
+			// 次渡して負ける場所かのチェック
 			preSetStage(o,p) ;
 			if( isVsCPU == 1 && whichTurn==0 && procAutoChoose(1) == 1 ){
 				preSetStageReset(o,p) ;
 				continue ;
 			}
 			preSetStageReset(o,p) ;
-
-			m = x ;
-			n = y ;
-			continue ;
+			dbgcnt = 1 ;
+			break ;
+			//continue ;
 
 			//return ;
 		}
+		if( dbgcnt == 1 ){break ;}
 	}
 	// 仮保存の座標を戻す.
 	x = m ;
@@ -2475,6 +2523,7 @@ void initVal(){
 	//set initial coords
 	autoChoose = 0 ;
 	p1only=1;
+	isAdvanced=0 ;
 	isVsCPU=1;
 	timerSetCount = 60 ;
 	quarto = 0 ;
@@ -2492,7 +2541,7 @@ void initVal(){
 
 	timer = 0 ;
 
-	game_music = 1; // 1:game1, 4:game2
+	game_music = 1; // 1:game1, 3:game2
 	reach = 0 ;
 
 	//init other vars
@@ -2526,6 +2575,8 @@ void reset(void)
 	// MODE SELECT.
 	put_update_debug(16,17, 3, "   ");
 	put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
+	put_update_debug(16,19, 8, "NOMAL   ");
+
 	while(1){
 		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
 		if(pad&PAD_UP && p1only == 0){
@@ -2561,8 +2612,9 @@ void reset(void)
 	put_update_debug(5,51, 1, itoa(rand_box2[2], &strbuf[0], 10 ));
 	put_update_debug(7,51, 1, itoa(rand_box2[3], &strbuf[0], 10 ));
 */	
+	// TIMER設定.
 	spr = 0 ;
-	spr = oam_meta_spr( 70, 135, spr, meta_right_cursor) ;
+	spr = oam_meta_spr( 70, 134, spr, meta_right_cursor) ;
 	while(1){
 		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
 		if(pad&PAD_UP&& timerSetCount<=200){
@@ -2596,10 +2648,46 @@ void reset(void)
 		}
 		if(pad&PAD_A){
 			sfx_play(5,0);
+			for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				//delay(1) ;
+			}
 			break ;
 		}
 	}
 	timer=timerSetCount;
+
+	// RULE選択.
+	spr = 0 ;
+	spr = oam_meta_spr( 70, 151, spr, meta_right_cursor) ;
+	while(1){
+		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
+		if(pad&PAD_UP){
+			isAdvanced = 0 ;
+			put_update_debug(16,19, 8, "NOMAL   ");
+			sfx_play(2,0);
+			delay(2) ;
+			for( ; pad&PAD_UP ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				//delay(1) ;
+			}
+		}
+
+		if(pad&PAD_DOWN){
+			isAdvanced = 1 ;
+			put_update_debug(16,19, 8, "ADVANCED");
+			sfx_play(2,0);
+			delay(2) ;
+			for( ; pad&PAD_DOWN ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				//delay(1) ;
+			}
+		}
+		if(pad&PAD_A){
+			sfx_play(5,0);
+			for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				//delay(1) ;
+			}
+			break ;
+		}
+	}
 	
 	oam_clear() ;
 	pal_spr((char*)bg_palettes[bgpl]);//set background palette from an array
