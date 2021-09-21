@@ -1777,13 +1777,13 @@ void printMsg(unsigned char action)
 //		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":"" );
 //		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 && frame&4? "P2:SELECT NEXT":"" );
 		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
-		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 ? "P2:SELECT NEXT":(const char*)msgBlank );
+		put_update_debug(17,28, 14, whichTurn==0 ? "P2:SELECT NEXT":(const char*)msgBlank );
 
 	}else if( action == 1 ){
 //		put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":"" );
 //		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 && frame&4?"P2:PLAYING    ":"" );
 		put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
-		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 ?"P2:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(17,28, 14, whichTurn==0 ?"P2:PLAYING    ":(const char*)msgBlank );
 		printTimer() ;
 	}
 /*
@@ -1840,13 +1840,13 @@ void procSayQuarto(){
 	for( i=0 ; i< 20; i++ ){
 		animeKomaTurn(2) ;
 
-		//x-=4 ;
+		x-=4 ;
 		spr = 0 ;
-//		spr = oam_meta_spr( 100, 80, spr, meta_quarto) ;
-//		spr = oam_meta_spr( x + 0, 80, spr, meta_quarto) ;
-//		spr = oam_meta_spr( x + 30, 60, spr, meta_quarto) ;
-//		spr = oam_meta_spr( x + 60, 80, spr, meta_quarto) ;
-//		spr = oam_meta_spr( x + 90, 100, spr, meta_quarto) ;
+		spr = oam_meta_spr( x + 120, 80, spr, meta_quarto) ;
+//		spr = oam_meta_spr( x + 60,140, spr, meta_quarto) ;
+//		spr = oam_meta_spr( x + 90, 160, spr, meta_quarto) ;
+//		spr = oam_meta_spr( x + 0, 100, spr, meta_quarto) ;
+//		spr = oam_meta_spr( x + 30, 120, spr, meta_quarto) ;
 		cycleSprColor() ;
 		frame++ ;
 	}
@@ -1893,8 +1893,8 @@ unsigned char procAutoChoose( unsigned char isCheckOnly )
 
 	for( q=0; q<2; q++){
 		for( r=0; r<8; r++){
-//			if( isVsCPU == 1 && whichTurn==0 && frame & 16 ){sfx_play(3,1) ; }
-//			frame++;
+			if( isVsCPU == 1 && whichTurn==0 && frame%32==0 ){sfx_play(8,1) ; }
+			frame++;
 
 			if( koma_exist[rand_box3[q]][rand_box4[r]] == 1 ){
 
@@ -1938,7 +1938,7 @@ void preSetStageReset( unsigned char x, unsigned char y )
 }
 unsigned char preQuartoCheck(unsigned char x, unsigned char y )
 {
-	if( isVsCPU == 1 && whichTurn==0 && frame & 16 ){sfx_play(3,1) ;}
+	if( isVsCPU == 1 && whichTurn==0 && frame%32==0 ){sfx_play(8,1) ;}
 	frame++; 
 
 	tmp3 = 0 ;
@@ -1955,6 +1955,9 @@ unsigned char dieCheck(){
 	for( k = 0; k < 4; k++ ){
 		for( l = 0; l < 4; l++ ){
 			if( stage_stat[k][l][_KOMA_TYPE] == 0 ){
+				if( isVsCPU == 1 && whichTurn==0 && frame%32==0 ){sfx_play(8,1) ; }
+				frame++;
+
 				if( preQuartoCheck( k, l ) == 1 ){
 					return 1 ;
 				}
@@ -2238,6 +2241,8 @@ void autoSetXY()
 {
 	unsigned char k2 ;
 	unsigned char l2 ;
+	unsigned char lastX ;
+	unsigned char lastY ;
 	m = 0 ;
 	n = 0 ;
 	dbgcnt = 0 ;
@@ -2255,14 +2260,14 @@ void autoSetXY()
 			if( checkPutPos(x/8, y/8) == 1 ){
 				continue ;
 			}
+			lastX = x ;
+			lastY = y ;
 
 			if( isVsCPU == 1 && whichTurn==0 && preQuartoCheck(o, p) == 1 ){
 				return ;
 //				continue ; 
 			}
 
-			m = x ;
-			n = y ;
 			// 次渡して負ける場所かのチェック
 			preSetStage(o,p) ;
 			if( isVsCPU == 1 && whichTurn==0 && procAutoChoose(1) == 1 ){
@@ -2271,16 +2276,25 @@ void autoSetXY()
 			}
 			preSetStageReset(o,p) ;
 			dbgcnt = 1 ;
-			break ;
-			//continue ;
+
+			m = x ;
+			n = y ;
+
+			//break ;
+			continue ;
 
 			//return ;
 		}
-		if( dbgcnt == 1 ){break ;}
+		//if( dbgcnt == 1 ){break ;}
 	}
 	// 仮保存の座標を戻す.
-	x = m ;
-	y = n ;
+	if( m == 0 && n == 0 ){
+		x = lastX ;
+		y = lastY ;
+	}else{
+		x = m ;
+		y = n ;
+	}
 	checkPutPos(x/8, y/8) ;
 }
 
@@ -2575,7 +2589,7 @@ void reset(void)
 	// MODE SELECT.
 	put_update_debug(16,17, 3, "   ");
 	put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
-	put_update_debug(16,19, 8, "NOMAL   ");
+	put_update_debug(16,19, 8, "NORMAL  ");
 
 	while(1){
 		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
