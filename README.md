@@ -8,7 +8,7 @@ This is a NES game created with cc65.
 ## Usage
 Please use the following commands to make it up.
 ```
-make clean quarto_plus
+make clean quarto
 ```
 
 
