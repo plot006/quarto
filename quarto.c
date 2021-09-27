@@ -1816,9 +1816,9 @@ void loseAnime()
 	pal_bg(palette_jeesus);
 	ppu_on_all();//enable rendering
 
-	//music_play(3) ;
-	sfx_play(3,0);
-	delay(60);
+	music_play(4) ;
+	//sfx_play(3,0);
+	delay(180);
 	music_stop() ;
 	bank_bg(0);
 
@@ -1893,9 +1893,6 @@ unsigned char procAutoChoose( unsigned char isCheckOnly )
 
 	for( q=0; q<2; q++){
 		for( r=0; r<8; r++){
-			if( isVsCPU == 1 && whichTurn==0 && frame%32==0 ){sfx_play(8,1) ; }
-			frame++;
-
 			if( koma_exist[rand_box3[q]][rand_box4[r]] == 1 ){
 
 				selBW = rand_box3[q];
@@ -1938,9 +1935,6 @@ void preSetStageReset( unsigned char x, unsigned char y )
 }
 unsigned char preQuartoCheck(unsigned char x, unsigned char y )
 {
-	if( isVsCPU == 1 && whichTurn==0 && frame%32==0 ){sfx_play(8,1) ;}
-	frame++; 
-
 	tmp3 = 0 ;
 	preSetStage(x,y) ;
 	if( checkQuarto() == 1){
@@ -1955,15 +1949,22 @@ unsigned char dieCheck(){
 	for( k = 0; k < 4; k++ ){
 		for( l = 0; l < 4; l++ ){
 			if( stage_stat[k][l][_KOMA_TYPE] == 0 ){
-				if( isVsCPU == 1 && whichTurn==0 && frame%32==0 ){sfx_play(8,1) ; }
-				frame++;
-
+				if( isVsCPU == 1 && whichTurn==0 ){
+					if( frame%3==0 ){
+						pal_spr_bright(0);
+					}else{
+						pal_spr_bright(4);
+					}
+				}
+				frame++ ;
 				if( preQuartoCheck( k, l ) == 1 ){
+					pal_spr_bright(4);
 					return 1 ;
 				}
 			}
 		}
 	}
+	pal_spr_bright(4);
 	return 0 ;
 }
 
@@ -2249,6 +2250,13 @@ void autoSetXY()
 	for( k2=0; k2<4; k2++){
 		o = rand_box1[k2] ;
 		for( l2=0; l2<4; l2++){
+			if( frame%3==0 ){
+				pal_spr_bright(0);
+			}else{
+				pal_spr_bright(4);
+			}
+			frame++ ;
+
 			p = rand_box2[l2] ;
 
 			x = (o*32)-(p*32)+115+16 ;
@@ -2296,6 +2304,7 @@ void autoSetXY()
 		y = n ;
 	}
 	checkPutPos(x/8, y/8) ;
+	pal_spr_bright(4);
 }
 
 void procMoveKoma(void)
@@ -2742,8 +2751,9 @@ void reset(void)
 		sfx_play(2,1);
 		// P2
 //		putStockKoma(28-(x*4),26,0x55, (unsigned char*)koma_list[0][1][7-x]) ;
+		putStockKoma(28-(x*4),4,0x55, (unsigned char*)koma_list[0][1][7-x]) ;
 		//if( x == 4 ){continue; }
-		putStockKoma(x*4,4,0x55, (unsigned char*)koma_list[0][1][x]) ;
+//		putStockKoma(x*4,4,0x55, (unsigned char*)koma_list[0][1][x]) ;
 
 
 	}
