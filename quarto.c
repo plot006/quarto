@@ -1776,14 +1776,14 @@ void printMsg(unsigned char action)
 	if( action == 0 ){
 //		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":"" );
 //		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 && frame&4? "P2:SELECT NEXT":"" );
-		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
-		put_update_debug(17,28, 14, whichTurn==0 ? "P2:SELECT NEXT":(const char*)msgBlank );
+		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":"P1:           " );
+		put_update_debug(17,28, 14, whichTurn==0 ? "P2:SELECT NEXT":"P2:           " );
 
 	}else if( action == 1 ){
 //		put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":"" );
 //		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 && frame&4?"P2:PLAYING    ":"" );
-		put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
-		put_update_debug(17,28, 14, whichTurn==0 ?"P2:PLAYING    ":(const char*)msgBlank );
+		put_update_debug(1,28, 14, whichTurn!=0?"P1:THINKING   ":"P1:           " );
+		put_update_debug(17,28, 14, whichTurn==0 ?"P2:THINKING   ":"P2:           " );
 		printTimer() ;
 	}
 /*
@@ -1797,12 +1797,12 @@ void printMsg(unsigned char action)
 void initLife()
 {
 	put_update_debug(1,27, 3, "   " );
-	put_update_debug(25,27, 3,  "   " );
+	put_update_debug(17,27, 3,  "   " );
 }
 void printLife()
 {
 	put_update_debug(1,27, 3, err[1] == 0 ? "   ": err[1] == 1 ?"X  ": err[1] == 2 ?"XX ": "XXX" );
-	put_update_debug(25,27, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
+	put_update_debug(17,27, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
 }
 void loseAnime()
 {

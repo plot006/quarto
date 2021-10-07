@@ -10,7 +10,7 @@
 	.importzp	sp, sreg, regsave, regbank
 	.importzp	tmp1, tmp2, tmp3, tmp4, ptr1, ptr2, ptr3, ptr4
 	.macpack	longbranch
-	.dbg		file, "quarto.c", 66652, 1632287574
+	.dbg		file, "quarto.c", 66632, 1633059020
 	.dbg		file, "lib/neslib.h", 8684, 1631688193
 	.dbg		file, "resource/test2_blank.h", 156, 1631791396
 	.dbg		file, "resource/open_name.h", 1681, 1631791333
@@ -2611,44 +2611,50 @@ _koma_type:
 	.byte	$2D
 	.byte	$1E
 	.byte	$0F
-S0009:
-	.byte	$50,$32,$3A,$50,$4C,$41,$59,$49,$4E,$47,$20,$20,$20,$20,$00
+S000D:
+	.byte	$50,$32,$3A,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$00
+S000C:
+	.byte	$50,$32,$3A,$54,$48,$49,$4E,$4B,$49,$4E,$47,$20,$20,$20,$00
+S000B:
+	.byte	$50,$31,$3A,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$00
+S000A:
+	.byte	$50,$31,$3A,$54,$48,$49,$4E,$4B,$49,$4E,$47,$20,$20,$20,$00
+S0009	:=	S000D+0
 S0008:
-	.byte	$50,$31,$3A,$50,$4C,$41,$59,$49,$4E,$47,$20,$20,$20,$20,$00
-S0007:
 	.byte	$50,$32,$3A,$53,$45,$4C,$45,$43,$54,$20,$4E,$45,$58,$54,$00
+S0007	:=	S000B+0
 S0006:
 	.byte	$50,$31,$3A,$53,$45,$4C,$45,$43,$54,$20,$4E,$45,$58,$54,$00
 S0002:
 	.byte	$50,$52,$45,$53,$53,$20,$42,$55,$54,$54,$4F,$4E,$21,$00
 S0003:
 	.byte	$30,$30,$36,$20,$2A,$20,$32,$30,$32,$31,$00
-S0019:
+S001D:
 	.byte	$4E,$4F,$4D,$41,$4C,$20,$20,$20,$00
-S001A:
+S001E:
 	.byte	$41,$44,$56,$41,$4E,$43,$45,$44,$00
-S0015:
+S0019:
 	.byte	$4E,$4F,$52,$4D,$41,$4C,$20,$20,$00
-S0005	:=	S0009+11
-S0017	:=	S0009+11
-S0016	:=	S0009+11
-S0004	:=	S0009+11
-S0014	:=	S0009+11
-S000A	:=	S0009+11
-S000B	:=	S0009+11
-S000C	:=	S0009+11
-S000D:
-	.byte	$58,$20,$20,$00
-S000E:
-	.byte	$58,$58,$20,$00
-S000F:
-	.byte	$58,$58,$58,$00
-S0010	:=	S0009+11
-S0011	:=	S000D+0
-S0012	:=	S000E+0
-S0013	:=	S000F+0
-S0018:
+S001C:
 	.byte	$4F,$46,$46,$00
+S001B	:=	S000D+11
+S001A	:=	S000D+11
+S0004	:=	S000D+11
+S0018	:=	S000D+11
+S000E	:=	S000D+11
+S000F	:=	S000D+11
+S0010	:=	S000D+11
+S0011:
+	.byte	$58,$20,$20,$00
+S0012:
+	.byte	$58,$58,$20,$00
+S0013:
+	.byte	$58,$58,$58,$00
+S0014	:=	S000D+11
+S0015	:=	S0011+0
+S0016	:=	S0012+0
+S0017	:=	S0013+0
+S0005	:=	S000D+11
 
 .segment	"BSS"
 
@@ -2872,8 +2878,8 @@ L0076:	adc     #<(_bg_palettes)
 	lda     #$03
 	dey
 	sta     (sp),y
-	lda     #<(S0014)
-	ldx     #>(S0014)
+	lda     #<(S0018)
+	ldx     #>(S0018)
 	jsr     _put_update_debug
 ;
 ; put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
@@ -2920,8 +2926,8 @@ L0076:	adc     #<(_bg_palettes)
 	lda     #$08
 	dey
 	sta     (sp),y
-	lda     #<(S0015)
-	ldx     #>(S0015)
+	lda     #<(S0019)
+	ldx     #>(S0019)
 	jsr     _put_update_debug
 ;
 ; pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
@@ -3153,8 +3159,8 @@ L002A:	jsr     decsp3
 	lda     #$03
 	dey
 	sta     (sp),y
-	lda     #<(S0016)
-	ldx     #>(S0016)
+	lda     #<(S001A)
+	ldx     #>(S001A)
 	jsr     _put_update_debug
 ;
 ; put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
@@ -3263,8 +3269,8 @@ L0075:	sta     _timerSetCount
 	lda     #$03
 	dey
 	sta     (sp),y
-	lda     #<(S0017)
-	ldx     #>(S0017)
+	lda     #<(S001B)
+	ldx     #>(S001B)
 	jsr     _put_update_debug
 ;
 ; put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
@@ -3340,8 +3346,8 @@ L00A7:	lda     _pad
 	lda     #$03
 	dey
 	sta     (sp),y
-	lda     #<(S0018)
-	ldx     #>(S0018)
+	lda     #<(S001C)
+	ldx     #>(S001C)
 	jsr     _put_update_debug
 ;
 ; sfx_play(2,0);
@@ -3460,8 +3466,8 @@ L00B7:	jsr     _pad_poll
 	lda     #$08
 	dey
 	sta     (sp),y
-	lda     #<(S0019)
-	ldx     #>(S0019)
+	lda     #<(S001D)
+	ldx     #>(S001D)
 	jsr     _put_update_debug
 ;
 ; sfx_play(2,0);
@@ -3522,8 +3528,8 @@ L00BD:	lda     _pad
 	lda     #$08
 	dey
 	sta     (sp),y
-	lda     #<(S001A)
-	ldx     #>(S001A)
+	lda     #<(S001E)
+	ldx     #>(S001E)
 	jsr     _put_update_debug
 ;
 ; sfx_play(2,0);
@@ -10567,7 +10573,7 @@ L0008:	ldy     #$00
 	lda     (sp),y
 	bne     L000E
 ;
-; put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":(const char*)msgBlank );
+; put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":"P1:           " );
 ;
 	.dbg	line, "quarto.c", 1779
 	jsr     decsp3
@@ -10585,11 +10591,11 @@ L0008:	ldy     #$00
 	lda     #<(S0006)
 	ldx     #>(S0006)
 	jmp     L0004
-L0003:	lda     #<(_msgBlank)
-	ldx     #>(_msgBlank)
+L0003:	lda     #<(S0007)
+	ldx     #>(S0007)
 L0004:	jsr     _put_update_debug
 ;
-; put_update_debug(17,28, 14, whichTurn==0 ? "P2:SELECT NEXT":(const char*)msgBlank );
+; put_update_debug(17,28, 14, whichTurn==0 ? "P2:SELECT NEXT":"P2:           " );
 ;
 	.dbg	line, "quarto.c", 1780
 	jsr     decsp3
@@ -10604,11 +10610,11 @@ L0004:	jsr     _put_update_debug
 	sta     (sp),y
 	lda     _whichTurn
 	bne     L0005
-	lda     #<(S0007)
-	ldx     #>(S0007)
+	lda     #<(S0008)
+	ldx     #>(S0008)
 	jmp     L0006
-L0005:	lda     #<(_msgBlank)
-	ldx     #>(_msgBlank)
+L0005:	lda     #<(S0009)
+	ldx     #>(S0009)
 L0006:	jsr     _put_update_debug
 ;
 ; }else if( action == 1 ){
@@ -10619,7 +10625,7 @@ L000E:	lda     (sp),y
 	cmp     #$01
 	bne     L0008
 ;
-; put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":(const char*)msgBlank );
+; put_update_debug(1,28, 14, whichTurn!=0?"P1:THINKING   ":"P1:           " );
 ;
 	.dbg	line, "quarto.c", 1785
 	jsr     decsp3
@@ -10634,14 +10640,14 @@ L000E:	lda     (sp),y
 	sta     (sp),y
 	lda     _whichTurn
 	beq     L0009
-	lda     #<(S0008)
-	ldx     #>(S0008)
+	lda     #<(S000A)
+	ldx     #>(S000A)
 	jmp     L000A
-L0009:	lda     #<(_msgBlank)
-	ldx     #>(_msgBlank)
+L0009:	lda     #<(S000B)
+	ldx     #>(S000B)
 L000A:	jsr     _put_update_debug
 ;
-; put_update_debug(17,28, 14, whichTurn==0 ?"P2:PLAYING    ":(const char*)msgBlank );
+; put_update_debug(17,28, 14, whichTurn==0 ?"P2:THINKING   ":"P2:           " );
 ;
 	.dbg	line, "quarto.c", 1786
 	jsr     decsp3
@@ -10656,11 +10662,11 @@ L000A:	jsr     _put_update_debug
 	sta     (sp),y
 	lda     _whichTurn
 	bne     L000B
-	lda     #<(S0009)
-	ldx     #>(S0009)
+	lda     #<(S000C)
+	ldx     #>(S000C)
 	jmp     L000C
-L000B:	lda     #<(_msgBlank)
-	ldx     #>(_msgBlank)
+L000B:	lda     #<(S000D)
+	ldx     #>(S000D)
 L000C:	jsr     _put_update_debug
 ;
 ; printTimer() ;
@@ -10702,15 +10708,15 @@ L0008:	jmp     incsp1
 	lda     #$03
 	dey
 	sta     (sp),y
-	lda     #<(S000A)
-	ldx     #>(S000A)
+	lda     #<(S000E)
+	ldx     #>(S000E)
 	jsr     _put_update_debug
 ;
-; put_update_debug(25,27, 3,  "   " );
+; put_update_debug(17,27, 3,  "   " );
 ;
 	.dbg	line, "quarto.c", 1800
 	jsr     decsp3
-	lda     #$19
+	lda     #$11
 	ldy     #$02
 	sta     (sp),y
 	lda     #$1B
@@ -10719,8 +10725,8 @@ L0008:	jmp     incsp1
 	lda     #$03
 	dey
 	sta     (sp),y
-	lda     #<(S000B)
-	ldx     #>(S000B)
+	lda     #<(S000F)
+	ldx     #>(S000F)
 	jmp     _put_update_debug
 
 	.dbg	line
@@ -10754,30 +10760,30 @@ L0008:	jmp     incsp1
 	sta     (sp),y
 	lda     _err+1
 	bne     L000E
-	lda     #<(S000C)
-	ldx     #>(S000C)
+	lda     #<(S0010)
+	ldx     #>(S0010)
 	jmp     L0007
 L000E:	lda     _err+1
 	cmp     #$01
 	bne     L000F
-	lda     #<(S000D)
-	ldx     #>(S000D)
+	lda     #<(S0011)
+	ldx     #>(S0011)
 	jmp     L0007
 L000F:	lda     _err+1
 	cmp     #$02
 	bne     L0006
-	lda     #<(S000E)
-	ldx     #>(S000E)
+	lda     #<(S0012)
+	ldx     #>(S0012)
 	jmp     L0007
-L0006:	lda     #<(S000F)
-	ldx     #>(S000F)
+L0006:	lda     #<(S0013)
+	ldx     #>(S0013)
 L0007:	jsr     _put_update_debug
 ;
-; put_update_debug(25,27, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
+; put_update_debug(17,27, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
 ;
 	.dbg	line, "quarto.c", 1805
 	jsr     decsp3
-	lda     #$19
+	lda     #$11
 	ldy     #$02
 	sta     (sp),y
 	lda     #$1B
@@ -10788,23 +10794,23 @@ L0007:	jsr     _put_update_debug
 	sta     (sp),y
 	lda     _err
 	bne     L0010
-	lda     #<(S0010)
-	ldx     #>(S0010)
+	lda     #<(S0014)
+	ldx     #>(S0014)
 	jmp     L000D
 L0010:	lda     _err
 	cmp     #$01
 	bne     L0011
-	lda     #<(S0011)
-	ldx     #>(S0011)
+	lda     #<(S0015)
+	ldx     #>(S0015)
 	jmp     L000D
 L0011:	lda     _err
 	cmp     #$02
 	bne     L000C
-	lda     #<(S0012)
-	ldx     #>(S0012)
+	lda     #<(S0016)
+	ldx     #>(S0016)
 	jmp     L000D
-L000C:	lda     #<(S0013)
-	ldx     #>(S0013)
+L000C:	lda     #<(S0017)
+	ldx     #>(S0017)
 L000D:	jmp     _put_update_debug
 
 	.dbg	line
