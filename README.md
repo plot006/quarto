@@ -14,6 +14,6 @@ make clean quarto
 
 ## How to play
 
-Basically the same as QUARTO rules.
+Basically the same as QUARTO [rules](https://www.ultraboardgames.com/quarto/game-rules.php).
 
 Press the Start button when declaring QUARTO.
