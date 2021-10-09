@@ -49,8 +49,8 @@ static unsigned char timerSetCount;
 
 static unsigned char set_posh;
 static unsigned char set_posl;
-static unsigned char whichTurn;
-static unsigned char selBW;
+static unsigned char whichTurn,bak_whichTurn;
+static unsigned char selBW,bak_selBW;
 
 static unsigned char pad,spr;
 
@@ -82,7 +82,7 @@ static unsigned char p1only;
 static unsigned char koma_pos[2];
 static unsigned char koma_x[2];
 static unsigned char koma_y[2];
-static unsigned char ChooseKoma;
+static unsigned char ChooseKoma,bak_ChooseKoma;
 static unsigned char koma_exist[2][8];
 //static unsigned char tmp_line[8];
 
@@ -1649,7 +1649,7 @@ unsigned char checkQuarto()
 	return 0 ;
 }
 
-void moveKoma(unsigned char src_x, unsigned char src_y, unsigned char dst_x, unsigned char dst_y, unsigned char* meta )
+moveKoma(unsigned char src_x, unsigned char src_y, unsigned char dst_x, unsigned char dst_y, unsigned char* meta )
 {
 	// 2単位で増減するので、src,dstどこかが奇数となると無限ループする.
 	koma_x[0] = src_x % 2 == 0 ? src_x : src_x-1 ;
@@ -1945,35 +1945,49 @@ unsigned char preQuartoCheck(unsigned char x, unsigned char y )
 	preSetStageReset(x,y) ;
 	return tmp3 ;
 }
+void blinkEnemyKoma(unsigned char action)
+{
+	if( action == 0 ){
+		oam_clear() ;
+	}else{
+		if( bak_whichTurn == 1 ){ return ; }
+		oam_meta_spr( bak_whichTurn!=0?24:198, 70, 0, (unsigned char*)koma_list[0][bak_selBW==0?1:0][bak_ChooseKoma] ) ;
+	}
+}
 unsigned char dieCheck(){
 	for( k = 0; k < 4; k++ ){
 		for( l = 0; l < 4; l++ ){
 			if( stage_stat[k][l][_KOMA_TYPE] == 0 ){
 				if( isVsCPU == 1 && whichTurn==0 ){
-					if( frame%3==0 ){
-						pal_spr_bright(0);
+					if( frame&2 ){
+						//pal_spr_bright(0);
+						blinkEnemyKoma(0) ;
 					}else{
-						pal_spr_bright(4);
+						//pal_spr_bright(4);
+						blinkEnemyKoma(1) ;
 					}
 				}
 				frame++ ;
 				if( preQuartoCheck( k, l ) == 1 ){
-					pal_spr_bright(4);
+					//pal_spr_bright(4);
+					blinkEnemyKoma(1) ;
 					return 1 ;
 				}
 			}
 		}
 	}
-	pal_spr_bright(4);
+	//pal_spr_bright(4);
+	blinkEnemyKoma(1) ;
 	return 0 ;
 }
-
 void eventChooseButtonA(void)
 {
 	koma_exist[selBW][ChooseKoma] = 0 ;
 	putStockKoma((ChooseKoma*4),selBW==0?0:4, selBW==0?0x00:0xFF,  (unsigned char*)koma_list[0][0][ChooseKoma]) ;
 
 	oam_clear() ;
+	//pal_spr((char*)bg_palettes[bgpl]);//set background palette from an array
+
 	//spr = 0 ;
 	x = ChooseKoma*32 ;
 	y = 10+selBW*32 ;
@@ -2090,6 +2104,7 @@ void procChooseKoma(void)
 				sfx_play(3,0);
 				continue ;
 			}
+			
 			eventChooseButtonA() ;
 			return ;
 			
@@ -2126,6 +2141,10 @@ void procChooseKoma(void)
 		}
 		if( autoChoose==1){
 			oam_clear() ;
+			bak_selBW = selBW;
+			bak_ChooseKoma = ChooseKoma;
+			bak_whichTurn = 1 ;
+
 			// 自動コマ選択.
 			seedRandBox() ;
 
@@ -2218,7 +2237,9 @@ eventMoveButtonA()
 	stage_stat[x_index][y_index][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
 	stage_stat[x_index][y_index][_CHOOSE_KOMA] = ChooseKoma ;
 	stage_stat[x_index][y_index][_SEL_BW] = selBW ;
+
 	oam_clear() ;
+	//pal_spr((char*)bg_palettes[bgpl]);//set background palette from an array
 	
 	//putStageKomaColor( x/8, y/8, selBW==0?0xAA:0x55 ) ;
 	
@@ -2250,10 +2271,12 @@ void autoSetXY()
 	for( k2=0; k2<4; k2++){
 		o = rand_box1[k2] ;
 		for( l2=0; l2<4; l2++){
-			if( frame%3==0 ){
-				pal_spr_bright(0);
+			if( frame&2 ){
+				blinkEnemyKoma(0) ;
+				//pal_spr_bright(0);
 			}else{
-				pal_spr_bright(4);
+				blinkEnemyKoma(1) ;
+				//pal_spr_bright(4);
 			}
 			frame++ ;
 
@@ -2272,6 +2295,8 @@ void autoSetXY()
 			lastY = y ;
 
 			if( isVsCPU == 1 && whichTurn==0 && preQuartoCheck(o, p) == 1 ){
+				//pal_spr_bright(4);
+				blinkEnemyKoma(1) ;
 				return ;
 //				continue ; 
 			}
@@ -2304,7 +2329,8 @@ void autoSetXY()
 		y = n ;
 	}
 	checkPutPos(x/8, y/8) ;
-	pal_spr_bright(4);
+	//pal_spr_bright(4);
+	blinkEnemyKoma(1) ;
 }
 
 void procMoveKoma(void)
@@ -2422,6 +2448,9 @@ void procMoveKoma(void)
 			continue ;
 		}
 		if( autoChoose==1){
+			bak_selBW = selBW;
+			bak_ChooseKoma = ChooseKoma;
+			bak_whichTurn = whichTurn ;
 			// 自動コマ配置.
 			if( isVsCPU == 1 && whichTurn==0 && checkQuarto() == 1 ){
 				procSayQuarto() ;
@@ -2555,8 +2584,32 @@ void initVal(){
 	selBW = 0;
 	koma_pos[0]=3;
 	koma_pos[1]=1;
+
+	i=0;
+	j=0;
+	k=0;
+	l=0;
+	m=0;
+	n=0;
+	o=0;
+	p=0;
+
 	x=0;
 	y=0;
+	tmp_x=0;
+	tmp_y=0;
+
+	x_index=0;
+	y_index=0;
+
+	set_posh=0;
+	set_posl=0;
+
+	pad=0;
+	spr=0;
+
+	calc=0;
+
 	koma_x[0] = 72 ;
 	koma_y[0] = 122 ;
 	koma_x[1] = 152 ;
@@ -2570,6 +2623,9 @@ void initVal(){
 	//init other vars
 	
 	tmp = 0 ;	//collision flag
+	tmp2 = 0 ;
+	tmp3 = 0 ;
+	tmp4 = 0 ;
 	frame = 0 ;	//frame counter
 
 	for( i=0; i < 40; i++ ){
