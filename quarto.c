@@ -94,6 +94,7 @@ static unsigned char isVsCPU;
 static unsigned char isAdvanced;
 
 static unsigned char attr_stat[40];
+static unsigned char attr_buf[8][3];
 
 static unsigned char rand_box1[4] ;
 static unsigned char rand_box2[4] ;
@@ -924,7 +925,7 @@ void put_update_debug(unsigned char x, unsigned char y, unsigned char len, const
 		if(!*str) break;
 		update_debug[3+dbgcnt]=(*str++)-0x20 ;//fill row buffer with random tiles
 	}
-	ppu_wait_frame();
+	ppu_wait_nmi();
 	set_vram_update(0);
 }
 
@@ -1319,12 +1320,23 @@ void getStagePos(unsigned char posx, unsigned char posy)
 	set_posy = posy ;
 	
 }
+void attr_share(unsigned char action)
+{
+	if( action == 0 ){
+		attr_buf[3][2] = attr_stat[3] ;
+		attr_buf[4][2] = attr_stat[4] ;
+	}else{
+		attr_stat[3] = attr_buf[3][2] ;
+		attr_stat[4] = attr_buf[4][2] ;
+	}
+}
+
 void getAttrPos(unsigned char posx, unsigned char posy)
 {
 	set_posh = 0x23 ;
 	set_posl = 0xC0 + (0x08*(posy/4)) + posx/4 ;
-	//set_posl = 0xC0 ;
 }
+
 
 #define attr_pos_offset 0x08
 void putStageKomaColor(unsigned char color)
@@ -1362,23 +1374,51 @@ void putStageKomaColor(unsigned char color)
 
 			attr_stat[attr_pos[x_index][y_index][i]-0xC8] = tmp ;
 		}
-		ppu_wait_frame();
+		attr_share(0) ;
+		ppu_wait_nmi();
 	}
 }
-
 void putKomaColor(unsigned char posx, unsigned char posy, unsigned char color )
 {
+	// 上ブロック下段.
 	getAttrPos(posx, posy) ;
 	update_koma_color[0]=set_posh|NT_UPD_HORZ;
 	update_koma_color[1]=set_posl;
 	update_koma_color[2]=1;
 	update_koma_color[4]=NT_UPD_EOF;
 	set_vram_update(update_koma_color);
-	
-	update_koma_color[3] = color;
 
-	ppu_wait_frame();
-	
+	tmp = attr_buf[posx/4][(posy-2)/4] & 0b00001111 ;
+	tmp2 = color&0b11110000 ;
+	tmp = tmp | tmp2 ;
+	attr_buf[posx/4][(posy-2)/4] = tmp ;
+
+	update_koma_color[3] = tmp ;
+
+	ppu_wait_nmi();
+/*
+	ppu_off() ;
+	vram_adr(NAMETABLE_A);//set VRAM address
+	vram_read( &tmp, 1 ) ;
+	ppu_on_all() ;
+*/
+	// 下ブロック上段.
+	getAttrPos(posx, posy+2) ;
+	update_koma_color[0]=set_posh|NT_UPD_HORZ;
+	update_koma_color[1]=set_posl;
+	update_koma_color[2]=1;
+	update_koma_color[4]=NT_UPD_EOF;
+	set_vram_update(update_koma_color);
+
+	tmp = attr_buf[posx/4][((posy-2)/4)+1] & 0b11110000 ;
+	tmp2 =  color&0b00001111 ;
+	tmp = tmp | tmp2 ;
+	attr_buf[posx/4][((posy-2)/4)+1] = tmp ;
+
+	update_koma_color[3] = tmp ;
+	ppu_wait_nmi();
+
+	attr_share(1) ;
 }
 unsigned char checkPutPos(unsigned char posx, unsigned char posy)
 {
@@ -1411,20 +1451,7 @@ void putStockKoma(unsigned char posx, unsigned char posy, unsigned char color, u
 			update_koma[7*i+j+3] = meta[4*(4*i+j)+2] ;
 		}
 	}
-	ppu_wait_frame();
-	// 手持ちコマ用
-/*
-	if( posy == 26 ){
-		tmp = color & 0b11110000 | 0b00000101 ;
-		//put_update_debug(NTADR_A(1,24), 3, itoa(posx, &strbuf[0], 10 ));
-		//put_update_debug(NTADR_A(4,24), 3, itoa(posy, &strbuf[0], 10 ));
-		//put_update_debug(NTADR_A(7,24), 12, itoa(tmp, &strbuf[0], 16 ));
-		putKomaColor( posx, posy, tmp ) ;
-		putKomaColor( posx, posy+2, color ) ;
-	}else{
-		putKomaColor( posx, posy, color) ;
-	}
-*/
+	ppu_wait_nmi();
 	putKomaColor( posx, posy, color) ;
 }
 
@@ -1444,7 +1471,7 @@ void printBar(unsigned int adr, unsigned char action )
 			else { update_debug[i+3] = action == 1 ? 0xDE: 0xEE ; }
 		}
 	}
-	ppu_wait_frame();
+	ppu_wait_nmi();
 }
 
 /*
@@ -1501,7 +1528,7 @@ void putKoma(unsigned char posx, unsigned char posy, unsigned char color, unsign
 			}
 		}
 	}
-	ppu_wait_frame();
+	ppu_wait_nmi();
 }
 
 void printCursor()
@@ -1509,7 +1536,8 @@ void printCursor()
 	spr = 0 ;
 //	spr = oam_meta_spr( ChooseKoma*32+8, 30+(selBW*170), spr, selBW==0 ? cursor : cursor2  ) ;
 //	spr = oam_meta_spr( ChooseKoma*32+8, selBW==0? 30 : 30+170, spr, selBW==0 ? meta_pos1 : meta_pos2  ) ;
-	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 28-frame%6 : 60-frame%6, spr, selBW==0 ? meta_pos1_reverse : meta_pos2_reverse) ;
+//	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 28-frame%6 : 60-frame%6, spr, selBW==0 ? meta_pos1_reverse : meta_pos2_reverse) ;
+	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 42-frame%6 : 76-frame%6, spr, selBW==0 ? meta_pos1_reverse : meta_pos2_reverse) ;
 	//if( frame&2 ){ oam_hide_rest(spr) ; return ; }
 //	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 0-frame%6 : 202+frame%6, spr, selBW==0 ? meta_pos1 : meta_pos2  ) ;
 
@@ -1660,7 +1688,7 @@ moveKoma(unsigned char src_x, unsigned char src_y, unsigned char dst_x, unsigned
 	while(1){
 		koma_frame++ ;
 		if( koma_frame % 5 != 0 ){ continue ; }
-		//ppu_wait_frame();
+		//ppu_wait_nmi();
 		spr = 0 ;
 		spr = oam_meta_spr( koma_x[0], koma_y[0], spr, meta ) ;
 
@@ -1983,7 +2011,7 @@ unsigned char dieCheck(){
 void eventChooseButtonA(void)
 {
 	koma_exist[selBW][ChooseKoma] = 0 ;
-	putStockKoma((ChooseKoma*4),selBW==0?0:4, selBW==0?0x00:0xFF,  (unsigned char*)koma_list[0][0][ChooseKoma]) ;
+	putStockKoma((ChooseKoma*4),selBW==0?2:6, selBW==0?0x00:0xFF,  (unsigned char*)koma_list[0][0][ChooseKoma]) ;
 
 	oam_clear() ;
 	//pal_spr((char*)bg_palettes[bgpl]);//set background palette from an array
@@ -1993,7 +2021,7 @@ void eventChooseButtonA(void)
 	y = 10+selBW*32 ;
 	moveKoma( x, y, whichTurn==0?24:200, 70, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
 	//spr = oam_meta_spr( x, y, spr, koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
-	ppu_wait_frame();	// wait for next TV frame
+	ppu_wait_nmi();	// wait for next TV frame
 	
 	sfx_play(5,1);
 
@@ -2028,7 +2056,7 @@ void procChooseKoma(void)
 			ChooseKoma = ChooseKoma <= 0 ? 7 : --ChooseKoma ;
 			printCursor() ;
 			for( ;pad&PAD_LEFT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-				ppu_wait_frame();	// wait for next TV frame
+				ppu_wait_nmi();	// wait for next TV frame
 				frame++ ;
 				timerSet() ;
 				printCursor() ;
@@ -2041,7 +2069,7 @@ void procChooseKoma(void)
 				for( i = 0; i < 25 &&  pad&PAD_LEFT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 					i++ ;
 					//delay(1) ;
-					ppu_wait_frame();	// wait for next TV frame
+					ppu_wait_nmi();	// wait for next TV frame
 					frame++ ;
 					timerSet() ;
 				}
@@ -2057,7 +2085,7 @@ void procChooseKoma(void)
 			ChooseKoma = ChooseKoma >= 7 ? 0 : ++ChooseKoma ;
 			printCursor() ;
 			for( ;pad&PAD_RIGHT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-				ppu_wait_frame();	// wait for next TV frame
+				ppu_wait_nmi();	// wait for next TV frame
 				frame++ ;
 				timerSet() ;
 				printCursor() ;
@@ -2070,7 +2098,7 @@ void procChooseKoma(void)
 				for( i = 0; i < 25 && pad&PAD_RIGHT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
 					i++ ;
 					//delay(1) ;
-					ppu_wait_frame();	// wait for next TV frame
+					ppu_wait_nmi();	// wait for next TV frame
 					frame++ ;
 					timerSet() ;
 				}
@@ -2164,7 +2192,7 @@ void procChooseKoma(void)
 			
 		}
 
-		ppu_wait_frame();	// wait for next TV frame
+		ppu_wait_nmi();	// wait for next TV frame
 		frame++;
 	}
 }
@@ -2382,7 +2410,7 @@ void procMoveKoma(void)
 				sfx_play(3,0);
 				
 				for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-					//ppu_wait_frame();
+					//ppu_wait_nmi();
 					//frame++ ;
 					//delay(1) ;
 				}
@@ -2485,7 +2513,7 @@ void procMoveKoma(void)
 			
 		}
 		
-		ppu_wait_frame();	// wait for next TV frame
+		ppu_wait_nmi();	// wait for next TV frame
 		frame++;
 
 		oam_clear() ;
@@ -2533,7 +2561,7 @@ void procCheckQuarto(){
 			}
 
 			if( frame & 2 ){
-				spr = oam_meta_spr( whichTurn!=0?10:190 ,70, spr, whichTurn!=0?meta_p1win:meta_p2win);
+				spr = oam_meta_spr( whichTurn!=0?10:190 ,80, spr, whichTurn!=0?meta_p1win:meta_p2win);
 			}else{ 
 				oam_hide_rest(spr) ; 
 			}
@@ -2545,7 +2573,7 @@ void procCheckQuarto(){
 			frame++ ;
 
 			pad=pad_poll(0);
-			if( pad&PAD_START ){
+			if( pad&PAD_START || pad&PAD_A ){
 				oam_clear() ;
 
 				for( i=0 ; i< 5; i++ ){
@@ -2803,14 +2831,13 @@ void reset(void)
 	for( x = 0; x < 8; x++ ){
 		sfx_play(2,0);
 		// P1
-		putStockKoma(x*4,0,0xAA, (unsigned char*)koma_list[0][0][x]) ;
+		putStockKoma(x*4,2,0xAA, (unsigned char*)koma_list[0][0][x]) ;
+
+	}
+	for( x = 0; x < 8; x++ ){
 		sfx_play(2,1);
 		// P2
-//		putStockKoma(28-(x*4),26,0x55, (unsigned char*)koma_list[0][1][7-x]) ;
-		putStockKoma(28-(x*4),4,0x55, (unsigned char*)koma_list[0][1][7-x]) ;
-		//if( x == 4 ){continue; }
-//		putStockKoma(x*4,4,0x55, (unsigned char*)koma_list[0][1][x]) ;
-
+		putStockKoma(28-(x*4),6,0x55, (unsigned char*)koma_list[0][1][7-x]) ;
 
 	}
 	update_init() ;
