@@ -1,9 +1,11 @@
 # quarto
 This is a NES game created with cc65.
 
-![quarto_01](https://user-images.githubusercontent.com/18201911/133384111-efef8792-9044-4b02-8b93-5742c6184955.png) ![quarto_006](https://user-images.githubusercontent.com/18201911/133974952-5c41c100-77d1-4ec0-a253-4ac41d234343.png)
+![anime1_open](https://user-images.githubusercontent.com/18201911/137101689-e4dfeab9-9baa-4ff1-b33e-2190826c2934.gif)
 
+![main_play](https://user-images.githubusercontent.com/18201911/137101644-682182fa-eb7c-4fa7-89c8-433b7b2a189f.gif)
 
+![anime1_slow](https://user-images.githubusercontent.com/18201911/137101709-7680b087-aa56-40f1-92d3-782311f9de3e.gif)
 
 ## Usage
 Please use the following commands to make it up.
