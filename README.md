@@ -1,9 +1,8 @@
 # quarto
-This is a NES game created with cc65.
+This is a NES game compiled with cc65.It was created using neslib, a great library for C language NES development.
+https://shiru.untergrund.net/code.shtml
 
-![quarto_01](https://user-images.githubusercontent.com/18201911/133384111-efef8792-9044-4b02-8b93-5742c6184955.png) ![quarto_006](https://user-images.githubusercontent.com/18201911/133974952-5c41c100-77d1-4ec0-a253-4ac41d234343.png)
-
-
+<img src="https://user-images.githubusercontent.com/18201911/137101644-682182fa-eb7c-4fa7-89c8-433b7b2a189f.gif" width="400px"> <img src="https://user-images.githubusercontent.com/18201911/137273415-6a37f8cc-1a58-4472-b430-fea5b652e662.gif" width="400px"> 
 
 ## Usage
 Please use the following commands to make it up.
