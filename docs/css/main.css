@@ -1,0 +1,20 @@
+:root {
+    --mainColor: 255, 255, 255, 1;
+    --subColor: 128, 20, 30, 0.8;
+    --mainBgColor: 0, 20, 30, 1;
+}
+body {
+    animation: fadeIn 1s ease 0s 1 normal;
+    margin: 0px;
+    background-color: rgba(var(--mainBgColor));
+    color: rgba(var(--mainColor));
+    font-family: Courier New;
+}
+.screen {
+    width: 640px;
+    height: 480px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3em;
+}
