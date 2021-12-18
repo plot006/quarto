@@ -1,2 +1,18 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+*.nss linguist-language=NESScreenTool
+*.inc linguist-language=Assembly
+*.s linguist-language=Assembly
+*.h linguist-language=C
+
+quarto.s linguist-generated
+music.s linguist-generated
+sounds.s linguist-generated
+
+cc65/** linguist-vendored
+docs/** linguist-vendored
+lib/** linguist-vendored
+mesen/** linguist-vendored
+
+
