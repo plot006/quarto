@@ -8,7 +8,7 @@ This is a NES game compiled with cc65.It was created using neslib, a great libra
 
 ## Usage
 
-You can play on the **[demo page](https://plot006.github.io/quarto/)** on your web browser.
+You can play on the **[demo page](https://plot006.github.io/quarto-web/)** on your web browser.
 
 ### Build
 
