@@ -12,7 +12,7 @@ You can play on the **[demo page](https://plot006.github.io/quarto-web/)** on yo
 
 ### Build
 
-Please use the following commands to make it up.
+Please make by executing the following commands in MSYS2.
 
 ```cmd
 make clean quarto
