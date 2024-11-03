@@ -1,26 +1,31 @@
 {
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        {
-            "label": "Open MSYS2 Bash and Make",
-            "type": "shell",
-            "command": "C:\\msys64\\usr\\bin\\bash.exe",
-            "args": [
-                "-l",            // ログインシェルとして起動
-                "-i",            // インタラクティブモードで起動
-                "-c",            // コマンド指定
-                "cd '${workspaceFolder}' && make clean all"
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "panel": "new"    // 新しいターミナルパネルで実行
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        }
+      {
+        "label": "ALL ReBuild",
+        "type": "process",
+        "command": "make",
+        "args": ["clean","all"],
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "Clean",
+        "type": "process",
+        "command": "make",
+        "args": ["clean"],
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        },
+        "problemMatcher": []
+      },
     ]
-}
+  }
