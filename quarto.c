@@ -9,100 +9,100 @@
 #include "resource/jeesus.h"
 
 #include <stdlib.h>
-static unsigned char strbuf[16];
+static unsigned char g文字列バッファ[16];
 
 //#define debug
 #ifdef debug
 #endif
 
-void reset(void) ;
+void リセット処理(void) ;
 
 //variables
 
 //static unsigned char bank;
 
-static unsigned char quarto;
+static unsigned char gクアルト状態;
 //static unsigned char checking;
 
-static unsigned char i;
-static unsigned char j;
+static unsigned char gループI;
+static unsigned char gループJ;
 
-static unsigned char k;
-static unsigned char l;
-static unsigned char m;
-static unsigned char n;
+static unsigned char gループK;
+static unsigned char gループL;
+static unsigned char gループM;
+static unsigned char gループN;
 
-static unsigned char o;
-static unsigned char p;
+static unsigned char gループO;
+static unsigned char gループP;
 
 
-static unsigned char x;
-static unsigned char y;
-static unsigned char tmp_x;
-static unsigned char tmp_y;
+static unsigned char g座標X;
+static unsigned char g座標Y;
+static unsigned char g仮座標X;
+static unsigned char g仮座標Y;
 
-static unsigned char x_index;
-static unsigned char y_index;
+static unsigned char g座標インデックスX;
+static unsigned char g座標インデックスY;
 
-static unsigned char timer;
-static unsigned char timerSetCount;
+static unsigned char gタイマー値;
+static unsigned char gタイマー設定回数;
 
-static unsigned char set_posh;
-static unsigned char set_posl;
-static unsigned char whichTurn,bak_whichTurn;
-static unsigned char selBW,bak_selBW;
+static unsigned char g設定アドレス上位;
+static unsigned char g設定アドレス下位;
+static unsigned char g現在手番,g手番退避;
+static unsigned char g駒色選択,g駒色退避;
 
-static unsigned char pad,spr;
+static unsigned char gパッド入力,gスプライトID;
 
-static unsigned char calc;
-static unsigned char tmp;
-static unsigned char tmp2;
-static unsigned char tmp3;
-static unsigned char tmp4;
-static unsigned char frame;
-static unsigned char koma_frame;
-static unsigned char anime[4][4]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+static unsigned char g計算値;
+static unsigned char g一時値1;
+static unsigned char g一時値2;
+static unsigned char g一時値3;
+static unsigned char g一時値4;
+static unsigned char gフレームカウンタ;
+static unsigned char g駒フレーム;
+static unsigned char gアニメ格子[4][4]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-static unsigned char q_black;
-static unsigned char q_white;
-static unsigned char q_high;
-static unsigned char q_low;
-static unsigned char q_square;
-static unsigned char q_circle;
-static unsigned char q_plane;
-static unsigned char q_dot;
-static unsigned char err[2] ;
+static unsigned char g属性黒;
+static unsigned char g属性白;
+static unsigned char g属性高;
+static unsigned char g属性低;
+static unsigned char g属性四角;
+static unsigned char g属性丸;
+static unsigned char g属性平面;
+static unsigned char g属性穴;
+static unsigned char gエラーフラグ[2] ;
 
-static unsigned char set_posx;
-static unsigned char set_posy;
+static unsigned char g設定座標X;
+static unsigned char g設定座標Y;
 
 //static unsigned char moving;
-static unsigned char p1only;
+static unsigned char g一人プレイ;
 
-static unsigned char koma_pos[2];
-static unsigned char koma_x[2];
-static unsigned char koma_y[2];
-static unsigned char ChooseKoma,bak_ChooseKoma;
-static unsigned char koma_exist[2][8];
+static unsigned char g駒配置スロット[2];
+static unsigned char g駒位置X[2];
+static unsigned char g駒位置Y[2];
+static unsigned char g選択駒番号,g選択駒退避;
+static unsigned char g駒存在配列[2][8];
 //static unsigned char tmp_line[8];
 
-static unsigned char bgpl;
-static unsigned char game_music;
-static unsigned char reach;
-static unsigned char autoChoose;
-static unsigned char isVsCPU;
-static unsigned char isAdvanced;
+static unsigned char g背景パレット番号;
+static unsigned char gゲーム音楽モード;
+static unsigned char gリーチ状態;
+static unsigned char g自動選択フラグ;
+static unsigned char g対CPUフラグ;
+static unsigned char g上級モード;
 
-static unsigned char attr_stat[40];
-static unsigned char attr_buf[8][3];
+static unsigned char g属性状態配列[40];
+static unsigned char g属性更新バッファ[8][3];
 
-static unsigned char rand_box1[4] ;
-static unsigned char rand_box2[4] ;
-static unsigned char rand_box3[2] ;
-static unsigned char rand_box4[8] ;
+static unsigned char g乱数ボックス1[4] ;
+static unsigned char g乱数ボックス2[4] ;
+static unsigned char g乱数ボックス3[2] ;
+static unsigned char g乱数ボックス4[8] ;
 
 
-const unsigned char attr_pos[4][4][4] ={
+const unsigned char k属性座標テーブル[4][4][4] ={
 	0xCB,	0xCC,	0xD3,	0xD4,
 	0xD2,	0xD3,	0xD2,	0xD3,
 	0xD1,	0xD2,	0xD9,	0xDA,
@@ -125,7 +125,7 @@ const unsigned char attr_pos[4][4][4] ={
 
 };
 
-const unsigned char stage_anime_index[16][2] = {
+const unsigned char k盤面アニメ順序[16][2] = {
 	0,0,
 	0,1,
 	0,2,
@@ -147,40 +147,40 @@ const unsigned char stage_anime_index[16][2] = {
 //two players coords
 
 /*
-static unsigned char cat_x[2];
-static unsigned char cat_y[2];
-static unsigned char term[2];
-static unsigned char isHit[2];
+static unsigned char g猫座標X[2];
+static unsigned char g猫座標Y[2];
+static unsigned char g終端値配列[2];
+static unsigned char gヒット状態[2];
 */
 
-//static unsigned char x_index[2];
-//static unsigned char y_index[2];
+//static unsigned char g座標インデックスX[2];
+//static unsigned char g座標インデックスY[2];
 //static unsigned char chr_index[2];
 //static unsigned char dk_x_r_index;
 //static unsigned char dk_x_l_index;
 //static unsigned char dk_y_u_index;
 //static unsigned char dk_chr_index1;
-static unsigned char stage_stat[4][4][3];
+static unsigned char g盤面状態マップ[4][4][3];
 #define _KOMA_TYPE		0
 #define _CHOOSE_KOMA	1
 #define _SEL_BW			2
 
-static unsigned char quarto_line[4][2];
+static unsigned char gクアルトライン[4][2];
 
 
-static unsigned char update_list[6+8+8+1];
-static unsigned char update_koma[(3+3)*4+1];
-static unsigned char update_koma_color[3+1+1];
+static unsigned char g更新リスト[6+8+8+1];
+static unsigned char g更新駒データ[(3+3)*4+1];
+static unsigned char g更新駒カラー[3+1+1];
 
-static unsigned char update_debug[3+16+1];
-static unsigned char dbgcnt;
+static unsigned char g更新デバッグバッファ[3+16+1];
+static unsigned char gデバッグカウンタ;
 
 
 //first player metasprite, data structure explained in neslib.h
-const unsigned char msgBlank[]= "              " ;
+const unsigned char k空白メッセージ[]= "              " ;
 
 #define stage_y_offset 0x80
-const unsigned char stage_pos[4][4][6]={
+const unsigned char k盤面座標テーブル[4][4][6]={
 	0x01,	0x0e,	0x01,	0x2E,	0x01,	0x4E,
 	0x01,	0x4A,	0x01,	0x6A,	0x01,	0x8A,
 	0x01,	0x86,	0x01,	0xA6,	0x01,	0xC6,
@@ -199,57 +199,57 @@ const unsigned char stage_pos[4][4][6]={
 	0x02,	0x8E,	0x02,	0xAE,	0x02,	0xCE
 };
 
-//const unsigned char pal_spr_data1[16]={ 0x0f,0x00,0x0f,0x0f,0x0f,0x0c,0x30,0x31,0x0f,0x0c,0x30,0x37,0x0f,0x0c,0x0f,0x0f };
+//const unsigned char kスプライトパレット1[16]={ 0x0f,0x00,0x0f,0x0f,0x0f,0x0c,0x30,0x31,0x0f,0x0c,0x30,0x37,0x0f,0x0c,0x0f,0x0f };
 
 
-const unsigned char open_palette1[16]={ 0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a };
-const unsigned char open_palette2[16]={ 0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31 };
-const unsigned char open_palette3[16]={ 0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35 };
-const unsigned char open_palette4[16]={ 0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c };
+const unsigned char kオープンパレット1[16]={ 0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a };
+const unsigned char kオープンパレット2[16]={ 0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31 };
+const unsigned char kオープンパレット3[16]={ 0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35 };
+const unsigned char kオープンパレット4[16]={ 0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c };
 
-const unsigned char palette1[16]={ 0x0f,0x00,0x0f,0x0f,0x0f,0x0c,0x30,0x31,0x0f,0x0c,0x30,0x37,0x0f,0x0c,0x0f,0x0f };
-const unsigned char palette2[16]={ 0x0f,0x0c,0x3c,0x0f,0x0f,0x0f,0x30,0x15,0x0f,0x0f,0x30,0x1c,0x0f,0x05,0x35,0x0f };
-//const unsigned char palette2[16]={ 0x0f,0x1c,0x3c,0x0f,0x0f,0x0f,0x30,0x05,0x0f,0x0f,0x30,0x0c,0x0f,0x15,0x35,0x0f };
-const unsigned char palette3[16]={ 0x0c,0x0c,0x0c,0x0c,0x0c,0x00,0x30,0x30,0x0c,0x10,0x30,0x0f,0x0c,0x0c,0x0c,0x0c };
-const unsigned char palette4[16]={ 0x0b,0x0b,0x0b,0x0b,0x0b,0x26,0x30,0x07,0x0b,0x17,0x30,0x37,0x0b,0x0b,0x0b,0x0b };
-const unsigned char* bg_palettes[]={
-	palette1,
-	palette2,
-	palette3,
-	palette4
+const unsigned char k基本パレット1[16]={ 0x0f,0x00,0x0f,0x0f,0x0f,0x0c,0x30,0x31,0x0f,0x0c,0x30,0x37,0x0f,0x0c,0x0f,0x0f };
+const unsigned char k基本パレット2[16]={ 0x0f,0x0c,0x3c,0x0f,0x0f,0x0f,0x30,0x15,0x0f,0x0f,0x30,0x1c,0x0f,0x05,0x35,0x0f };
+//const unsigned char k基本パレット2[16]={ 0x0f,0x1c,0x3c,0x0f,0x0f,0x0f,0x30,0x05,0x0f,0x0f,0x30,0x0c,0x0f,0x15,0x35,0x0f };
+const unsigned char k基本パレット3[16]={ 0x0c,0x0c,0x0c,0x0c,0x0c,0x00,0x30,0x30,0x0c,0x10,0x30,0x0f,0x0c,0x0c,0x0c,0x0c };
+const unsigned char k基本パレット4[16]={ 0x0b,0x0b,0x0b,0x0b,0x0b,0x26,0x30,0x07,0x0b,0x17,0x30,0x37,0x0b,0x0b,0x0b,0x0b };
+const unsigned char* k背景パレット配列[]={
+	k基本パレット1,
+	k基本パレット2,
+	k基本パレット3,
+	k基本パレット4
 };
 
 
-const unsigned char palette5[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x0f,0x0f,0x0f,0x21,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f };
-const unsigned char palette6[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x0f,0x24,0x0f,0x21,0x0f,0x21,0x0f,0x0f,0x0f,0x0f };
-const unsigned char palette7[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x30,0x24,0x0f,0x21,0x30,0x21,0x0f,0x0f,0x0f,0x0f };
-const unsigned char palette8[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x24,0x0f,0x0f,0x21,0x21,0x0f,0x0f,0x0f,0x0f };
-const unsigned char* bg_palettes2[]={
-	palette5,
-	palette6,
-	palette7,
-	palette8
+const unsigned char k基本パレット5[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x0f,0x0f,0x0f,0x21,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f };
+const unsigned char k基本パレット6[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x0f,0x24,0x0f,0x21,0x0f,0x21,0x0f,0x0f,0x0f,0x0f };
+const unsigned char k基本パレット7[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x30,0x24,0x0f,0x21,0x30,0x21,0x0f,0x0f,0x0f,0x0f };
+const unsigned char k基本パレット8[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x24,0x0f,0x0f,0x21,0x21,0x0f,0x0f,0x0f,0x0f };
+const unsigned char* k背景パレット代替[]={
+	k基本パレット5,
+	k基本パレット6,
+	k基本パレット7,
+	k基本パレット8
 };
 
-const unsigned char palette_jeesus[16]={ 0x0f,0x05,0x30,0x26,0x0f,0x05,0x30,0x36,0x0f,0x16,0x30,0x36,0x0f,0x26,0x30,0x30 };
+const unsigned char kジーザスパレット[16]={ 0x0f,0x05,0x30,0x26,0x0f,0x05,0x30,0x36,0x0f,0x16,0x30,0x36,0x0f,0x26,0x30,0x30 };
 
 /*
-const unsigned char meta_bar1[]={
+const unsigned char kメタバー1[]={
 	0xDD,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,
 	0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDF
 };
-const unsigned char meta_bar2[]={
+const unsigned char kメタバー2[]={
 	0xED,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,
 	0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEF
 };
 */
 /*
-const unsigned char meta_mask[]={
+const unsigned char kメタマスク[]={
 	0,	0,	0x42,	0,
 	8,	0,	0x42,	0,
 	128
 };
-const unsigned char meta_mask_long[]={
+const unsigned char kメタマスクロング[]={
 	0,	0,	0x42,	0,
 	8,	0,	0x42,	0,
 	16,	0,	0x42,	0,
@@ -262,7 +262,7 @@ const unsigned char meta_mask_long[]={
 };
 */
 
-const unsigned char meta_quarto[]={
+const unsigned char kメタクアルト[]={
 	8*0,	0,	'Q'-0x20,	1,
 	8*1,	0,	'U'-0x20,	1,
 	8*2,	0,	'A'-0x20,	1,
@@ -273,7 +273,7 @@ const unsigned char meta_quarto[]={
 	128
 };
 
-const unsigned char meta_p1win[]={
+const unsigned char kメタ先手勝利[]={
 	8*0,	0,	'P'-0x20,	1,
 	8*1,	0,	'1'-0x20,	1,
 	8*2,	0,	' '-0x20,	1,
@@ -283,7 +283,7 @@ const unsigned char meta_p1win[]={
 	8*6,	0,	'!'-0x20,	1,
 	128
 };
-const unsigned char meta_p2win[]={
+const unsigned char kメタ後手勝利[]={
 	8*0,	0,	'P'-0x20,	1,
 	8*1,	0,	'2'-0x20,	1,
 	8*2,	0,	' '-0x20,	1,
@@ -293,39 +293,39 @@ const unsigned char meta_p2win[]={
 	8*6,	0,	'!'-0x20,	1,
 	128
 };
-const unsigned char meta_right_cursor[]={
+const unsigned char kメタ右カーソル[]={
 	0,	0,	0x1E,	1,
 	128
 };
 
-const unsigned char meta_pos1[]={
+const unsigned char kメタ位置1[]={
 	0,	0,	0xCF,	1,
 	128
 };
-const unsigned char meta_pos2[]={
+const unsigned char kメタ位置2[]={
 	0,	0,	0xCF,	2,
 	128
 };
 
-const unsigned char meta_pos1_reverse[]={
+const unsigned char kメタ位置1逆[]={
 	0,	0,	0xCF,	0x81,
 	128
 };
-const unsigned char meta_pos2_reverse[]={
+const unsigned char kメタ位置2逆[]={
 	0,	0,	0xCF,	0x82,
 	128
 };
 /*
-const unsigned char cursor[]={
+const unsigned char kカーソルスプライト[]={
 	0,	0,	0x44,	1,
 	128
 };
-const unsigned char cursor2[]={
+const unsigned char kカーソルスプライト2[]={
 	0,	0,	0x44,	0x81,
 	128
 };
 */
-const unsigned char koma_1[]={
+const unsigned char k先手駒1[]={
 	0,	0,	0x80,	1,
 	0,	8,	0x90,	1,
 	0,	16,	0xA0,	1,
@@ -340,7 +340,7 @@ const unsigned char koma_1[]={
 	16,	24,	0xB2,	1,
 	128
 };
-const unsigned char koma_2[]={
+const unsigned char k先手駒2[]={
 	0,	0,	0x86,	1,
 	0,	8,	0x90,	1,
 	0,	16,	0xA0,	1,
@@ -355,7 +355,7 @@ const unsigned char koma_2[]={
 	16,	24,	0xB2,	1,
 	128
 };
-const unsigned char koma_3[]={
+const unsigned char k先手駒3[]={
 	0,	0,	0x83,	1,
 	0,	8,	0x93,	1,
 	0,	16,	0xA3,	1,
@@ -370,7 +370,7 @@ const unsigned char koma_3[]={
 	16,	24,	0xB5,	1,
 	128
 };
-const unsigned char koma_4[]={
+const unsigned char k先手駒4[]={
 	0,	0,	0x89,	1,
 	0,	8,	0x93,	1,
 	0,	16,	0xA3,	1,
@@ -385,7 +385,7 @@ const unsigned char koma_4[]={
 	16,	24,	0xB5,	1,
 	128
 };
-const unsigned char koma_5[]={
+const unsigned char k先手駒5[]={
 	0,	0,	0x00,	1,
 	0,	8,	0x80,	1,
 	0,	16,	0x90,	1,
@@ -400,7 +400,7 @@ const unsigned char koma_5[]={
 	16,	24,	0xB2,	1,
 	128
 };
-const unsigned char koma_6[]={
+const unsigned char k先手駒6[]={
 	0,	0,	0x00,	1,
 	0,	8,	0x86,	1,
 	0,	16,	0x90,	1,
@@ -415,7 +415,7 @@ const unsigned char koma_6[]={
 	16,	24,	0xB2,	1,
 	128
 };
-const unsigned char koma_7[]={
+const unsigned char k先手駒7[]={
 	0,	0,	0x00,	1,
 	0,	8,	0x83,	1,
 	0,	16,	0x93,	1,
@@ -430,7 +430,7 @@ const unsigned char koma_7[]={
 	16,	24,	0xB5,	1,
 	128
 };
-const unsigned char koma_8[]={
+const unsigned char k先手駒8[]={
 	0,	0,	0x00,	1,
 	0,	8,	0x89,	1,
 	0,	16,	0x93,	1,
@@ -446,7 +446,7 @@ const unsigned char koma_8[]={
 	128
 };
 
-const unsigned char koma_1_P2[]={
+const unsigned char k後手駒1[]={
 	0,	0,	0x80,	2,
 	0,	8,	0x90,	2,
 	0,	16,	0xA0,	2,
@@ -461,7 +461,7 @@ const unsigned char koma_1_P2[]={
 	16,	24,	0xB2,	2,
 	128
 };
-const unsigned char koma_2_P2[]={
+const unsigned char k後手駒2[]={
 	0,	0,	0x86,	2,
 	0,	8,	0x90,	2,
 	0,	16,	0xA0,	2,
@@ -476,7 +476,7 @@ const unsigned char koma_2_P2[]={
 	16,	24,	0xB2,	2,
 	128
 };
-const unsigned char koma_3_P2[]={
+const unsigned char k後手駒3[]={
 	0,	0,	0x83,	2,
 	0,	8,	0x93,	2,
 	0,	16,	0xA3,	2,
@@ -491,7 +491,7 @@ const unsigned char koma_3_P2[]={
 	16,	24,	0xB5,	2,
 	128
 };
-const unsigned char koma_4_P2[]={
+const unsigned char k後手駒4[]={
 	0,	0,	0x89,	2,
 	0,	8,	0x93,	2,
 	0,	16,	0xA3,	2,
@@ -506,7 +506,7 @@ const unsigned char koma_4_P2[]={
 	16,	24,	0xB5,	2,
 	128
 };
-const unsigned char koma_5_P2[]={
+const unsigned char k後手駒5[]={
 	0,	0,	0x00,	2,
 	0,	8,	0x80,	2,
 	0,	16,	0x90,	2,
@@ -521,7 +521,7 @@ const unsigned char koma_5_P2[]={
 	16,	24,	0xB2,	2,
 	128
 };
-const unsigned char koma_6_P2[]={
+const unsigned char k後手駒6[]={
 	0,	0,	0x00,	2,
 	0,	8,	0x86,	2,
 	0,	16,	0x90,	2,
@@ -536,7 +536,7 @@ const unsigned char koma_6_P2[]={
 	16,	24,	0xB2,	2,
 	128
 };
-const unsigned char koma_7_P2[]={
+const unsigned char k後手駒7[]={
 	0,	0,	0x00,	2,
 	0,	8,	0x83,	2,
 	0,	16,	0x93,	2,
@@ -551,7 +551,7 @@ const unsigned char koma_7_P2[]={
 	16,	24,	0xB5,	2,
 	128
 };
-const unsigned char koma_8_P2[]={
+const unsigned char k後手駒8[]={
 	0,	0,	0x00,	2,
 	0,	8,	0x89,	2,
 	0,	16,	0x93,	2,
@@ -566,7 +566,7 @@ const unsigned char koma_8_P2[]={
 	16,	24,	0xB5,	2,
 	128
 };
-const unsigned char OFF_koma_1[]={
+const unsigned char k非表示先手駒1[]={
 	0,	0,	0x80,	0,
 	0,	8,	0x90,	0,
 	0,	16,	0xA0,	0,
@@ -581,7 +581,7 @@ const unsigned char OFF_koma_1[]={
 	16,	24,	0xB2,	0,
 	128
 };
-const unsigned char OFF_koma_2[]={
+const unsigned char k非表示先手駒2[]={
 	0,	0,	0x86,	0,
 	0,	8,	0x90,	0,
 	0,	16,	0xA0,	0,
@@ -596,7 +596,7 @@ const unsigned char OFF_koma_2[]={
 	16,	24,	0xB2,	0,
 	128
 };
-const unsigned char OFF_koma_3[]={
+const unsigned char k非表示先手駒3[]={
 	0,	0,	0x83,	0,
 	0,	8,	0x93,	0,
 	0,	16,	0xA3,	0,
@@ -611,7 +611,7 @@ const unsigned char OFF_koma_3[]={
 	16,	24,	0xB5,	0,
 	128
 };
-const unsigned char OFF_koma_4[]={
+const unsigned char k非表示先手駒4[]={
 	0,	0,	0x89,	0,
 	0,	8,	0x93,	0,
 	0,	16,	0xA3,	0,
@@ -626,7 +626,7 @@ const unsigned char OFF_koma_4[]={
 	16,	24,	0xB5,	0,
 	128
 };
-const unsigned char OFF_koma_5[]={
+const unsigned char k非表示先手駒5[]={
 	0,	0,	0x00,	0,
 	0,	8,	0x80,	0,
 	0,	16,	0x90,	0,
@@ -641,7 +641,7 @@ const unsigned char OFF_koma_5[]={
 	16,	24,	0xB2,	0,
 	128
 };
-const unsigned char OFF_koma_6[]={
+const unsigned char k非表示先手駒6[]={
 	0,	0,	0x00,	0,
 	0,	8,	0x86,	0,
 	0,	16,	0x90,	0,
@@ -656,7 +656,7 @@ const unsigned char OFF_koma_6[]={
 	16,	24,	0xB2,	0,
 	128
 };
-const unsigned char OFF_koma_7[]={
+const unsigned char k非表示先手駒7[]={
 	0,	0,	0x00,	0,
 	0,	8,	0x83,	0,
 	0,	16,	0x93,	0,
@@ -671,7 +671,7 @@ const unsigned char OFF_koma_7[]={
 	16,	24,	0xB5,	0,
 	128
 };
-const unsigned char OFF_koma_8[]={
+const unsigned char k非表示先手駒8[]={
 	0,	0,	0x00,	0,
 	0,	8,	0x89,	0,
 	0,	16,	0x93,	0,
@@ -687,7 +687,7 @@ const unsigned char OFF_koma_8[]={
 	128
 };
 /*
-const unsigned char OFF_koma_1_P2[]={
+const unsigned char k非表示後手駒1[]={
 	0,	0,	0x80,	0,
 	0,	8,	0x90,	0,
 	0,	16,	0xA0,	0,
@@ -702,7 +702,7 @@ const unsigned char OFF_koma_1_P2[]={
 	16,	24,	0xB2,	3,
 	128
 };
-const unsigned char OFF_koma_2_P2[]={
+const unsigned char k非表示後手駒2[]={
 	0,	0,	0x86,	3,
 	0,	8,	0x90,	3,
 	0,	16,	0xA0,	3,
@@ -717,7 +717,7 @@ const unsigned char OFF_koma_2_P2[]={
 	16,	24,	0xB2,	3,
 	128
 };
-const unsigned char OFF_koma_3_P2[]={
+const unsigned char k非表示後手駒3[]={
 	0,	0,	0x83,	3,
 	0,	8,	0x93,	3,
 	0,	16,	0xA3,	3,
@@ -732,7 +732,7 @@ const unsigned char OFF_koma_3_P2[]={
 	16,	24,	0xB5,	3,
 	128
 };
-const unsigned char OFF_koma_4_P2[]={
+const unsigned char k非表示後手駒4[]={
 	0,	0,	0x89,	3,
 	0,	8,	0x93,	3,
 	0,	16,	0xA3,	3,
@@ -747,7 +747,7 @@ const unsigned char OFF_koma_4_P2[]={
 	16,	24,	0xB5,	3,
 	128
 };
-const unsigned char OFF_koma_5_P2[]={
+const unsigned char k非表示後手駒5[]={
 	0,	0,	0x00,	3,
 	0,	8,	0x80,	3,
 	0,	16,	0x90,	3,
@@ -762,7 +762,7 @@ const unsigned char OFF_koma_5_P2[]={
 	16,	24,	0xB2,	3,
 	128
 };
-const unsigned char OFF_koma_6_P2[]={
+const unsigned char k非表示後手駒6[]={
 	0,	0,	0x00,	3,
 	0,	8,	0x86,	3,
 	0,	16,	0x90,	3,
@@ -777,7 +777,7 @@ const unsigned char OFF_koma_6_P2[]={
 	16,	24,	0xB2,	3,
 	128
 };
-const unsigned char OFF_koma_7_P2[]={
+const unsigned char k非表示後手駒7[]={
 	0,	0,	0x00,	3,
 	0,	8,	0x83,	3,
 	0,	16,	0x93,	3,
@@ -792,7 +792,7 @@ const unsigned char OFF_koma_7_P2[]={
 	16,	24,	0xB5,	3,
 	128
 };
-const unsigned char OFF_koma_8_P2[]={
+const unsigned char k非表示後手駒8[]={
 	0,	0,	0x00,	3,
 	0,	8,	0x89,	3,
 	0,	16,	0x93,	3,
@@ -808,7 +808,7 @@ const unsigned char OFF_koma_8_P2[]={
 	128
 };
 */
-const unsigned char koma_type[] ={ 
+const unsigned char k駒属性マスク[] ={ 
 	0b00000000,
 	0b11110000,
 	0b11100001,
@@ -827,326 +827,326 @@ const unsigned char koma_type[] ={
 	0b00011110,
 	0b00001111
 };
-const unsigned char* koma_list[1][2][8]={
-	koma_1,
-	koma_2,
-	koma_3,
-	koma_4,
-	koma_5,
-	koma_6,
-	koma_7,
-	koma_8,
-	koma_1_P2,
-	koma_2_P2,
-	koma_3_P2,
-	koma_4_P2,
-	koma_5_P2,
-	koma_6_P2,
-	koma_7_P2,
-	koma_8_P2
+const unsigned char* k駒スプライトリスト[1][2][8]={
+	k先手駒1,
+	k先手駒2,
+	k先手駒3,
+	k先手駒4,
+	k先手駒5,
+	k先手駒6,
+	k先手駒7,
+	k先手駒8,
+	k後手駒1,
+	k後手駒2,
+	k後手駒3,
+	k後手駒4,
+	k後手駒5,
+	k後手駒6,
+	k後手駒7,
+	k後手駒8
 /*
-	OFF_koma_1,
-	OFF_koma_2,
-	OFF_koma_3,
-	OFF_koma_4,
-	OFF_koma_5,
-	OFF_koma_6,
-	OFF_koma_7,
-	OFF_koma_8,
-	OFF_koma_1_P2,
-	OFF_koma_2_P2,
-	OFF_koma_3_P2,
-	OFF_koma_4_P2,
-	OFF_koma_5_P2,
-	OFF_koma_6_P2,
-	OFF_koma_7_P2,
-	OFF_koma_8_P2
+	k非表示先手駒1,
+	k非表示先手駒2,
+	k非表示先手駒3,
+	k非表示先手駒4,
+	k非表示先手駒5,
+	k非表示先手駒6,
+	k非表示先手駒7,
+	k非表示先手駒8,
+	k非表示後手駒1,
+	k非表示後手駒2,
+	k非表示後手駒3,
+	k非表示後手駒4,
+	k非表示後手駒5,
+	k非表示後手駒6,
+	k非表示後手駒7,
+	k非表示後手駒8
 */
 };
 
-void seedRandBox()
+void 乱数ボックス初期化()
 {
-	memfill( rand_box1, 9, 4 );
-	memfill( rand_box2, 9, 4 );
-	memfill( rand_box3, 9, 2 );
-	memfill( rand_box4, 9, 8 );
+	memfill( g乱数ボックス1, 9, 4 );
+	memfill( g乱数ボックス2, 9, 4 );
+	memfill( g乱数ボックス3, 9, 2 );
+	memfill( g乱数ボックス4, 9, 8 );
 
-	for( i=0; i < 4;){
-		tmp = (rand8()+frame)%4 ;
-		if( rand_box1[tmp] == i || rand_box1[tmp] != 9 ){
-			frame += open_palette1[tmp] ;
+	for( gループI=0; gループI < 4;){
+		g一時値1 = (rand8()+gフレームカウンタ)%4 ;
+		if( g乱数ボックス1[g一時値1] == gループI || g乱数ボックス1[g一時値1] != 9 ){
+			gフレームカウンタ += kオープンパレット1[g一時値1] ;
 			continue ;
 		}
-		rand_box1[tmp] = i ;
-		i++ ;
+		g乱数ボックス1[g一時値1] = gループI ;
+		gループI++ ;
 	}
-	for( i=0; i < 4;){
-		tmp = (rand8()+frame)%4 ;
-		if( rand_box2[tmp] == i || rand_box2[tmp] != 9 ){
-			frame += open_palette1[tmp] ;
+	for( gループI=0; gループI < 4;){
+		g一時値1 = (rand8()+gフレームカウンタ)%4 ;
+		if( g乱数ボックス2[g一時値1] == gループI || g乱数ボックス2[g一時値1] != 9 ){
+			gフレームカウンタ += kオープンパレット1[g一時値1] ;
 			continue ;
 		}
-		rand_box2[tmp] = i ;
-		i++ ;
+		g乱数ボックス2[g一時値1] = gループI ;
+		gループI++ ;
 	}
 
-	for( i=0; i < 2;){
-		tmp = (rand8()+frame)%2 ;
-		if( rand_box3[tmp] == i || rand_box3[tmp] != 9 ){
-			frame += open_palette1[tmp] ;
+	for( gループI=0; gループI < 2;){
+		g一時値1 = (rand8()+gフレームカウンタ)%2 ;
+		if( g乱数ボックス3[g一時値1] == gループI || g乱数ボックス3[g一時値1] != 9 ){
+			gフレームカウンタ += kオープンパレット1[g一時値1] ;
 			continue ;
 		}
-		rand_box3[tmp] = i ;
-		i++ ;
+		g乱数ボックス3[g一時値1] = gループI ;
+		gループI++ ;
 	}
-	for( i=0; i < 8;){
-		tmp = (rand8()+frame)%8 ;
-		if( rand_box4[tmp] == i || rand_box4[tmp] != 9 ){
-			frame += open_palette1[tmp] ;
+	for( gループI=0; gループI < 8;){
+		g一時値1 = (rand8()+gフレームカウンタ)%8 ;
+		if( g乱数ボックス4[g一時値1] == gループI || g乱数ボックス4[g一時値1] != 9 ){
+			gフレームカウンタ += kオープンパレット1[g一時値1] ;
 			continue ;
 		}
-		rand_box4[tmp] = i ;
-		i++ ;
+		g乱数ボックス4[g一時値1] = gループI ;
+		gループI++ ;
 	}
 
 }
 
-void put_update_debug(unsigned char x, unsigned char y, unsigned char len, const char *str)
+void デバッグ表示更新(unsigned char g座標X, unsigned char g座標Y, unsigned char arg長さ, const char *arg文字列)
 {
 	
-	update_debug[0]=MSB(NTADR_A(x,y))|NT_UPD_HORZ;//set the address
-	update_debug[1]=LSB(NTADR_A(x,y));
-	update_debug[2]=len;//update sequence is 4 tiles wide
-	update_debug[3+len]=NT_UPD_EOF;
-	set_vram_update(update_debug);
+	g更新デバッグバッファ[0]=MSB(NTADR_A(g座標X,g座標Y))|NT_UPD_HORZ;//set the address
+	g更新デバッグバッファ[1]=LSB(NTADR_A(g座標X,g座標Y));
+	g更新デバッグバッファ[2]=arg長さ;//update sequence is 4 tiles wide
+	g更新デバッグバッファ[3+arg長さ]=NT_UPD_EOF;
+	set_vram_update(g更新デバッグバッファ);
 
-	for( dbgcnt = 0;dbgcnt<len;dbgcnt++)
+	for( gデバッグカウンタ = 0;gデバッグカウンタ<arg長さ;gデバッグカウンタ++)
 	{
-		if(!*str) break;
-		update_debug[3+dbgcnt]=(*str++)-0x20 ;//fill row buffer with random tiles
+		if(!*arg文字列) break;
+		g更新デバッグバッファ[3+gデバッグカウンタ]=(*arg文字列++)-0x20 ;//fill row buffer with random tiles
 	}
 	ppu_wait_nmi();
 	set_vram_update(0);
 }
 
 
-void update_init(void){
-	update_list[0]=0x20|NT_UPD_HORZ;
-	update_list[1]=0x00;
-	update_list[2]=3;
+void 更新初期化(void){
+	g更新リスト[0]=0x20|NT_UPD_HORZ;
+	g更新リスト[1]=0x00;
+	g更新リスト[2]=3;
 	
-	update_list[(6)]=0x20|NT_UPD_HORZ;
-	update_list[(6)+1]=0x00;
-	update_list[(6)+2]=5;
+	g更新リスト[(6)]=0x20|NT_UPD_HORZ;
+	g更新リスト[(6)+1]=0x00;
+	g更新リスト[(6)+2]=5;
 	
-	update_list[(6+8)]=0x20|NT_UPD_HORZ;
-	update_list[(6+8)+1]=0x00;
-	update_list[(6+8)+2]=5;
+	g更新リスト[(6+8)]=0x20|NT_UPD_HORZ;
+	g更新リスト[(6+8)+1]=0x00;
+	g更新リスト[(6+8)+2]=5;
 	
-	update_list[(6+8+8)]=NT_UPD_EOF;
-	set_vram_update(update_list);
+	g更新リスト[(6+8+8)]=NT_UPD_EOF;
+	set_vram_update(g更新リスト);
 
 }
 
 /*
-void stagePreAnime(unsigned char x, unsigned char y, unsigned char action)
+void 盤面プリアニメ(unsigned char g座標X, unsigned char g座標Y, unsigned char argアクション)
 {
-	spr = 0 ;
-	for( tmp = 0; tmp < 32 ; tmp++ ){
-		oam_meta_spr( (x*32)-(y*32)+115-tmp, (y*16)+(x*16)+71, spr, meta_mask_long ) ;
-		if( action == 0 ){ return ; }
-		//ppu_wait_frame();	// wait for next TV frame
+	gスプライトID = 0 ;
+	for( g一時値1 = 0; g一時値1 < 32 ; g一時値1++ ){
+		oam_meta_spr( (g座標X*32)-(g座標Y*32)+115-g一時値1, (g座標Y*16)+(g座標X*16)+71, gスプライトID, kメタマスクロング ) ;
+		if( argアクション == 0 ){ return ; }
+		//ppu_wait_frame();	// wait for next TV gフレームカウンタ
 
-		//if( tmp % 16 == 0 ){ delay(1) ; }
+		//if( g一時値1 % 16 == 0 ){ delay(1) ; }
 	}
 	oam_clear() ;
 }
 */
-void upProc(unsigned char x, unsigned char y )
+void 上方向処理(unsigned char g座標X, unsigned char g座標Y )
 {
-	for( i = 0; i < 5; i++ ){
-		if( anime[x][y] == 0 ){
-			//stagePreAnime(x,y,0) ;
-			if( i != 0 && i != 4 ){
-				update_list[i+3-1] = 0 ; 
+	for( gループI = 0; gループI < 5; gループI++ ){
+		if( gアニメ格子[g座標X][g座標Y] == 0 ){
+			//盤面プリアニメ(g座標X,g座標Y,0) ;
+			if( gループI != 0 && gループI != 4 ){
+				g更新リスト[gループI+3-1] = 0 ; 
 			}
-			update_list[i+(6)+3] = (unsigned char)(0xE5+i) ;
-			update_list[i+(6+8)+3] = (unsigned char)(0xF5+i) ;
-		}else if( anime[x][y] == 1 ){
-			if( i != 0 && i != 4 ){
-				update_list[i+3-1] = 0 ; 
+			g更新リスト[gループI+(6)+3] = (unsigned char)(0xE5+gループI) ;
+			g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xF5+gループI) ;
+		}else if( gアニメ格子[g座標X][g座標Y] == 1 ){
+			if( gループI != 0 && gループI != 4 ){
+				g更新リスト[gループI+3-1] = 0 ; 
 			}
-			update_list[i+(6)+3] = (unsigned char)(0xE5+i) ;
-			update_list[i+(6+8)+3] = (unsigned char)(0xF5+i) ;
-		}else if( anime[x][y] == 2 ){
-			if( i != 0 && i != 4 ){
-				update_list[i+3-1] = 0 ; 
+			g更新リスト[gループI+(6)+3] = (unsigned char)(0xE5+gループI) ;
+			g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xF5+gループI) ;
+		}else if( gアニメ格子[g座標X][g座標Y] == 2 ){
+			if( gループI != 0 && gループI != 4 ){
+				g更新リスト[gループI+3-1] = 0 ; 
 			}
-			update_list[i+(6)+3] = (unsigned char)(0xE0+i) ;
-			update_list[i+(6+8)+3] = (unsigned char)(0xF0+i) ;
-		}else if( anime[x][y] == 3 ){
-			if( i != 0 && i != 4 ){
-				update_list[i+3-1] = (unsigned char)(0xC5+i) ;
+			g更新リスト[gループI+(6)+3] = (unsigned char)(0xE0+gループI) ;
+			g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xF0+gループI) ;
+		}else if( gアニメ格子[g座標X][g座標Y] == 3 ){
+			if( gループI != 0 && gループI != 4 ){
+				g更新リスト[gループI+3-1] = (unsigned char)(0xC5+gループI) ;
 			}
-			if( i == 0 || i == 4 ){
-				update_list[i+(6)+3] = (unsigned char)(0xC5+i) ;
+			if( gループI == 0 || gループI == 4 ){
+				g更新リスト[gループI+(6)+3] = (unsigned char)(0xC5+gループI) ;
 			}
-			update_list[i+(6+8)+3] = (unsigned char)(0xD5+i) ;
-		}else if( anime[x][y] == 4 ){
-			if( i != 0 && i != 4 ){
-				update_list[i+3-1] = (unsigned char)(0xC0+i) ;
+			g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xD5+gループI) ;
+		}else if( gアニメ格子[g座標X][g座標Y] == 4 ){
+			if( gループI != 0 && gループI != 4 ){
+				g更新リスト[gループI+3-1] = (unsigned char)(0xC0+gループI) ;
 			}
-			if( i == 0 || i == 4 ){
-				update_list[i+(6)+3] = (unsigned char)(0xC0+i) ;
+			if( gループI == 0 || gループI == 4 ){
+				g更新リスト[gループI+(6)+3] = (unsigned char)(0xC0+gループI) ;
 			}
-			update_list[i+(6+8)+3] = (unsigned char)(0xD0+i) ;
+			g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xD0+gループI) ;
 		}else{
 			return ;
 		}
 	}
 	delay(1) ;
 }
-void setStageAdr(unsigned char x, unsigned char y )
+void 盤面アドレス設定(unsigned char g座標X, unsigned char g座標Y )
 {
 	unsigned char calcAdr = 0x00 ;
-	calcAdr = stage_pos[x][y][1]+1+stage_y_offset > 0xFF ? stage_pos[x][y][0]+1 : stage_pos[x][y][0];
-	update_list[0]=(0x20+calcAdr)&0xFF|NT_UPD_HORZ;//horizontal update sequence, dummy address
-	update_list[1]=stage_pos[x][y][1]+1+stage_y_offset;
+	calcAdr = k盤面座標テーブル[g座標X][g座標Y][1]+1+stage_y_offset > 0xFF ? k盤面座標テーブル[g座標X][g座標Y][0]+1 : k盤面座標テーブル[g座標X][g座標Y][0];
+	g更新リスト[0]=(0x20+calcAdr)&0xFF|NT_UPD_HORZ;//horizontal update sequence, dummy address
+	g更新リスト[1]=k盤面座標テーブル[g座標X][g座標Y][1]+1+stage_y_offset;
 
-	calcAdr = stage_pos[x][y][3]+stage_y_offset > 0xFF ? stage_pos[x][y][2]+1 : stage_pos[x][y][2];
-	update_list[(6)]=(0x20+calcAdr)&0xFF|NT_UPD_HORZ;//horizontal update sequence, dummy address
-	update_list[(6)+1]=stage_pos[x][y][3]+stage_y_offset;
+	calcAdr = k盤面座標テーブル[g座標X][g座標Y][3]+stage_y_offset > 0xFF ? k盤面座標テーブル[g座標X][g座標Y][2]+1 : k盤面座標テーブル[g座標X][g座標Y][2];
+	g更新リスト[(6)]=(0x20+calcAdr)&0xFF|NT_UPD_HORZ;//horizontal update sequence, dummy address
+	g更新リスト[(6)+1]=k盤面座標テーブル[g座標X][g座標Y][3]+stage_y_offset;
 
-	calcAdr = stage_pos[x][y][5]+stage_y_offset > 0xFF ? stage_pos[x][y][4]+1 : stage_pos[x][y][4];
-	update_list[(6+8)]=(0x20+calcAdr)&0xFF|NT_UPD_HORZ;//horizontal update sequence, dummy address
-	update_list[(6+8)+1]=stage_pos[x][y][5]+stage_y_offset;
+	calcAdr = k盤面座標テーブル[g座標X][g座標Y][5]+stage_y_offset > 0xFF ? k盤面座標テーブル[g座標X][g座標Y][4]+1 : k盤面座標テーブル[g座標X][g座標Y][4];
+	g更新リスト[(6+8)]=(0x20+calcAdr)&0xFF|NT_UPD_HORZ;//horizontal update sequence, dummy address
+	g更新リスト[(6+8)+1]=k盤面座標テーブル[g座標X][g座標Y][5]+stage_y_offset;
 }
-void up_stage(unsigned char x, unsigned char y )
+void 盤面上昇(unsigned char g座標X, unsigned char g座標Y )
 {
-	setStageAdr(x,y);
+	盤面アドレス設定(g座標X,g座標Y);
 /*
-	update_list[0]=0x20+stage_pos[x][y][0]|NT_UPD_HORZ;//horizontal update sequence, dummy address
-	update_list[1]=stage_pos[x][y][1]+1;
-	update_list[(6)]=0x20+stage_pos[x][y][2]|NT_UPD_HORZ;//horizontal update sequence, dummy address
-	update_list[(6)+1]=stage_pos[x][y][3];
-	update_list[(6+8)]=0x20+stage_pos[x][y][4]|NT_UPD_HORZ;//horizontal update sequence, dummy address
-	update_list[(6+8)+1]=stage_pos[x][y][5];
+	g更新リスト[0]=0x20+k盤面座標テーブル[g座標X][g座標Y][0]|NT_UPD_HORZ;//horizontal update sequence, dummy address
+	g更新リスト[1]=k盤面座標テーブル[g座標X][g座標Y][1]+1;
+	g更新リスト[(6)]=0x20+k盤面座標テーブル[g座標X][g座標Y][2]|NT_UPD_HORZ;//horizontal update sequence, dummy address
+	g更新リスト[(6)+1]=k盤面座標テーブル[g座標X][g座標Y][3];
+	g更新リスト[(6+8)]=0x20+k盤面座標テーブル[g座標X][g座標Y][4]|NT_UPD_HORZ;//horizontal update sequence, dummy address
+	g更新リスト[(6+8)+1]=k盤面座標テーブル[g座標X][g座標Y][5];
 */
 	sfx_play(5,0);
 
-	for( anime[x][y] = 0 ; anime[x][y] < 5; anime[x][y]++ ){
+	for( gアニメ格子[g座標X][g座標Y] = 0 ; gアニメ格子[g座標X][g座標Y] < 5; gアニメ格子[g座標X][g座標Y]++ ){
 /*
-		for( i = 0; i < 5; i++ ){
-			if( anime[x][y] == 0 ){
-				//stagePreAnime(x,y,0) ;
-				if( i != 0 && i != 4 ){
-					update_list[i+3-1] = 0 ; 
+		for( gループI = 0; gループI < 5; gループI++ ){
+			if( gアニメ格子[g座標X][g座標Y] == 0 ){
+				//盤面プリアニメ(g座標X,g座標Y,0) ;
+				if( gループI != 0 && gループI != 4 ){
+					g更新リスト[gループI+3-1] = 0 ; 
 				}
-				update_list[i+(6)+3] = (unsigned char)(0xE5+i) ;
-				update_list[i+(6+8)+3] = (unsigned char)(0xF5+i) ;
-			}else if( anime[x][y] == 1 ){
-				if( i != 0 && i != 4 ){
-					update_list[i+3-1] = 0 ; 
+				g更新リスト[gループI+(6)+3] = (unsigned char)(0xE5+gループI) ;
+				g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xF5+gループI) ;
+			}else if( gアニメ格子[g座標X][g座標Y] == 1 ){
+				if( gループI != 0 && gループI != 4 ){
+					g更新リスト[gループI+3-1] = 0 ; 
 				}
-				update_list[i+(6)+3] = (unsigned char)(0xE5+i) ;
-				update_list[i+(6+8)+3] = (unsigned char)(0xF5+i) ;
-			}else if( anime[x][y] == 2 ){
-				if( i != 0 && i != 4 ){
-					update_list[i+3-1] = 0 ; 
+				g更新リスト[gループI+(6)+3] = (unsigned char)(0xE5+gループI) ;
+				g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xF5+gループI) ;
+			}else if( gアニメ格子[g座標X][g座標Y] == 2 ){
+				if( gループI != 0 && gループI != 4 ){
+					g更新リスト[gループI+3-1] = 0 ; 
 				}
-				update_list[i+(6)+3] = (unsigned char)(0xE0+i) ;
-				update_list[i+(6+8)+3] = (unsigned char)(0xF0+i) ;
-			}else if( anime[x][y] == 3 ){
-				if( i != 0 && i != 4 ){
-					update_list[i+3-1] = (unsigned char)(0xC5+i) ;
+				g更新リスト[gループI+(6)+3] = (unsigned char)(0xE0+gループI) ;
+				g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xF0+gループI) ;
+			}else if( gアニメ格子[g座標X][g座標Y] == 3 ){
+				if( gループI != 0 && gループI != 4 ){
+					g更新リスト[gループI+3-1] = (unsigned char)(0xC5+gループI) ;
 				}
-				if( i == 0 || i == 4 ){
-					update_list[i+(6)+3] = (unsigned char)(0xC5+i) ;
+				if( gループI == 0 || gループI == 4 ){
+					g更新リスト[gループI+(6)+3] = (unsigned char)(0xC5+gループI) ;
 				}
-				update_list[i+(6+8)+3] = (unsigned char)(0xD5+i) ;
-			}else if( anime[x][y] == 4 ){
-				if( i != 0 && i != 4 ){
-					update_list[i+3-1] = (unsigned char)(0xC0+i) ;
+				g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xD5+gループI) ;
+			}else if( gアニメ格子[g座標X][g座標Y] == 4 ){
+				if( gループI != 0 && gループI != 4 ){
+					g更新リスト[gループI+3-1] = (unsigned char)(0xC0+gループI) ;
 				}
-				if( i == 0 || i == 4 ){
-					update_list[i+(6)+3] = (unsigned char)(0xC0+i) ;
+				if( gループI == 0 || gループI == 4 ){
+					g更新リスト[gループI+(6)+3] = (unsigned char)(0xC0+gループI) ;
 				}
-				update_list[i+(6+8)+3] = (unsigned char)(0xD0+i) ;
+				g更新リスト[gループI+(6+8)+3] = (unsigned char)(0xD0+gループI) ;
 			}else{
 				return ;
 			}
 		}
 		delay(1) ;
 		*/
-		upProc(x,y) ;
+		上方向処理(g座標X,g座標Y) ;
 	}
 }
 /*
-void down_stage(unsigned char x, unsigned char y )
+void 盤面下降(unsigned char g座標X, unsigned char g座標Y )
 {
-	setStageAdr(x,y);
+	盤面アドレス設定(g座標X,g座標Y);
 	sfx_play(1,0);
 
-	for( anime[x][y] = 4 ; anime[x][y] >= 0; anime[x][y]-- ){
-		upProc(x,y) ;
+	for( gアニメ格子[g座標X][g座標Y] = 4 ; gアニメ格子[g座標X][g座標Y] >= 0; gアニメ格子[g座標X][g座標Y]-- ){
+		上方向処理(g座標X,g座標Y) ;
 	}
 }
 */
-void cycleNextColor(void)
+void 次色サイクル(void)
 {
-	bgpl++ ;
-	bgpl = bgpl > 3 ? 0 : bgpl ;
-	//put_update_debug(NTADR_A(1,24), 5, itoa(bgpl, &strbuf[0], 10 ));
+	g背景パレット番号++ ;
+	g背景パレット番号 = g背景パレット番号 > 3 ? 0 : g背景パレット番号 ;
+	//デバッグ表示更新(NTADR_A(1,24), 5, itoa(g背景パレット番号, &g文字列バッファ[0], 10 ));
 
-	pal_spr((char*)bg_palettes[bgpl]);
-	pal_bg((char*)bg_palettes[bgpl]);
+	pal_spr((char*)k背景パレット配列[g背景パレット番号]);
+	pal_bg((char*)k背景パレット配列[g背景パレット番号]);
 }
-void cycleColor(void)
+void 色サイクル(void)
 {
-	if(frame%4==0){ pal_bg((char*)open_palette4);}
-	if(frame%4==1){ pal_bg((char*)open_palette3);}
-	if(frame%4==2){ pal_bg((char*)open_palette2);}
-	if(frame%4==3){ pal_bg((char*)open_palette1);}
+	if(gフレームカウンタ%4==0){ pal_bg((char*)kオープンパレット4);}
+	if(gフレームカウンタ%4==1){ pal_bg((char*)kオープンパレット3);}
+	if(gフレームカウンタ%4==2){ pal_bg((char*)kオープンパレット2);}
+	if(gフレームカウンタ%4==3){ pal_bg((char*)kオープンパレット1);}
 }
-void cycleSprColor(void)
+void スプライト色サイクル(void)
 {
-	if(frame%4==0){ pal_spr((char*)open_palette4);}
-	if(frame%4==1){ pal_spr((char*)open_palette3);}
-	if(frame%4==2){ pal_spr((char*)open_palette2);}
-	if(frame%4==3){ pal_spr((char*)open_palette1);}
+	if(gフレームカウンタ%4==0){ pal_spr((char*)kオープンパレット4);}
+	if(gフレームカウンタ%4==1){ pal_spr((char*)kオープンパレット3);}
+	if(gフレームカウンタ%4==2){ pal_spr((char*)kオープンパレット2);}
+	if(gフレームカウンタ%4==3){ pal_spr((char*)kオープンパレット1);}
 }
-unsigned char checkForceBreak(void)
+unsigned char 強制終了チェック(void)
 {
-	pad = pad_poll(0);
-	if(pad&PAD_START || pad&PAD_SELECT || pad&PAD_A || pad&PAD_B ){
+	gパッド入力 = pad_poll(0);
+	if(gパッド入力&PAD_START || gパッド入力&PAD_SELECT || gパッド入力&PAD_A || gパッド入力&PAD_B ){
 		return 1 ;
 	}
-	pad = pad_poll(1);
-	if(pad&PAD_START || pad&PAD_SELECT || pad&PAD_A || pad&PAD_B ){
+	gパッド入力 = pad_poll(1);
+	if(gパッド入力&PAD_START || gパッド入力&PAD_SELECT || gパッド入力&PAD_A || gパッド入力&PAD_B ){
 		return 1 ;
 	}
 	return 0 ;
 }
 /*
-unsigned char setKomaBuf(unsigned char* koma, unsigned char color)
+unsigned char 駒バッファ設定(unsigned char* arg駒データ, unsigned char argカラー)
 {
-	for( i = 0; i < sizeof(koma_buf)/4; i++ ){
-		memcpy( koma_buf[4*i], &koma[4*i], 3 );
-		koma_buf[4*i+3] = color ;
+	for( gループI = 0; gループI < sizeof(koma_buf)/4; gループI++ ){
+		memcpy( koma_buf[4*gループI], &arg駒データ[4*gループI], 3 );
+		koma_buf[4*gループI+3] = argカラー ;
 	}
 }
 */
-void bgFlash(unsigned char action)
+void 背景フラッシュ(unsigned char argアクション)
 {
-	pal_bright(action);
+	pal_bright(argアクション);
 	delay(6) ;
 	pal_bright(4);
 	delay(6) ;
-	pal_bright(action);
+	pal_bright(argアクション);
 	delay(6) ;
 	pal_bright(4);
 }
-void bgDown()
+void 背景ダウン()
 {
 	pal_bright(3);
 	delay(6) ;
@@ -1156,7 +1156,7 @@ void bgDown()
 	delay(6) ;
 	pal_bright(0);
 }
-void bgUp()
+void 背景アップ()
 {
 	pal_bright(0);
 	delay(10) ;
@@ -1168,32 +1168,32 @@ void bgUp()
 }
 
 #ifndef debug
-void move_next(void)
+void 次処理へ移動(void)
 {
-	for( i = 0; i < 2; i++ ){
-		koma_frame = 0 ;
+	for( gループI = 0; gループI < 2; gループI++ ){
+		g駒フレーム = 0 ;
 		while(1){
 
-			if( koma_frame % 10 == 0 ){ frame++ ; }
+			if( g駒フレーム % 10 == 0 ){ gフレームカウンタ++ ; }
 
 			delay(1) ;
-			cycleColor() ;
+			色サイクル() ;
 
-			if( koma_frame == 0 ){
+			if( g駒フレーム == 0 ){
 
 				// 初回アニメ処理.
-				if( tmp < 10 ){ 
+				if( g一時値1 < 10 ){ 
 					delay(1) ;
-					tmp++ ;
+					g一時値1++ ;
 					continue ;
 				}
-				if( tmp == 10 ){
+				if( g一時値1 == 10 ){
 
-					tmp++ ;
+					g一時値1++ ;
 					delay(20) ;
 
-					bgFlash(0) ;
-					bgDown() ;
+					背景フラッシュ(0) ;
+					背景ダウン() ;
 
 					ppu_off() ;
 					vram_adr(NAMETABLE_A);//set VRAM address
@@ -1201,71 +1201,71 @@ void move_next(void)
 					ppu_on_all() ;
 
 					delay(20) ;
-					spr = 0 ;
-					//spr = oam_meta_spr( koma_x[0], koma_y[0], spr, koma_list[0][0][0] ) ;
-					//spr = oam_meta_spr( koma_x[1], koma_y[1], spr, koma_list[0][1][0] ) ;
+					gスプライトID = 0 ;
+					//gスプライトID = oam_meta_spr( g駒位置X[0], g駒位置Y[0], gスプライトID, k駒スプライトリスト[0][0][0] ) ;
+					//gスプライトID = oam_meta_spr( g駒位置X[1], g駒位置Y[1], gスプライトID, k駒スプライトリスト[0][1][0] ) ;
 
-					bgUp() ;
+					背景アップ() ;
 
-					put_update_debug(10,25, 13, "PRESS BUTTON!" );
-					put_update_debug(11,27, 10, "006 * 2021" );
+					デバッグ表示更新(10,25, 13, "PRESS BUTTON!" );
+					デバッグ表示更新(11,27, 10, "006 * 2021" );
 					//delay(20) ;
 					pal_bright(4);
 					music_play(0);
 				}
 				// 駒描写
-				for( j = 0; j < 14; j++ ){
+				for( gループJ = 0; gループJ < 14; gループJ++ ){
 					delay(1) ;
-					koma_y[i]-- ;
-					spr = 0 ;
-					spr = oam_meta_spr( koma_x[0], koma_y[0], spr, koma_list[0][0][0] ) ;
-					spr = oam_meta_spr( koma_x[1], koma_y[1], spr, koma_list[0][1][0] ) ;
-					cycleColor() ;
-					if( koma_frame % 10 == 0 ){ frame++ ; }
-					koma_frame++ ;
-					if( checkForceBreak() ){ return ; }
+					g駒位置Y[gループI]-- ;
+					gスプライトID = 0 ;
+					gスプライトID = oam_meta_spr( g駒位置X[0], g駒位置Y[0], gスプライトID, k駒スプライトリスト[0][0][0] ) ;
+					gスプライトID = oam_meta_spr( g駒位置X[1], g駒位置Y[1], gスプライトID, k駒スプライトリスト[0][1][0] ) ;
+					色サイクル() ;
+					if( g駒フレーム % 10 == 0 ){ gフレームカウンタ++ ; }
+					g駒フレーム++ ;
+					if( 強制終了チェック() ){ return ; }
 
 				}
 			}
 
-			if( checkForceBreak() ){ return ; }
-			koma_frame++ ;
+			if( 強制終了チェック() ){ return ; }
+			g駒フレーム++ ;
 
-			spr = 0 ;
+			gスプライトID = 0 ;
 			
-			spr = oam_meta_spr( koma_x[0], koma_y[0], spr, koma_list[0][0][0] ) ;
-			spr = oam_meta_spr( koma_x[1], koma_y[1], spr, koma_list[0][1][0] ) ;
+			gスプライトID = oam_meta_spr( g駒位置X[0], g駒位置Y[0], gスプライトID, k駒スプライトリスト[0][0][0] ) ;
+			gスプライトID = oam_meta_spr( g駒位置X[1], g駒位置Y[1], gスプライトID, k駒スプライトリスト[0][1][0] ) ;
 
 
-			if( koma_pos[i] == 0 ){
-				if( koma_x[i] != 152 ){ koma_x[i]+=2; }
-				if( koma_y[i] != 122 ){ koma_y[i]+=1; }
-				if( koma_x[i] == 152 && koma_y[i] == 122 ){ 
-					koma_pos[i] = 1 ;
+			if( g駒配置スロット[gループI] == 0 ){
+				if( g駒位置X[gループI] != 152 ){ g駒位置X[gループI]+=2; }
+				if( g駒位置Y[gループI] != 122 ){ g駒位置Y[gループI]+=1; }
+				if( g駒位置X[gループI] == 152 && g駒位置Y[gループI] == 122 ){ 
+					g駒配置スロット[gループI] = 1 ;
 					break ;
 				}
 			}
-			else if( koma_pos[i] == 1 ){
-				if( koma_x[i] != 112 ){ koma_x[i]-=2; }
-				if( koma_y[i] != 144 ){ koma_y[i]+=1; }
-				if( koma_x[i] == 112 && koma_y[i] == 144  ){
-					koma_pos[i] = 2 ;
+			else if( g駒配置スロット[gループI] == 1 ){
+				if( g駒位置X[gループI] != 112 ){ g駒位置X[gループI]-=2; }
+				if( g駒位置Y[gループI] != 144 ){ g駒位置Y[gループI]+=1; }
+				if( g駒位置X[gループI] == 112 && g駒位置Y[gループI] == 144  ){
+					g駒配置スロット[gループI] = 2 ;
 					break ;
 				}
 			}
-			else if( koma_pos[i] == 2 ){
-				if( koma_x[i] != 72 ){ koma_x[i]-=2; }
-				if( koma_y[i] != 122 ){ koma_y[i]-=1; }
-				if( koma_x[i] == 72 && koma_y[i] == 122 ){
-					koma_pos[i] = 3 ;
+			else if( g駒配置スロット[gループI] == 2 ){
+				if( g駒位置X[gループI] != 72 ){ g駒位置X[gループI]-=2; }
+				if( g駒位置Y[gループI] != 122 ){ g駒位置Y[gループI]-=1; }
+				if( g駒位置X[gループI] == 72 && g駒位置Y[gループI] == 122 ){
+					g駒配置スロット[gループI] = 3 ;
 					break ;
 				}
 			}
-			else if( koma_pos[i] == 3 ){
-				if( koma_x[i] != 112 ){ koma_x[i]+=2; }
-				if( koma_y[i] != 96 ){ koma_y[i]-=1; }
-				if( koma_x[i] == 112 && koma_y[i] == 96 ){
-					koma_pos[i] = 0 ;
+			else if( g駒配置スロット[gループI] == 3 ){
+				if( g駒位置X[gループI] != 112 ){ g駒位置X[gループI]+=2; }
+				if( g駒位置Y[gループI] != 96 ){ g駒位置Y[gループI]-=1; }
+				if( g駒位置X[gループI] == 112 && g駒位置Y[gループI] == 96 ){
+					g駒配置スロット[gループI] = 0 ;
 					break ;
 				}
 			}
@@ -1274,255 +1274,255 @@ void move_next(void)
 }
 #endif
 #define posy_offset 4
-void getStagePos(unsigned char posx, unsigned char posy)
+void 盤面座標取得(unsigned char arg位置X, unsigned char arg位置Y)
 {
 	//位置補正.
-	j = 0 ;
-	if(posx >= 2 && posx <= 5){
-		if( posy >= 10+posy_offset && posy <= 12+posy_offset ){ posx = 3 ;posy = 12+posy_offset ; j++; x_index=0 ; y_index=3 ;}
+	gループJ = 0 ;
+	if(arg位置X >= 2 && arg位置X <= 5){
+		if( arg位置Y >= 10+posy_offset && arg位置Y <= 12+posy_offset ){ arg位置X = 3 ;arg位置Y = 12+posy_offset ; gループJ++; g座標インデックスX=0 ; g座標インデックスY=3 ;}
 	}	
-	if(posx >= 6 && posx <= 9){
-		if( posy >= 8+posy_offset && posy <= 10+posy_offset ){ posx = 7 ;posy = 10+posy_offset ; j++; x_index=0 ; y_index=2 ;}
-		if( posy >= 12+posy_offset && posy <= 14+posy_offset ){ posx = 7 ;posy = 14+posy_offset ; j++; x_index=1 ; y_index=3 ;}
+	if(arg位置X >= 6 && arg位置X <= 9){
+		if( arg位置Y >= 8+posy_offset && arg位置Y <= 10+posy_offset ){ arg位置X = 7 ;arg位置Y = 10+posy_offset ; gループJ++; g座標インデックスX=0 ; g座標インデックスY=2 ;}
+		if( arg位置Y >= 12+posy_offset && arg位置Y <= 14+posy_offset ){ arg位置X = 7 ;arg位置Y = 14+posy_offset ; gループJ++; g座標インデックスX=1 ; g座標インデックスY=3 ;}
 	}	
-	if(posx >= 10 && posx <= 13){
-		if( posy >= 6+posy_offset && posy <= 8+posy_offset ){ posx = 11 ;posy = 8+posy_offset ; j++; x_index=0 ; y_index=1 ;}
-		if( posy >= 10+posy_offset && posy <= 12+posy_offset ){ posx = 11 ;posy = 12+posy_offset ; j++; x_index=1 ; y_index=2 ;}
-		if( posy >= 14+posy_offset && posy <= 16+posy_offset ){ posx = 11 ;posy = 16+posy_offset ; j++; x_index=2 ; y_index=3 ;}
+	if(arg位置X >= 10 && arg位置X <= 13){
+		if( arg位置Y >= 6+posy_offset && arg位置Y <= 8+posy_offset ){ arg位置X = 11 ;arg位置Y = 8+posy_offset ; gループJ++; g座標インデックスX=0 ; g座標インデックスY=1 ;}
+		if( arg位置Y >= 10+posy_offset && arg位置Y <= 12+posy_offset ){ arg位置X = 11 ;arg位置Y = 12+posy_offset ; gループJ++; g座標インデックスX=1 ; g座標インデックスY=2 ;}
+		if( arg位置Y >= 14+posy_offset && arg位置Y <= 16+posy_offset ){ arg位置X = 11 ;arg位置Y = 16+posy_offset ; gループJ++; g座標インデックスX=2 ; g座標インデックスY=3 ;}
 	}
-	if(posx >= 14 && posx <= 17){
-		if( posy >= 4+posy_offset && posy <= 7+posy_offset ){ posx = 15 ;posy = 6+posy_offset ; j++; x_index=0 ; y_index=0 ; }
-		if( posy >= 8+posy_offset && posy <= 10+posy_offset ){ posx = 15 ;posy = 10+posy_offset ; j++; x_index=1 ; y_index=1 ;}
-		if( posy >= 12+posy_offset && posy <= 14+posy_offset ){ posx = 15 ;posy = 14+posy_offset ; j++; x_index=2 ; y_index=2 ;}
-		if( posy >= 16+posy_offset && posy <= 18+posy_offset ){ posx = 15 ;posy = 18+posy_offset ; j++; x_index=3 ; y_index=3 ;}
+	if(arg位置X >= 14 && arg位置X <= 17){
+		if( arg位置Y >= 4+posy_offset && arg位置Y <= 7+posy_offset ){ arg位置X = 15 ;arg位置Y = 6+posy_offset ; gループJ++; g座標インデックスX=0 ; g座標インデックスY=0 ; }
+		if( arg位置Y >= 8+posy_offset && arg位置Y <= 10+posy_offset ){ arg位置X = 15 ;arg位置Y = 10+posy_offset ; gループJ++; g座標インデックスX=1 ; g座標インデックスY=1 ;}
+		if( arg位置Y >= 12+posy_offset && arg位置Y <= 14+posy_offset ){ arg位置X = 15 ;arg位置Y = 14+posy_offset ; gループJ++; g座標インデックスX=2 ; g座標インデックスY=2 ;}
+		if( arg位置Y >= 16+posy_offset && arg位置Y <= 18+posy_offset ){ arg位置X = 15 ;arg位置Y = 18+posy_offset ; gループJ++; g座標インデックスX=3 ; g座標インデックスY=3 ;}
 	}
-	if(posx >= 18 && posx <= 21){
-		if( posy >= 6+posy_offset && posy <= 8+posy_offset ){ posx = 19 ;posy = 8+posy_offset ; j++; x_index=1 ; y_index=0 ;}
-		if( posy >= 10+posy_offset && posy <= 12+posy_offset ){ posx = 19 ;posy = 12+posy_offset ; j++; x_index=2 ; y_index=1 ;}
-		if( posy >= 14+posy_offset && posy <= 16+posy_offset ){ posx = 19 ;posy = 16+posy_offset ; j++; x_index=3 ; y_index=2 ;}
+	if(arg位置X >= 18 && arg位置X <= 21){
+		if( arg位置Y >= 6+posy_offset && arg位置Y <= 8+posy_offset ){ arg位置X = 19 ;arg位置Y = 8+posy_offset ; gループJ++; g座標インデックスX=1 ; g座標インデックスY=0 ;}
+		if( arg位置Y >= 10+posy_offset && arg位置Y <= 12+posy_offset ){ arg位置X = 19 ;arg位置Y = 12+posy_offset ; gループJ++; g座標インデックスX=2 ; g座標インデックスY=1 ;}
+		if( arg位置Y >= 14+posy_offset && arg位置Y <= 16+posy_offset ){ arg位置X = 19 ;arg位置Y = 16+posy_offset ; gループJ++; g座標インデックスX=3 ; g座標インデックスY=2 ;}
 	}
-	if(posx >= 22 && posx <= 25){
-		if( posy >= 8+posy_offset && posy <= 10+posy_offset ){ posx = 23 ;posy = 10+posy_offset ; j++; x_index=2 ; y_index=0 ;}
-		if( posy >= 12+posy_offset && posy <= 14+posy_offset ){ posx = 23 ;posy = 14+posy_offset ; j++; x_index=3 ; y_index=1 ;}
+	if(arg位置X >= 22 && arg位置X <= 25){
+		if( arg位置Y >= 8+posy_offset && arg位置Y <= 10+posy_offset ){ arg位置X = 23 ;arg位置Y = 10+posy_offset ; gループJ++; g座標インデックスX=2 ; g座標インデックスY=0 ;}
+		if( arg位置Y >= 12+posy_offset && arg位置Y <= 14+posy_offset ){ arg位置X = 23 ;arg位置Y = 14+posy_offset ; gループJ++; g座標インデックスX=3 ; g座標インデックスY=1 ;}
 	}
-	if(posx >= 26 && posx <= 29){
-		if( posy >= 10+posy_offset && posy <= 12+posy_offset ){ posx = 27 ;posy = 12+posy_offset ; j++;x_index=3 ; y_index=0 ;}
+	if(arg位置X >= 26 && arg位置X <= 29){
+		if( arg位置Y >= 10+posy_offset && arg位置Y <= 12+posy_offset ){ arg位置X = 27 ;arg位置Y = 12+posy_offset ; gループJ++;g座標インデックスX=3 ; g座標インデックスY=0 ;}
 	}
 	
-	if( posy < 8 ){
-		set_posh = 0x20 ;
-		set_posl = 0x00 + (0x20*posy) + posx ;
+	if( arg位置Y < 8 ){
+		g設定アドレス上位 = 0x20 ;
+		g設定アドレス下位 = 0x00 + (0x20*arg位置Y) + arg位置X ;
 	}else{
-		set_posh = 0x20 + posy / 8 ;
-		set_posl = 0x00 + (0x20*(posy%8)) + posx ;
+		g設定アドレス上位 = 0x20 + arg位置Y / 8 ;
+		g設定アドレス下位 = 0x00 + (0x20*(arg位置Y%8)) + arg位置X ;
 	}
-	set_posx = posx ;
-	set_posy = posy ;
+	g設定座標X = arg位置X ;
+	g設定座標Y = arg位置Y ;
 	
 }
-void attr_share(unsigned char action)
+void 属性共有(unsigned char argアクション)
 {
-	if( action == 0 ){
-		attr_buf[3][2] = attr_stat[3] ;
-		attr_buf[4][2] = attr_stat[4] ;
+	if( argアクション == 0 ){
+		g属性更新バッファ[3][2] = g属性状態配列[3] ;
+		g属性更新バッファ[4][2] = g属性状態配列[4] ;
 	}else{
-		attr_stat[3] = attr_buf[3][2] ;
-		attr_stat[4] = attr_buf[4][2] ;
+		g属性状態配列[3] = g属性更新バッファ[3][2] ;
+		g属性状態配列[4] = g属性更新バッファ[4][2] ;
 	}
 }
 
-void getAttrPos(unsigned char posx, unsigned char posy)
+void 属性座標取得(unsigned char arg位置X, unsigned char arg位置Y)
 {
-	set_posh = 0x23 ;
-	set_posl = 0xC0 + (0x08*(posy/4)) + posx/4 ;
+	g設定アドレス上位 = 0x23 ;
+	g設定アドレス下位 = 0xC0 + (0x08*(arg位置Y/4)) + arg位置X/4 ;
 }
 
 
 #define attr_pos_offset 0x08
-void putStageKomaColor(unsigned char color)
+void 盤面駒色設定(unsigned char argカラー)
 {
 	//getStageAttrPos() ;
-	update_koma_color[0]=0x23|NT_UPD_HORZ;
-	update_koma_color[1]=0x00;
-	update_koma_color[2]=1;
-	update_koma_color[4]=NT_UPD_EOF;
-	set_vram_update(update_koma_color);
+	g更新駒カラー[0]=0x23|NT_UPD_HORZ;
+	g更新駒カラー[1]=0x00;
+	g更新駒カラー[2]=1;
+	g更新駒カラー[4]=NT_UPD_EOF;
+	set_vram_update(g更新駒カラー);
 
-	for( i=0; i < 4; i++ ){
-		update_koma_color[0]=0x23|NT_UPD_HORZ;
-		update_koma_color[1]=attr_pos[x_index][y_index][i]+attr_pos_offset;
-		if( (x_index - y_index) % 2 == 0 ){
-			if( i == 0 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b01000000:0b10000000 ; tmp3 = 0b00111111 ;}
-			if( i == 1 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00010000:0b00100000 ; tmp3 = 0b11001111 ;}
-			if( i == 2 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000100:0b00001000 ; tmp3 = 0b11110011 ;}
-			if( i == 3 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000001:0b00000010 ; tmp3 = 0b11111100 ;}
-			if( color==0x00 ){ tmp2 = 0x00 ;}
-			tmp = tmp & tmp3;
-			tmp = tmp | tmp2;
-			update_koma_color[3] = tmp ;
+	for( gループI=0; gループI < 4; gループI++ ){
+		g更新駒カラー[0]=0x23|NT_UPD_HORZ;
+		g更新駒カラー[1]=k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]+attr_pos_offset;
+		if( (g座標インデックスX - g座標インデックスY) % 2 == 0 ){
+			if( gループI == 0 ){ g一時値1 = g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] ; g一時値2 = argカラー==0x55?0b01000000:0b10000000 ; g一時値3 = 0b00111111 ;}
+			if( gループI == 1 ){ g一時値1 = g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] ; g一時値2 = argカラー==0x55?0b00010000:0b00100000 ; g一時値3 = 0b11001111 ;}
+			if( gループI == 2 ){ g一時値1 = g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] ; g一時値2 = argカラー==0x55?0b00000100:0b00001000 ; g一時値3 = 0b11110011 ;}
+			if( gループI == 3 ){ g一時値1 = g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] ; g一時値2 = argカラー==0x55?0b00000001:0b00000010 ; g一時値3 = 0b11111100 ;}
+			if( argカラー==0x00 ){ g一時値2 = 0x00 ;}
+			g一時値1 = g一時値1 & g一時値3;
+			g一時値1 = g一時値1 | g一時値2;
+			g更新駒カラー[3] = g一時値1 ;
 
-			attr_stat[attr_pos[x_index][y_index][i]-0xC8] = tmp ;
+			g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] = g一時値1 ;
 		}else{
-			if( i == 0 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000100:0b00001000 ; tmp3 = 0b11110011 ;}
-			if( i == 1 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00000001:0b00000010 ; tmp3 = 0b11111100 ;}
-			if( i == 2 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b01000000:0b10000000 ; tmp3 = 0b00111111 ;}
-			if( i == 3 ){ tmp = attr_stat[attr_pos[x_index][y_index][i]-0xC8] ; tmp2 = color==0x55?0b00010000:0b00100000 ; tmp3 = 0b11001111 ;}
-			if( color==0x00 ){ tmp2 = 0x00 ;}
-			tmp = tmp & tmp3;
-			tmp = tmp | tmp2;
-			update_koma_color[3] = tmp ;
+			if( gループI == 0 ){ g一時値1 = g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] ; g一時値2 = argカラー==0x55?0b00000100:0b00001000 ; g一時値3 = 0b11110011 ;}
+			if( gループI == 1 ){ g一時値1 = g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] ; g一時値2 = argカラー==0x55?0b00000001:0b00000010 ; g一時値3 = 0b11111100 ;}
+			if( gループI == 2 ){ g一時値1 = g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] ; g一時値2 = argカラー==0x55?0b01000000:0b10000000 ; g一時値3 = 0b00111111 ;}
+			if( gループI == 3 ){ g一時値1 = g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] ; g一時値2 = argカラー==0x55?0b00010000:0b00100000 ; g一時値3 = 0b11001111 ;}
+			if( argカラー==0x00 ){ g一時値2 = 0x00 ;}
+			g一時値1 = g一時値1 & g一時値3;
+			g一時値1 = g一時値1 | g一時値2;
+			g更新駒カラー[3] = g一時値1 ;
 
-			attr_stat[attr_pos[x_index][y_index][i]-0xC8] = tmp ;
+			g属性状態配列[k属性座標テーブル[g座標インデックスX][g座標インデックスY][gループI]-0xC8] = g一時値1 ;
 		}
-		attr_share(0) ;
+		属性共有(0) ;
 		ppu_wait_nmi();
 	}
 }
-void putKomaColor(unsigned char posx, unsigned char posy, unsigned char color )
+void 駒色設定(unsigned char arg位置X, unsigned char arg位置Y, unsigned char argカラー )
 {
 	// 上ブロック下段.
-	getAttrPos(posx, posy) ;
-	update_koma_color[0]=set_posh|NT_UPD_HORZ;
-	update_koma_color[1]=set_posl;
-	update_koma_color[2]=1;
-	update_koma_color[4]=NT_UPD_EOF;
-	set_vram_update(update_koma_color);
+	属性座標取得(arg位置X, arg位置Y) ;
+	g更新駒カラー[0]=g設定アドレス上位|NT_UPD_HORZ;
+	g更新駒カラー[1]=g設定アドレス下位;
+	g更新駒カラー[2]=1;
+	g更新駒カラー[4]=NT_UPD_EOF;
+	set_vram_update(g更新駒カラー);
 
-	tmp = attr_buf[posx/4][(posy-2)/4] & 0b00001111 ;
-	tmp2 = color&0b11110000 ;
-	tmp = tmp | tmp2 ;
-	attr_buf[posx/4][(posy-2)/4] = tmp ;
+	g一時値1 = g属性更新バッファ[arg位置X/4][(arg位置Y-2)/4] & 0b00001111 ;
+	g一時値2 = argカラー&0b11110000 ;
+	g一時値1 = g一時値1 | g一時値2 ;
+	g属性更新バッファ[arg位置X/4][(arg位置Y-2)/4] = g一時値1 ;
 
-	update_koma_color[3] = tmp ;
+	g更新駒カラー[3] = g一時値1 ;
 
 	ppu_wait_nmi();
 /*
 	ppu_off() ;
 	vram_adr(NAMETABLE_A);//set VRAM address
-	vram_read( &tmp, 1 ) ;
+	vram_read( &g一時値1, 1 ) ;
 	ppu_on_all() ;
 */
 	// 下ブロック上段.
-	getAttrPos(posx, posy+2) ;
-	update_koma_color[0]=set_posh|NT_UPD_HORZ;
-	update_koma_color[1]=set_posl;
-	update_koma_color[2]=1;
-	update_koma_color[4]=NT_UPD_EOF;
-	set_vram_update(update_koma_color);
+	属性座標取得(arg位置X, arg位置Y+2) ;
+	g更新駒カラー[0]=g設定アドレス上位|NT_UPD_HORZ;
+	g更新駒カラー[1]=g設定アドレス下位;
+	g更新駒カラー[2]=1;
+	g更新駒カラー[4]=NT_UPD_EOF;
+	set_vram_update(g更新駒カラー);
 
-	tmp = attr_buf[posx/4][((posy-2)/4)+1] & 0b11110000 ;
-	tmp2 =  color&0b00001111 ;
-	tmp = tmp | tmp2 ;
-	attr_buf[posx/4][((posy-2)/4)+1] = tmp ;
+	g一時値1 = g属性更新バッファ[arg位置X/4][((arg位置Y-2)/4)+1] & 0b11110000 ;
+	g一時値2 =  argカラー&0b00001111 ;
+	g一時値1 = g一時値1 | g一時値2 ;
+	g属性更新バッファ[arg位置X/4][((arg位置Y-2)/4)+1] = g一時値1 ;
 
-	update_koma_color[3] = tmp ;
+	g更新駒カラー[3] = g一時値1 ;
 	ppu_wait_nmi();
 
-	attr_share(1) ;
+	属性共有(1) ;
 }
-unsigned char checkPutPos(unsigned char posx, unsigned char posy)
+unsigned char 配置判定(unsigned char arg位置X, unsigned char arg位置Y)
 {
-	getStagePos(posx, posy) ;
-	if( j == 0 ){
+	盤面座標取得(arg位置X, arg位置Y) ;
+	if( gループJ == 0 ){
 		return 1;
 	}
-	if( stage_stat[x_index][y_index][_KOMA_TYPE] != 0 ){
+	if( g盤面状態マップ[g座標インデックスX][g座標インデックスY][_KOMA_TYPE] != 0 ){
 		return 1 ;
 	}
 	return 0 ;
 }
-void putStockKoma(unsigned char posx, unsigned char posy, unsigned char color, unsigned char* meta)
+void ストック駒配置(unsigned char arg位置X, unsigned char arg位置Y, unsigned char argカラー, unsigned char* argメタデータ)
 {
-	getStagePos(posx, posy) ;
-	update_koma[0]=set_posh|NT_UPD_VERT;
-	update_koma[1]=set_posl;
-	update_koma[2]=4;
-	update_koma[7]=set_posh|NT_UPD_VERT;
-	update_koma[8]=set_posl+1;
-	update_koma[9]=4;
-	update_koma[14]=set_posh|NT_UPD_VERT;
-	update_koma[15]=set_posl+2;
-	update_koma[16]=4;
-	update_koma[(3+4)*3]=NT_UPD_EOF;
-	set_vram_update(update_koma);
+	盤面座標取得(arg位置X, arg位置Y) ;
+	g更新駒データ[0]=g設定アドレス上位|NT_UPD_VERT;
+	g更新駒データ[1]=g設定アドレス下位;
+	g更新駒データ[2]=4;
+	g更新駒データ[7]=g設定アドレス上位|NT_UPD_VERT;
+	g更新駒データ[8]=g設定アドレス下位+1;
+	g更新駒データ[9]=4;
+	g更新駒データ[14]=g設定アドレス上位|NT_UPD_VERT;
+	g更新駒データ[15]=g設定アドレス下位+2;
+	g更新駒データ[16]=4;
+	g更新駒データ[(3+4)*3]=NT_UPD_EOF;
+	set_vram_update(g更新駒データ);
 
-	for( i=0; i<3; i++ ){
-		for( j=0; j<4; j++ ){
-			update_koma[7*i+j+3] = meta[4*(4*i+j)+2] ;
+	for( gループI=0; gループI<3; gループI++ ){
+		for( gループJ=0; gループJ<4; gループJ++ ){
+			g更新駒データ[7*gループI+gループJ+3] = argメタデータ[4*(4*gループI+gループJ)+2] ;
 		}
 	}
 	ppu_wait_nmi();
-	putKomaColor( posx, posy, color) ;
+	駒色設定( arg位置X, arg位置Y, argカラー) ;
 }
 
-void printBar(unsigned int adr, unsigned char action )
+void バー描画(unsigned int argアドレス, unsigned char argアクション )
 {
-	update_debug[0]=MSB(adr)|NT_UPD_HORZ;
-	update_debug[1]=LSB(adr);
-	update_debug[2]=16;
-	update_debug[3+16]=NT_UPD_EOF;
-	set_vram_update(update_debug);
+	g更新デバッグバッファ[0]=MSB(argアドレス)|NT_UPD_HORZ;
+	g更新デバッグバッファ[1]=LSB(argアドレス);
+	g更新デバッグバッファ[2]=16;
+	g更新デバッグバッファ[3+16]=NT_UPD_EOF;
+	set_vram_update(g更新デバッグバッファ);
 
-	memfill( &update_debug[3], 0x00, 16 );
-	if( action == 1 ){
-		for( i=0; i<16; i++ ){
-			if( i == 0 ){ update_debug[i+3] = action == 1 ? 0xDD: 0xED ; }
-			else if( i ==15 ){ update_debug[i+3] = action == 1 ? 0xDF: 0xEF ; }
-			else { update_debug[i+3] = action == 1 ? 0xDE: 0xEE ; }
+	memfill( &g更新デバッグバッファ[3], 0x00, 16 );
+	if( argアクション == 1 ){
+		for( gループI=0; gループI<16; gループI++ ){
+			if( gループI == 0 ){ g更新デバッグバッファ[gループI+3] = argアクション == 1 ? 0xDD: 0xED ; }
+			else if( gループI ==15 ){ g更新デバッグバッファ[gループI+3] = argアクション == 1 ? 0xDF: 0xEF ; }
+			else { g更新デバッグバッファ[gループI+3] = argアクション == 1 ? 0xDE: 0xEE ; }
 		}
 	}
 	ppu_wait_nmi();
 }
 
 /*
-void initBar()
+void バー初期化()
 {
-	printBar( NTADR_A(0,29), 0 );
+	バー描画( NTADR_A(0,29), 0 );
 }
 */
-void autoPrintBar()
+void バー自動描画()
 {
-//	printBar( NTADR_A(0,29), 0);
-	printBar( NTADR_A(whichTurn==0?0:16,29), 0);
-	printBar( NTADR_A(whichTurn==1?0:16,29), 1);
+//	バー描画( NTADR_A(0,29), 0);
+	バー描画( NTADR_A(g現在手番==0?0:16,29), 0);
+	バー描画( NTADR_A(g現在手番==1?0:16,29), 1);
 }
 
-void putKoma(unsigned char posx, unsigned char posy, unsigned char color, unsigned char* meta)
+void 駒配置(unsigned char arg位置X, unsigned char arg位置Y, unsigned char argカラー, unsigned char* argメタデータ)
 {
-	putStageKomaColor( color ) ;
+	盤面駒色設定( argカラー ) ;
 
-	getStagePos(posx, posy) ;
-	update_koma[0]=set_posh|NT_UPD_VERT;
-	update_koma[1]=set_posl;
-	update_koma[2]=4;
-	update_koma[7]=set_posh|NT_UPD_VERT;
-	update_koma[8]=set_posl+1;
-	update_koma[9]=4;
-	update_koma[14]=set_posh|NT_UPD_VERT;
-	update_koma[15]=set_posl+2;
-	update_koma[16]=4;
-	update_koma[(3+4)*3]=NT_UPD_EOF;
-	set_vram_update(update_koma);
+	盤面座標取得(arg位置X, arg位置Y) ;
+	g更新駒データ[0]=g設定アドレス上位|NT_UPD_VERT;
+	g更新駒データ[1]=g設定アドレス下位;
+	g更新駒データ[2]=4;
+	g更新駒データ[7]=g設定アドレス上位|NT_UPD_VERT;
+	g更新駒データ[8]=g設定アドレス下位+1;
+	g更新駒データ[9]=4;
+	g更新駒データ[14]=g設定アドレス上位|NT_UPD_VERT;
+	g更新駒データ[15]=g設定アドレス下位+2;
+	g更新駒データ[16]=4;
+	g更新駒データ[(3+4)*3]=NT_UPD_EOF;
+	set_vram_update(g更新駒データ);
 
-	for( i=0; i<3; i++ ){
-		for( j=0; j<4; j++ ){
-			update_koma[7*i+j+3] = meta[4*(4*i+j)+2] ;
+	for( gループI=0; gループI<3; gループI++ ){
+		for( gループJ=0; gループJ<4; gループJ++ ){
+			g更新駒データ[7*gループI+gループJ+3] = argメタデータ[4*(4*gループI+gループJ)+2] ;
 
 			// 頭被り補正処理.
 			//if( checking != 0 ){continue ;}
 
-			if( x_index != 0 && y_index != 0){
-				if( j == 0 ){
-					if( ChooseKoma >= 4 && ChooseKoma <= 7 ){
+			if( g座標インデックスX != 0 && g座標インデックスY != 0){
+				if( gループJ == 0 ){
+					if( g選択駒番号 >= 4 && g選択駒番号 <= 7 ){
 						// 被りなしコマ.
-						update_koma[7*i+j+3] = 0xD1+i ;
+						g更新駒データ[7*gループI+gループJ+3] = 0xD1+gループI ;
 					}else{
 						// 被りありコマ. ※左端2マスのみ再描画.
-						if( i == 1 ){ continue ; }
-						if( ChooseKoma == 0 ){ update_koma[7*i+j+3] = i == 0 ? 0xAA : 0xAA+1 ;}
-						if( ChooseKoma == 1 ){ update_koma[7*i+j+3] = i == 0 ? 0xBA : 0xBA+1 ;}
-						if( ChooseKoma == 2 ){ update_koma[7*i+j+3] = i == 0 ? 0xAC : 0xAC+1 ;}
-						if( ChooseKoma == 3 ){ update_koma[7*i+j+3] = i == 0 ? 0xBC : 0xBC+1 ;}
+						if( gループI == 1 ){ continue ; }
+						if( g選択駒番号 == 0 ){ g更新駒データ[7*gループI+gループJ+3] = gループI == 0 ? 0xAA : 0xAA+1 ;}
+						if( g選択駒番号 == 1 ){ g更新駒データ[7*gループI+gループJ+3] = gループI == 0 ? 0xBA : 0xBA+1 ;}
+						if( g選択駒番号 == 2 ){ g更新駒データ[7*gループI+gループJ+3] = gループI == 0 ? 0xAC : 0xAC+1 ;}
+						if( g選択駒番号 == 3 ){ g更新駒データ[7*gループI+gループJ+3] = gループI == 0 ? 0xBC : 0xBC+1 ;}
 					}
 				}
 			}
@@ -1531,143 +1531,143 @@ void putKoma(unsigned char posx, unsigned char posy, unsigned char color, unsign
 	ppu_wait_nmi();
 }
 
-void printCursor()
+void カーソル描画()
 {
-	spr = 0 ;
-//	spr = oam_meta_spr( ChooseKoma*32+8, 30+(selBW*170), spr, selBW==0 ? cursor : cursor2  ) ;
-//	spr = oam_meta_spr( ChooseKoma*32+8, selBW==0? 30 : 30+170, spr, selBW==0 ? meta_pos1 : meta_pos2  ) ;
-//	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 28-frame%6 : 60-frame%6, spr, selBW==0 ? meta_pos1_reverse : meta_pos2_reverse) ;
-	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 42-frame%6 : 76-frame%6, spr, selBW==0 ? meta_pos1_reverse : meta_pos2_reverse) ;
-	//if( frame&2 ){ oam_hide_rest(spr) ; return ; }
-//	spr = oam_meta_spr( ChooseKoma*32+9, selBW==0? 0-frame%6 : 202+frame%6, spr, selBW==0 ? meta_pos1 : meta_pos2  ) ;
+	gスプライトID = 0 ;
+//	gスプライトID = oam_meta_spr( g選択駒番号*32+8, 30+(g駒色選択*170), gスプライトID, g駒色選択==0 ? kカーソルスプライト : kカーソルスプライト2  ) ;
+//	gスプライトID = oam_meta_spr( g選択駒番号*32+8, g駒色選択==0? 30 : 30+170, gスプライトID, g駒色選択==0 ? kメタ位置1 : kメタ位置2  ) ;
+//	gスプライトID = oam_meta_spr( g選択駒番号*32+9, g駒色選択==0? 28-gフレームカウンタ%6 : 60-gフレームカウンタ%6, gスプライトID, g駒色選択==0 ? kメタ位置1逆 : kメタ位置2逆) ;
+	gスプライトID = oam_meta_spr( g選択駒番号*32+9, g駒色選択==0? 42-gフレームカウンタ%6 : 76-gフレームカウンタ%6, gスプライトID, g駒色選択==0 ? kメタ位置1逆 : kメタ位置2逆) ;
+	//if( gフレームカウンタ&2 ){ oam_hide_rest(gスプライトID) ; return ; }
+//	gスプライトID = oam_meta_spr( g選択駒番号*32+9, g駒色選択==0? 0-gフレームカウンタ%6 : 202+gフレームカウンタ%6, gスプライトID, g駒色選択==0 ? kメタ位置1 : kメタ位置2  ) ;
 
 }
 /*
-unsigned char isPadNull()
+unsigned char パッド無入力()
 {
-	pad = pad_poll(0);
-	if(pad==0){
+	gパッド入力 = pad_poll(0);
+	if(gパッド入力==0){
 		moving = 0 ;
 		return 1 ;
 	}
 	return 0 ;
 }
 */
-unsigned char checkLineQuarto()
+unsigned char ラインクアルト判定()
 {
-	if ( q_black == 4 || q_white == 4 || q_high == 4 || q_low == 4 || 
-	q_square == 4 || q_circle == 4 || q_plane == 4 || q_dot == 4 ) {
+	if ( g属性黒 == 4 || g属性白 == 4 || g属性高 == 4 || g属性低 == 4 || 
+	g属性四角 == 4 || g属性丸 == 4 || g属性平面 == 4 || g属性穴 == 4 ) {
 		return 1 ;
 	}
 	return 0 ;
 }
-void initQuartoFlg()
+void クアルトフラグ初期化()
 {
-	q_black =0 ;
-	q_white = 0 ;
-	q_high = 0 ;
-	q_low = 0 ;
-	q_square = 0 ;
-	q_circle = 0 ;
-	q_plane = 0 ;
-	q_dot = 0 ;
+	g属性黒 =0 ;
+	g属性白 = 0 ;
+	g属性高 = 0 ;
+	g属性低 = 0 ;
+	g属性四角 = 0 ;
+	g属性丸 = 0 ;
+	g属性平面 = 0 ;
+	g属性穴 = 0 ;
 }
-void bitCalc(unsigned char x, unsigned char y)
+void ビット計算(unsigned char g座標X, unsigned char g座標Y)
 {
-	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b10000000 ){ q_black++ ;}
-	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b01000000 ){ q_high++ ;}
-	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00100000 ){ q_square++ ;}
-	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00010000 ){ q_plane++ ;}
-	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00001000 ){ q_white++ ;}
-	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00000100 ){ q_low++ ;}
-	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00000010 ){ q_circle++ ;}
-	calc = stage_stat[x][y][_KOMA_TYPE] ; if( calc & 0b00000001 ){ q_dot++ ;}
+	g計算値 = g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] ; if( g計算値 & 0b10000000 ){ g属性黒++ ;}
+	g計算値 = g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] ; if( g計算値 & 0b01000000 ){ g属性高++ ;}
+	g計算値 = g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] ; if( g計算値 & 0b00100000 ){ g属性四角++ ;}
+	g計算値 = g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] ; if( g計算値 & 0b00010000 ){ g属性平面++ ;}
+	g計算値 = g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] ; if( g計算値 & 0b00001000 ){ g属性白++ ;}
+	g計算値 = g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] ; if( g計算値 & 0b00000100 ){ g属性低++ ;}
+	g計算値 = g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] ; if( g計算値 & 0b00000010 ){ g属性丸++ ;}
+	g計算値 = g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] ; if( g計算値 & 0b00000001 ){ g属性穴++ ;}
 }
-unsigned char checkQuarto()
+unsigned char クアルト判定()
 {
-	for( i = 0; i < 4; i++ ){
-		initQuartoFlg() ;
-		for( j = 0; j < 4; j++ ){
-			bitCalc(i,j) ;
+	for( gループI = 0; gループI < 4; gループI++ ){
+		クアルトフラグ初期化() ;
+		for( gループJ = 0; gループJ < 4; gループJ++ ){
+			ビット計算(gループI,gループJ) ;
 		}
-		if( checkLineQuarto() == 1 ){
-			for( j = 0; j < 4; j++ ){
-				quarto_line[j][0] = i ;
-				quarto_line[j][1] = j ;
+		if( ラインクアルト判定() == 1 ){
+			for( gループJ = 0; gループJ < 4; gループJ++ ){
+				gクアルトライン[gループJ][0] = gループI ;
+				gクアルトライン[gループJ][1] = gループJ ;
 			}
 			return 1 ;
 		}
 	}
-	for( j = 0; j < 4; j++ ){
-		initQuartoFlg() ;
-		for( i = 0; i < 4; i++ ){
-			bitCalc(i,j) ;
+	for( gループJ = 0; gループJ < 4; gループJ++ ){
+		クアルトフラグ初期化() ;
+		for( gループI = 0; gループI < 4; gループI++ ){
+			ビット計算(gループI,gループJ) ;
 		}
 		/*
-		if( j == 3 ){
-			put_update_debug(1,11, 3, itoa(q_black, &strbuf[0], 10 ));
-			put_update_debug(4,11, 3, itoa(q_high, &strbuf[0], 10 ));
-			put_update_debug(7,11, 3, itoa(q_square, &strbuf[0], 10 ));
-			put_update_debug(10,11, 3, itoa(q_plane, &strbuf[0], 10 ));
-			put_update_debug(13,11, 3, itoa(q_white, &strbuf[0], 10 ));
-			put_update_debug(16,11, 3, itoa(q_low, &strbuf[0], 10 ));
-			put_update_debug(19,11, 3, itoa(q_circle, &strbuf[0], 10 ));
-			put_update_debug(22,11, 3, itoa(q_dot, &strbuf[0], 10 ));
+		if( gループJ == 3 ){
+			デバッグ表示更新(1,11, 3, itoa(g属性黒, &g文字列バッファ[0], 10 ));
+			デバッグ表示更新(4,11, 3, itoa(g属性高, &g文字列バッファ[0], 10 ));
+			デバッグ表示更新(7,11, 3, itoa(g属性四角, &g文字列バッファ[0], 10 ));
+			デバッグ表示更新(10,11, 3, itoa(g属性平面, &g文字列バッファ[0], 10 ));
+			デバッグ表示更新(13,11, 3, itoa(g属性白, &g文字列バッファ[0], 10 ));
+			デバッグ表示更新(16,11, 3, itoa(g属性低, &g文字列バッファ[0], 10 ));
+			デバッグ表示更新(19,11, 3, itoa(g属性丸, &g文字列バッファ[0], 10 ));
+			デバッグ表示更新(22,11, 3, itoa(g属性穴, &g文字列バッファ[0], 10 ));
 		}
 		*/
-		if( checkLineQuarto() == 1 ){
-			for( i = 0; i < 4; i++ ){
-				quarto_line[i][0] = i ;
-				quarto_line[i][1] = j ;
+		if( ラインクアルト判定() == 1 ){
+			for( gループI = 0; gループI < 4; gループI++ ){
+				gクアルトライン[gループI][0] = gループI ;
+				gクアルトライン[gループI][1] = gループJ ;
 			}
 			return 1 ;
 		}
 	}
 
 	// クロス縦.
-	initQuartoFlg() ;
-	for( i = 0; i < 4; i++ ){
-		bitCalc(i,i) ;
+	クアルトフラグ初期化() ;
+	for( gループI = 0; gループI < 4; gループI++ ){
+		ビット計算(gループI,gループI) ;
 	}
-	if( checkLineQuarto() == 1 ){
-		for( i = 0; i < 4; i++ ){
-			quarto_line[i][0] = i ;
-			quarto_line[i][1] = i ;
+	if( ラインクアルト判定() == 1 ){
+		for( gループI = 0; gループI < 4; gループI++ ){
+			gクアルトライン[gループI][0] = gループI ;
+			gクアルトライン[gループI][1] = gループI ;
 		}
 		return 1 ;
 	}
 
 	// クロス横.
-	initQuartoFlg() ;
-	for( i = 0; i < 4; i++ ){
-		bitCalc(i,3-i) ;
+	クアルトフラグ初期化() ;
+	for( gループI = 0; gループI < 4; gループI++ ){
+		ビット計算(gループI,3-gループI) ;
 	}
-	if( checkLineQuarto() == 1 ){
-		for( i = 0; i < 4; i++ ){
-			quarto_line[i][0] = i ;
-			quarto_line[i][1] = 3-i ;
+	if( ラインクアルト判定() == 1 ){
+		for( gループI = 0; gループI < 4; gループI++ ){
+			gクアルトライン[gループI][0] = gループI ;
+			gクアルトライン[gループI][1] = 3-gループI ;
 		}
 		return 1 ;
 	}
 
 	// ボックス(上級ルール).
-	if( isAdvanced == 1 ){
-		for( i = 0; i < 3; i++ ){
-			for( j = 0; j < 3; j++ ){
-				initQuartoFlg() ;
-				bitCalc(i,j) ;
-				bitCalc(i,j+1) ;
-				bitCalc(i+1,j) ;
-				bitCalc(i+1,j+1) ;
-				if( checkLineQuarto() == 1 ){
-					quarto_line[0][0] = i ;
-					quarto_line[0][1] = j ;
-					quarto_line[1][0] = i ;
-					quarto_line[1][1] = j+1 ;
-					quarto_line[2][0] = i+1 ;
-					quarto_line[2][1] = j ;
-					quarto_line[3][0] = i+1 ;
-					quarto_line[3][1] = j+1 ;
+	if( g上級モード == 1 ){
+		for( gループI = 0; gループI < 3; gループI++ ){
+			for( gループJ = 0; gループJ < 3; gループJ++ ){
+				クアルトフラグ初期化() ;
+				ビット計算(gループI,gループJ) ;
+				ビット計算(gループI,gループJ+1) ;
+				ビット計算(gループI+1,gループJ) ;
+				ビット計算(gループI+1,gループJ+1) ;
+				if( ラインクアルト判定() == 1 ){
+					gクアルトライン[0][0] = gループI ;
+					gクアルトライン[0][1] = gループJ ;
+					gクアルトライン[1][0] = gループI ;
+					gクアルトライン[1][1] = gループJ+1 ;
+					gクアルトライン[2][0] = gループI+1 ;
+					gクアルトライン[2][1] = gループJ ;
+					gクアルトライン[3][0] = gループI+1 ;
+					gクアルトライン[3][1] = gループJ+1 ;
 					return 1 ;
 				}
 			}
@@ -1677,162 +1677,162 @@ unsigned char checkQuarto()
 	return 0 ;
 }
 
-moveKoma(unsigned char src_x, unsigned char src_y, unsigned char dst_x, unsigned char dst_y, unsigned char* meta )
+void 駒移動演出(unsigned char arg元座標X, unsigned char arg元座標Y, unsigned char arg先座標X, unsigned char arg先座標Y, unsigned char* argメタデータ )
 {
 	// 2単位で増減するので、src,dstどこかが奇数となると無限ループする.
-	koma_x[0] = src_x % 2 == 0 ? src_x : src_x-1 ;
-	koma_y[0] = src_y % 2 == 0 ? src_y : src_y-1 ;
-	dst_x = dst_x % 2 == 0 ? dst_x : dst_x-1 ;
-	dst_y = dst_y % 2 == 0 ? dst_y : dst_y-1 ;
+	g駒位置X[0] = arg元座標X % 2 == 0 ? arg元座標X : arg元座標X-1 ;
+	g駒位置Y[0] = arg元座標Y % 2 == 0 ? arg元座標Y : arg元座標Y-1 ;
+	arg先座標X = arg先座標X % 2 == 0 ? arg先座標X : arg先座標X-1 ;
+	arg先座標Y = arg先座標Y % 2 == 0 ? arg先座標Y : arg先座標Y-1 ;
 	
 	while(1){
-		koma_frame++ ;
-		if( koma_frame % 5 != 0 ){ continue ; }
+		g駒フレーム++ ;
+		if( g駒フレーム % 5 != 0 ){ continue ; }
 		//ppu_wait_nmi();
-		spr = 0 ;
-		spr = oam_meta_spr( koma_x[0], koma_y[0], spr, meta ) ;
+		gスプライトID = 0 ;
+		gスプライトID = oam_meta_spr( g駒位置X[0], g駒位置Y[0], gスプライトID, argメタデータ ) ;
 
-		if( koma_y[0] > dst_y ){ koma_y[0]-=2; }
-		else if( koma_y[0] < dst_y ){ koma_y[0]+=2; }
-		else if( koma_x[0] > dst_x ){ koma_x[0]-=2; }
-		else if( koma_x[0] < dst_x ){ koma_x[0]+=2; }
+		if( g駒位置Y[0] > arg先座標Y ){ g駒位置Y[0]-=2; }
+		else if( g駒位置Y[0] < arg先座標Y ){ g駒位置Y[0]+=2; }
+		else if( g駒位置X[0] > arg先座標X ){ g駒位置X[0]-=2; }
+		else if( g駒位置X[0] < arg先座標X ){ g駒位置X[0]+=2; }
 
-		if( koma_x[0] == dst_x && koma_y[0] == dst_y ){ 
+		if( g駒位置X[0] == arg先座標X && g駒位置Y[0] == arg先座標Y ){ 
 			break ;
 		}
 
 	}
-	x = dst_x ;
-	y = dst_y ;
+	g座標X = arg先座標X ;
+	g座標Y = arg先座標Y ;
 	ppu_wait_frame();
 }
 /*
-void stageAnime(unsigned char action)
+void 盤面アニメ(unsigned char argアクション)
 {
-	spr = 0 ;
-	for( i = 0; i < 32 ; i++ ){
-		for( x = 0; x < 4 ; x++ ){
-			for( y = 0; y < 4 ; y++ ){
-				spr = oam_meta_spr( (x*32)-(y*32)+117-i, (y*16)+(x*16)+79, spr, meta_mask ) ;
+	gスプライトID = 0 ;
+	for( gループI = 0; gループI < 32 ; gループI++ ){
+		for( g座標X = 0; g座標X < 4 ; g座標X++ ){
+			for( g座標Y = 0; g座標Y < 4 ; g座標Y++ ){
+				gスプライトID = oam_meta_spr( (g座標X*32)-(g座標Y*32)+117-gループI, (g座標Y*16)+(g座標X*16)+79, gスプライトID, kメタマスク ) ;
 			}
 		}
-		if( action == 0 ){
+		if( argアクション == 0 ){
 			return ;
 		}
 	}
 }
 */
-void printTimerInit()
+void タイマー表示初期化()
 {
-	put_update_debug(2,25, 3, "   " );
-	put_update_debug(28,25,  3, "   " );
+	デバッグ表示更新(2,25, 3, "   " );
+	デバッグ表示更新(28,25,  3, "   " );
 }
-void printTimer()
+void タイマー表示()
 {
-	printTimerInit() ;
-	if( timerSetCount != 0 ){
-		put_update_debug(whichTurn!=0?2:28,25, 3, itoa(timer, &strbuf[0], 10 ) );
+	タイマー表示初期化() ;
+	if( gタイマー設定回数 != 0 ){
+		デバッグ表示更新(g現在手番!=0?2:28,25, 3, itoa(gタイマー値, &g文字列バッファ[0], 10 ) );
 	}
 }
 
 /*
-void offStageDraw()
+void 盤面外描画()
 {
-	for( k = 1; k < 4; k++ ){
-		for( l = 1; l < 4; l++ ){
-			if( stage_stat[k][l][_KOMA_TYPE] != 0 ){
-				ChooseKoma = stage_stat[k][l][_CHOOSE_KOMA] ;
-				selBW = stage_stat[k][l][_SEL_BW] ;
-				x = (k*32)-(l*32)+115+16 ;
-				y = (l*16)+(k*16)+71-16 ;
-				putKoma( x/8, y/8, selBW==0?0xAA:0x55, (unsigned char*)koma_list[0][0][ChooseKoma] ) ;
+	for( gループK = 1; gループK < 4; gループK++ ){
+		for( gループL = 1; gループL < 4; gループL++ ){
+			if( g盤面状態マップ[gループK][gループL][_KOMA_TYPE] != 0 ){
+				g選択駒番号 = g盤面状態マップ[gループK][gループL][_CHOOSE_KOMA] ;
+				g駒色選択 = g盤面状態マップ[gループK][gループL][_SEL_BW] ;
+				g座標X = (gループK*32)-(gループL*32)+115+16 ;
+				g座標Y = (gループL*16)+(gループK*16)+71-16 ;
+				駒配置( g座標X/8, g座標Y/8, g駒色選択==0?0xAA:0x55, (unsigned char*)k駒スプライトリスト[0][0][g選択駒番号] ) ;
 			}
 		}
 	}
 }
 */
-void animeKomaTurnOff()
+void 駒回転停止()
 {
 	bank_bg(0);
-	pal_bg((char*)bg_palettes[bgpl]);
-	pal_spr((char*)bg_palettes[bgpl]);
+	pal_bg((char*)k背景パレット配列[g背景パレット番号]);
+	pal_spr((char*)k背景パレット配列[g背景パレット番号]);
 
 }
-void animeKomaTurn(unsigned char speed)
+void 駒回転アニメ(unsigned char argスピード)
 {
 //	checking = 1 ;
-//	pal_bg((char*)bg_palettes2[0]);
-//	offStageDraw();
+//	pal_bg((char*)k背景パレット代替[0]);
+//	盤面外描画();
 
-//	for( i = 0; i < 5; i++){
+//	for( gループI = 0; gループI < 5; gループI++){
 	
-	if( frame % 4 == 0 ){
+	if( gフレームカウンタ % 4 == 0 ){
 		bank_bg(0);
-		pal_bg((char*)bg_palettes2[0]);
+		pal_bg((char*)k背景パレット代替[0]);
 	}
-	if( frame % 4 == 1 ){
+	if( gフレームカウンタ % 4 == 1 ){
 		bank_bg(1);
-		pal_bg((char*)bg_palettes2[1]);
+		pal_bg((char*)k背景パレット代替[1]);
 		//delay(1) ;
 	}
-	if( frame % 4 == 2 ){
-		pal_bg((char*)bg_palettes2[2]);
+	if( gフレームカウンタ % 4 == 2 ){
+		pal_bg((char*)k背景パレット代替[2]);
 		//delay(2) ;
 	}
-	if( frame % 4 == 3 ){
-		pal_bg((char*)bg_palettes2[3]);
+	if( gフレームカウンタ % 4 == 3 ){
+		pal_bg((char*)k背景パレット代替[3]);
 		//delay(1) ;
 	}
-	delay(speed) ;
+	delay(argスピード) ;
 
 //	checking = 0 ;
-//	offStageDraw() ;
+//	盤面外描画() ;
 
 }
-void initMsg()
+void メッセージ初期化()
 {
-	//initBar() ;
-	//printTimerInit() ;
-	put_update_debug(1,28, 14, (const char*)msgBlank );
-	put_update_debug(17,28, 14, (const char*)msgBlank );
+	//バー初期化() ;
+	//タイマー表示初期化() ;
+	デバッグ表示更新(1,28, 14, (const char*)k空白メッセージ );
+	デバッグ表示更新(17,28, 14, (const char*)k空白メッセージ );
 }
-void printMsg(unsigned char action)
+void メッセージ表示(unsigned char argアクション)
 {
-	autoPrintBar();
+	バー自動描画();
 
-	//initMsg() ;
-	if( action == 0 ){
-//		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":"" );
-//		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 && frame&4? "P2:SELECT NEXT":"" );
-		put_update_debug(1,28, 14, whichTurn!=0?"P1:SELECT NEXT":"P1:           " );
-		put_update_debug(17,28, 14, whichTurn==0 ? "P2:SELECT NEXT":"P2:           " );
+	//メッセージ初期化() ;
+	if( argアクション == 0 ){
+//		デバッグ表示更新(1,28, 14, g現在手番!=0?"P1:SELECT NEXT":"" );
+//		デバッグ表示更新(17,28, 14, g対CPUフラグ == 1 && g現在手番==0 && gフレームカウンタ&4? "P2:SELECT NEXT":"" );
+		デバッグ表示更新(1,28, 14, g現在手番!=0?"P1:SELECT NEXT":"P1:           " );
+		デバッグ表示更新(17,28, 14, g現在手番==0 ? "P2:SELECT NEXT":"P2:           " );
 
-	}else if( action == 1 ){
-//		put_update_debug(1,28, 14, whichTurn!=0?"P1:PLAYING    ":"" );
-//		put_update_debug(17,28, 14, isVsCPU == 1 && whichTurn==0 && frame&4?"P2:PLAYING    ":"" );
-		put_update_debug(1,28, 14, whichTurn!=0?"P1:THINKING   ":"P1:           " );
-		put_update_debug(17,28, 14, whichTurn==0 ?"P2:THINKING   ":"P2:           " );
-		printTimer() ;
+	}else if( argアクション == 1 ){
+//		デバッグ表示更新(1,28, 14, g現在手番!=0?"P1:PLAYING    ":"" );
+//		デバッグ表示更新(17,28, 14, g対CPUフラグ == 1 && g現在手番==0 && gフレームカウンタ&4?"P2:PLAYING    ":"" );
+		デバッグ表示更新(1,28, 14, g現在手番!=0?"P1:THINKING   ":"P1:           " );
+		デバッグ表示更新(17,28, 14, g現在手番==0 ?"P2:THINKING   ":"P2:           " );
+		タイマー表示() ;
 	}
 /*
-	else if( action == 2 ){
-		put_update_debug(1,24, 14, whichTurn!=0?"P1:WIN!       ":(const char*)msgBlank );
-		put_update_debug(1,5, 14, whichTurn==0?"P2:WIN!       ":(const char*)msgBlank );
+	else if( argアクション == 2 ){
+		デバッグ表示更新(1,24, 14, g現在手番!=0?"P1:WIN!       ":(const char*)k空白メッセージ );
+		デバッグ表示更新(1,5, 14, g現在手番==0?"P2:WIN!       ":(const char*)k空白メッセージ );
 	}
 */
 
 }
-void initLife()
+void ライフ初期化()
 {
-	put_update_debug(1,27, 3, "   " );
-	put_update_debug(17,27, 3,  "   " );
+	デバッグ表示更新(1,27, 3, "   " );
+	デバッグ表示更新(17,27, 3,  "   " );
 }
-void printLife()
+void ライフ表示()
 {
-	put_update_debug(1,27, 3, err[1] == 0 ? "   ": err[1] == 1 ?"X  ": err[1] == 2 ?"XX ": "XXX" );
-	put_update_debug(17,27, 3, err[0] == 0 ? "   ": err[0] == 1 ?"X  ": err[0] == 2 ?"XX ": "XXX" );
+	デバッグ表示更新(1,27, 3, gエラーフラグ[1] == 0 ? "   ": gエラーフラグ[1] == 1 ?"X  ": gエラーフラグ[1] == 2 ?"XX ": "XXX" );
+	デバッグ表示更新(17,27, 3, gエラーフラグ[0] == 0 ? "   ": gエラーフラグ[0] == 1 ?"X  ": gエラーフラグ[0] == 2 ?"XX ": "XXX" );
 }
-void loseAnime()
+void 敗北アニメ()
 {
 	oam_clear() ;
 	ppu_off() ;
@@ -1841,7 +1841,7 @@ void loseAnime()
 	bank_bg(1);
 	vram_adr(NAMETABLE_A);//set VRAM address
 	vram_unrle((unsigned char*)jeesus);
-	pal_bg(palette_jeesus);
+	pal_bg(kジーザスパレット);
 	ppu_on_all();//enable rendering
 
 	music_play(4) ;
@@ -1850,228 +1850,228 @@ void loseAnime()
 	music_stop() ;
 	bank_bg(0);
 
-	reset() ;
+	リセット処理() ;
 
 }
-void procSayQuarto(){
+void クアルト宣言処理(){
 	oam_clear() ;
-	initMsg() ;
-	initLife() ;
-	printTimerInit() ;
+	メッセージ初期化() ;
+	ライフ初期化() ;
+	タイマー表示初期化() ;
 	
 	music_play(2) ;
 
-//	tmp = rand8() ;
-//	tmp2 = rand8() ;
-//	tmp3 = rand8() ;
-//	tmp4 = rand8() ;
-	for( i=0 ; i< 20; i++ ){
-		animeKomaTurn(2) ;
+//	g一時値1 = rand8() ;
+//	g一時値2 = rand8() ;
+//	g一時値3 = rand8() ;
+//	g一時値4 = rand8() ;
+	for( gループI=0 ; gループI< 20; gループI++ ){
+		駒回転アニメ(2) ;
 
-		x-=4 ;
-		spr = 0 ;
-		spr = oam_meta_spr( x + 120, 80, spr, meta_quarto) ;
-//		spr = oam_meta_spr( x + 60,140, spr, meta_quarto) ;
-//		spr = oam_meta_spr( x + 90, 160, spr, meta_quarto) ;
-//		spr = oam_meta_spr( x + 0, 100, spr, meta_quarto) ;
-//		spr = oam_meta_spr( x + 30, 120, spr, meta_quarto) ;
-		cycleSprColor() ;
-		frame++ ;
+		g座標X-=4 ;
+		gスプライトID = 0 ;
+		gスプライトID = oam_meta_spr( g座標X + 120, 80, gスプライトID, kメタクアルト) ;
+//		gスプライトID = oam_meta_spr( g座標X + 60,140, gスプライトID, kメタクアルト) ;
+//		gスプライトID = oam_meta_spr( g座標X + 90, 160, gスプライトID, kメタクアルト) ;
+//		gスプライトID = oam_meta_spr( g座標X + 0, 100, gスプライトID, kメタクアルト) ;
+//		gスプライトID = oam_meta_spr( g座標X + 30, 120, gスプライトID, kメタクアルト) ;
+		スプライト色サイクル() ;
+		gフレームカウンタ++ ;
 	}
 	oam_clear() ;
-	animeKomaTurnOff() ;
+	駒回転停止() ;
 	delay(20) ;
 	music_stop() ;
 }
-void timerSet()
+void タイマー設定()
 {
-	if( frame % 50 == 0 && autoChoose!=1 && timerSetCount != 0 ){
-		timer--;
-		printTimer() ;
-		if( timer == 0 ){
-			autoChoose=1;
+	if( gフレームカウンタ % 50 == 0 && g自動選択フラグ!=1 && gタイマー設定回数 != 0 ){
+		gタイマー値--;
+		タイマー表示() ;
+		if( gタイマー値 == 0 ){
+			g自動選択フラグ=1;
 			sfx_play(3,0);
-			//err[whichTurn==0?1:0]++ ;
-			//printLife() ;
-			timer = timerSetCount ;
+			//gエラーフラグ[g現在手番==0?1:0]++ ;
+			//ライフ表示() ;
+			gタイマー値 = gタイマー設定回数 ;
 		}
-		frame=0 ;
+		gフレームカウンタ=0 ;
 	}
 }
-unsigned char checkIsFin()
+unsigned char 終了チェック()
 {
 	unsigned char q = 0 ;
 	unsigned char r = 0 ;
 	for( q=0; q<4; q++){
 		for( r=0; r<4; r++){
-			if( stage_stat[q][r][_KOMA_TYPE] == 0 ){
+			if( g盤面状態マップ[q][r][_KOMA_TYPE] == 0 ){
 				return 0 ;
 			}
 		}
 	}
 	return 1 ;
 }
-unsigned char dieCheck() ;
-unsigned char procAutoChoose( unsigned char isCheckOnly )
+unsigned char 敗北チェック() ;
+unsigned char 自動選択処理( unsigned char argチェックOnly )
 {
 	unsigned char q = 0 ;
 	unsigned char r = 0 ;
-	strbuf[0] = selBW;
-	strbuf[1] = ChooseKoma;
+	g文字列バッファ[0] = g駒色選択;
+	g文字列バッファ[1] = g選択駒番号;
 
 	for( q=0; q<2; q++){
 		for( r=0; r<8; r++){
-			if( koma_exist[rand_box3[q]][rand_box4[r]] == 1 ){
+			if( g駒存在配列[g乱数ボックス3[q]][g乱数ボックス4[r]] == 1 ){
 
-				selBW = rand_box3[q];
-				ChooseKoma = rand_box4[r];
+				g駒色選択 = g乱数ボックス3[q];
+				g選択駒番号 = g乱数ボックス4[r];
 
-				//printCursor() ;
+				//カーソル描画() ;
 				//sfx_play(3,1) ;
 				
-				if( isVsCPU == 1 && reach == 1 && whichTurn == 0 && dieCheck() == 1){
+				if( g対CPUフラグ == 1 && gリーチ状態 == 1 && g現在手番 == 0 && 敗北チェック() == 1){
 					continue ;
 				}
-				//put_update_debug(1,10, 1, itoa(selBW, &strbuf[0], 10 ));
-				//put_update_debug(4,10, 1, itoa(ChooseKoma, &strbuf[0], 10 ));
+				//デバッグ表示更新(1,10, 1, itoa(g駒色選択, &g文字列バッファ[0], 10 ));
+				//デバッグ表示更新(4,10, 1, itoa(g選択駒番号, &g文字列バッファ[0], 10 ));
 
-				if( isCheckOnly == 1 ){
-					selBW = strbuf[0] ;
-					ChooseKoma = strbuf[1];
+				if( argチェックOnly == 1 ){
+					g駒色選択 = g文字列バッファ[0] ;
+					g選択駒番号 = g文字列バッファ[1];
 				}
 				return 0;
 			}
 		}
 	}
-	if( isCheckOnly == 1 ){
-		selBW = strbuf[0] ;
-		ChooseKoma = strbuf[1];
+	if( argチェックOnly == 1 ){
+		g駒色選択 = g文字列バッファ[0] ;
+		g選択駒番号 = g文字列バッファ[1];
 	}
 	return 1 ;
 }
-void preSetStage( unsigned char x, unsigned char y )
+void 盤面仮設定( unsigned char g座標X, unsigned char g座標Y )
 {
-	stage_stat[x][y][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
-	stage_stat[x][y][_CHOOSE_KOMA] = ChooseKoma ;
-	stage_stat[x][y][_SEL_BW] = selBW ;	
+	g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] = g駒色選択==0 ? k駒属性マスク[1+g選択駒番号] : k駒属性マスク[1+g選択駒番号+8] ;
+	g盤面状態マップ[g座標X][g座標Y][_CHOOSE_KOMA] = g選択駒番号 ;
+	g盤面状態マップ[g座標X][g座標Y][_SEL_BW] = g駒色選択 ;	
 }
-void preSetStageReset( unsigned char x, unsigned char y )
+void 盤面仮解除( unsigned char g座標X, unsigned char g座標Y )
 {
-	stage_stat[x][y][_KOMA_TYPE] = 0 ;
-	stage_stat[x][y][_CHOOSE_KOMA] = 0 ;
-	stage_stat[x][y][_SEL_BW] = 0 ;	
+	g盤面状態マップ[g座標X][g座標Y][_KOMA_TYPE] = 0 ;
+	g盤面状態マップ[g座標X][g座標Y][_CHOOSE_KOMA] = 0 ;
+	g盤面状態マップ[g座標X][g座標Y][_SEL_BW] = 0 ;	
 }
-unsigned char preQuartoCheck(unsigned char x, unsigned char y )
+unsigned char 事前クアルト確認(unsigned char g座標X, unsigned char g座標Y )
 {
-	tmp3 = 0 ;
-	preSetStage(x,y) ;
-	if( checkQuarto() == 1){
-		tmp3 = 1 ;
+	g一時値3 = 0 ;
+	盤面仮設定(g座標X,g座標Y) ;
+	if( クアルト判定() == 1){
+		g一時値3 = 1 ;
 	}else{
-		tmp3 = 0 ;
+		g一時値3 = 0 ;
 	}
-	preSetStageReset(x,y) ;
-	return tmp3 ;
+	盤面仮解除(g座標X,g座標Y) ;
+	return g一時値3 ;
 }
-void blinkEnemyKoma(unsigned char action)
+void 敵駒点滅(unsigned char argアクション)
 {
-	if( action == 0 ){
+	if( argアクション == 0 ){
 		oam_clear() ;
 	}else{
-		if( bak_whichTurn == 1 ){ return ; }
-		oam_meta_spr( bak_whichTurn!=0?24:198, 70, 0, (unsigned char*)koma_list[0][bak_selBW==0?1:0][bak_ChooseKoma] ) ;
+		if( g手番退避 == 1 ){ return ; }
+		oam_meta_spr( g手番退避!=0?24:198, 70, 0, (unsigned char*)k駒スプライトリスト[0][g駒色退避==0?1:0][g選択駒退避] ) ;
 	}
 }
-unsigned char dieCheck(){
-	for( k = 0; k < 4; k++ ){
-		for( l = 0; l < 4; l++ ){
-			if( stage_stat[k][l][_KOMA_TYPE] == 0 ){
-				if( isVsCPU == 1 && whichTurn==0 ){
-					if( frame&2 ){
+unsigned char 敗北チェック(){
+	for( gループK = 0; gループK < 4; gループK++ ){
+		for( gループL = 0; gループL < 4; gループL++ ){
+			if( g盤面状態マップ[gループK][gループL][_KOMA_TYPE] == 0 ){
+				if( g対CPUフラグ == 1 && g現在手番==0 ){
+					if( gフレームカウンタ&2 ){
 						//pal_spr_bright(0);
-						blinkEnemyKoma(0) ;
+						敵駒点滅(0) ;
 					}else{
 						//pal_spr_bright(4);
-						blinkEnemyKoma(1) ;
+						敵駒点滅(1) ;
 					}
 				}
-				frame++ ;
-				if( preQuartoCheck( k, l ) == 1 ){
+				gフレームカウンタ++ ;
+				if( 事前クアルト確認( gループK, gループL ) == 1 ){
 					//pal_spr_bright(4);
-					blinkEnemyKoma(1) ;
+					敵駒点滅(1) ;
 					return 1 ;
 				}
 			}
 		}
 	}
 	//pal_spr_bright(4);
-	blinkEnemyKoma(1) ;
+	敵駒点滅(1) ;
 	return 0 ;
 }
-void eventChooseButtonA(void)
+void 選択ボタンAイベント(void)
 {
-	koma_exist[selBW][ChooseKoma] = 0 ;
-	putStockKoma((ChooseKoma*4),selBW==0?2:6, selBW==0?0x00:0xFF,  (unsigned char*)koma_list[0][0][ChooseKoma]) ;
+	g駒存在配列[g駒色選択][g選択駒番号] = 0 ;
+	ストック駒配置((g選択駒番号*4),g駒色選択==0?2:6, g駒色選択==0?0x00:0xFF,  (unsigned char*)k駒スプライトリスト[0][0][g選択駒番号]) ;
 
 	oam_clear() ;
-	//pal_spr((char*)bg_palettes[bgpl]);//set background palette from an array
+	//pal_spr((char*)k背景パレット配列[g背景パレット番号]);//set background palette from an array
 
-	//spr = 0 ;
-	x = ChooseKoma*32 ;
-	y = 10+selBW*32 ;
-	moveKoma( x, y, whichTurn==0?24:200, 70, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
-	//spr = oam_meta_spr( x, y, spr, koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
-	ppu_wait_nmi();	// wait for next TV frame
+	//gスプライトID = 0 ;
+	g座標X = g選択駒番号*32 ;
+	g座標Y = 10+g駒色選択*32 ;
+	駒移動演出( g座標X, g座標Y, g現在手番==0?24:200, 70, (unsigned char*)k駒スプライトリスト[0][g駒色選択==0?1:0][g選択駒番号] ) ;
+	//gスプライトID = oam_meta_spr( g座標X, g座標Y, gスプライトID, k駒スプライトリスト[0][g駒色選択==0?1:0][g選択駒番号] ) ;
+	ppu_wait_nmi();	// wait for next TV gフレームカウンタ
 	
 	sfx_play(5,1);
 
-	whichTurn = whichTurn == 0? 1:0 ;
-	timer = timerSetCount ;
+	g現在手番 = g現在手番 == 0? 1:0 ;
+	gタイマー値 = gタイマー設定回数 ;
 	
-	printMsg(1);
+	メッセージ表示(1);
 }
-void procChooseKoma(void)
+void 駒選択処理(void)
 {
-	printMsg(0) ;
-	printLife() ;
+	メッセージ表示(0) ;
+	ライフ表示() ;
 
-//	timer = 5;
-//	printTimer() ;
-	//timer = timerSetCount ;
-	//autoChoose=0;
+//	gタイマー値 = 5;
+//	タイマー表示() ;
+	//gタイマー値 = gタイマー設定回数 ;
+	//g自動選択フラグ=0;
 	while(1)
 	{
-		printCursor() ;
-		timerSet() ;
+		カーソル描画() ;
+		タイマー設定() ;
 		// カーソルセレクト
-		//isPadNull() ;
-		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
-		if( isVsCPU != 0 && whichTurn==0 ){
-			pad=0 ;
-			autoChoose = 1 ;
+		//パッド無入力() ;
+		gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ;
+		if( g対CPUフラグ != 0 && g現在手番==0 ){
+			gパッド入力=0 ;
+			g自動選択フラグ = 1 ;
 		} ;
 
-		if(pad&PAD_LEFT){
-			//frame = 0 ;
-			ChooseKoma = ChooseKoma <= 0 ? 7 : --ChooseKoma ;
-			printCursor() ;
-			for( ;pad&PAD_LEFT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-				ppu_wait_nmi();	// wait for next TV frame
-				frame++ ;
-				timerSet() ;
-				printCursor() ;
-				if( autoChoose==1){break ;}
+		if(gパッド入力&PAD_LEFT){
+			//gフレームカウンタ = 0 ;
+			g選択駒番号 = g選択駒番号 <= 0 ? 7 : --g選択駒番号 ;
+			カーソル描画() ;
+			for( ;gパッド入力&PAD_LEFT ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
+				ppu_wait_nmi();	// wait for next TV gフレームカウンタ
+				gフレームカウンタ++ ;
+				タイマー設定() ;
+				カーソル描画() ;
+				if( g自動選択フラグ==1){break ;}
 			}
 		}
 /*
 			if( moving == 0 || moving == 2 ){
-				//for( i = 0 ; isPadNull() != 1 && i < 25; i++ ){
-				for( i = 0; i < 25 &&  pad&PAD_LEFT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-					i++ ;
+				//for( gループI = 0 ; パッド無入力() != 1 && gループI < 25; gループI++ ){
+				for( gループI = 0; gループI < 25 &&  gパッド入力&PAD_LEFT ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
+					gループI++ ;
 					//delay(1) ;
-					ppu_wait_nmi();	// wait for next TV frame
-					frame++ ;
-					timerSet() ;
+					ppu_wait_nmi();	// wait for next TV gフレームカウンタ
+					gフレームカウンタ++ ;
+					タイマー設定() ;
 				}
 			}else{
 				delay(5) ;
@@ -2080,27 +2080,27 @@ void procChooseKoma(void)
 		}
 */
 
-		if(pad&PAD_RIGHT){
-			//frame = 0 ;
-			ChooseKoma = ChooseKoma >= 7 ? 0 : ++ChooseKoma ;
-			printCursor() ;
-			for( ;pad&PAD_RIGHT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-				ppu_wait_nmi();	// wait for next TV frame
-				frame++ ;
-				timerSet() ;
-				printCursor() ;
-				if( autoChoose==1){break ;}
+		if(gパッド入力&PAD_RIGHT){
+			//gフレームカウンタ = 0 ;
+			g選択駒番号 = g選択駒番号 >= 7 ? 0 : ++g選択駒番号 ;
+			カーソル描画() ;
+			for( ;gパッド入力&PAD_RIGHT ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
+				ppu_wait_nmi();	// wait for next TV gフレームカウンタ
+				gフレームカウンタ++ ;
+				タイマー設定() ;
+				カーソル描画() ;
+				if( g自動選択フラグ==1){break ;}
 			}
 		}
 /*
 			if( moving == 0 || moving == 1 ){
-				//for( i = 0 ; isPadNull() != 1 && i < 25; i++ ){
-				for( i = 0; i < 25 && pad&PAD_RIGHT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
-					i++ ;
+				//for( gループI = 0 ; パッド無入力() != 1 && gループI < 25; gループI++ ){
+				for( gループI = 0; gループI < 25 && gパッド入力&PAD_RIGHT ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
+					gループI++ ;
 					//delay(1) ;
-					ppu_wait_nmi();	// wait for next TV frame
-					frame++ ;
-					timerSet() ;
+					ppu_wait_nmi();	// wait for next TV gフレームカウンタ
+					gフレームカウンタ++ ;
+					タイマー設定() ;
 				}
 			}else{
 				delay(5) ;
@@ -2108,321 +2108,321 @@ void procChooseKoma(void)
 			moving = 2 ;
 		}
 */
-		if(pad&PAD_UP){
-			selBW = 0 ;
-			//printCursor() ;
+		if(gパッド入力&PAD_UP){
+			g駒色選択 = 0 ;
+			//カーソル描画() ;
 		}
-		if(pad&PAD_DOWN){
-			selBW = 1 ;
-			//printCursor() ;
+		if(gパッド入力&PAD_DOWN){
+			g駒色選択 = 1 ;
+			//カーソル描画() ;
 		}
 
-		if(pad&PAD_A){
-			if( koma_exist[selBW][ChooseKoma] == 0 ){
+		if(gパッド入力&PAD_A){
+			if( g駒存在配列[g駒色選択][g選択駒番号] == 0 ){
 				sfx_play(3,0);
 
-				for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				for( ; gパッド入力&PAD_A ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 					//delay(1) ;
 				}
 				continue ;
 			}
 			
-			tmp = pad_poll(1) ;
-			if( tmp&PAD_SELECT && dieCheck() == 1 ){
+			g一時値1 = pad_poll(1) ;
+			if( g一時値1&PAD_SELECT && 敗北チェック() == 1 ){
 				sfx_play(3,0);
 				continue ;
 			}
 			
-			eventChooseButtonA() ;
+			選択ボタンAイベント() ;
 			return ;
 			
 		}
 
-		if(pad&PAD_SELECT){
-			cycleNextColor() ;
-			for( ; pad&PAD_SELECT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+		if(gパッド入力&PAD_SELECT){
+			次色サイクル() ;
+			for( ; gパッド入力&PAD_SELECT ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 				//delay(1) ;
 			}
 		}
 		
-		if(pad&PAD_START){
-			procSayQuarto() ;
+		if(gパッド入力&PAD_START){
+			クアルト宣言処理() ;
 
-			if( checkQuarto() == 1 ){
-				quarto = 1 ;
+			if( クアルト判定() == 1 ){
+				gクアルト状態 = 1 ;
 				return ;
 			}else{
 				sfx_play(3,1);
-				music_play(game_music) ;
-				err[whichTurn]++ ;
-				if( err[whichTurn] == 3 ){
-					loseAnime() ;
+				music_play(gゲーム音楽モード) ;
+				gエラーフラグ[g現在手番]++ ;
+				if( gエラーフラグ[g現在手番] == 3 ){
+					敗北アニメ() ;
 				}
 				
 			}
-			printLife() ;
-			printMsg(0) ;
-			for( ; pad&PAD_START ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+			ライフ表示() ;
+			メッセージ表示(0) ;
+			for( ; gパッド入力&PAD_START ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 				//delay(1) ;
 			}
 			continue ;
 		}
-		if( autoChoose==1){
+		if( g自動選択フラグ==1){
 			oam_clear() ;
-			bak_selBW = selBW;
-			bak_ChooseKoma = ChooseKoma;
-			bak_whichTurn = 1 ;
+			g駒色退避 = g駒色選択;
+			g選択駒退避 = g選択駒番号;
+			g手番退避 = 1 ;
 
 			// 自動コマ選択.
-			seedRandBox() ;
+			乱数ボックス初期化() ;
 
-			if( isVsCPU != 1 && koma_exist[selBW][ChooseKoma] != 0 ){
+			if( g対CPUフラグ != 1 && g駒存在配列[g駒色選択][g選択駒番号] != 0 ){
 				
 			}else{
-				procAutoChoose(0) ;
-				if( checkIsFin() == 1 ){
-					loseAnime() ;
+				自動選択処理(0) ;
+				if( 終了チェック() == 1 ){
+					敗北アニメ() ;
 					return ;
 				}
 			}
-			printCursor() ;
+			カーソル描画() ;
 			
-			eventChooseButtonA() ;
+			選択ボタンAイベント() ;
 			return ;
 			
 		}
 
-		ppu_wait_nmi();	// wait for next TV frame
-		frame++;
+		ppu_wait_nmi();	// wait for next TV gフレームカウンタ
+		gフレームカウンタ++;
 	}
 }
-unsigned char checkReach()
+unsigned char リーチ判定()
 {
-	for( k = 0; k < 4; k++ ){
-		tmp = 0 ; // X軸3連チェック用.
-		tmp2 = 0 ; // Y軸3連チェック用.
-		for( l = 0; l < 4; l++ ){
+	for( gループK = 0; gループK < 4; gループK++ ){
+		g一時値1 = 0 ; // X軸3連チェック用.
+		g一時値2 = 0 ; // Y軸3連チェック用.
+		for( gループL = 0; gループL < 4; gループL++ ){
 			// X軸検索.
-			if( stage_stat[k][l][_KOMA_TYPE] != 0 ){
-				tmp++ ;
-				if( tmp >= 3 ){
-					reach = 1 ;
+			if( g盤面状態マップ[gループK][gループL][_KOMA_TYPE] != 0 ){
+				g一時値1++ ;
+				if( g一時値1 >= 3 ){
+					gリーチ状態 = 1 ;
 				}	
 			}
 			// Y軸検索.
-			if( stage_stat[l][k][_KOMA_TYPE] != 0 ){
-				tmp2++ ;
-				if( tmp2 >= 3 ){
-					reach = 1 ;
+			if( g盤面状態マップ[gループL][gループK][_KOMA_TYPE] != 0 ){
+				g一時値2++ ;
+				if( g一時値2 >= 3 ){
+					gリーチ状態 = 1 ;
 				}
 			}
 		}
 	}
 
-	tmp = 0 ;
-	tmp2 = 0 ;
-	for( k = 0; k < 4; k++ ){
+	g一時値1 = 0 ;
+	g一時値2 = 0 ;
+	for( gループK = 0; gループK < 4; gループK++ ){
 		// X軸クロス検索.
-		if( stage_stat[k][k][_KOMA_TYPE] != 0 ){
-			tmp++ ;
-			if( tmp >= 3 ){
-				reach = 1 ;
+		if( g盤面状態マップ[gループK][gループK][_KOMA_TYPE] != 0 ){
+			g一時値1++ ;
+			if( g一時値1 >= 3 ){
+				gリーチ状態 = 1 ;
 			}
 		}
 		// Y軸クロス検索.
-		if( stage_stat[k][3-k][_KOMA_TYPE] != 0 ){
-			tmp2++ ;
-			if( tmp2 >= 3 ){
-				reach = 1 ;
+		if( g盤面状態マップ[gループK][3-gループK][_KOMA_TYPE] != 0 ){
+			g一時値2++ ;
+			if( g一時値2 >= 3 ){
+				gリーチ状態 = 1 ;
 			}
 		}
 	}
 
-	if( isAdvanced == 1 ){
-		for( k = 0; k < 3; k++ ){
-			for( l = 0; l < 3; l++ ){
-				tmp = 0 ;
-				if( stage_stat[k][l][_KOMA_TYPE] != 0 ){ tmp++ ; }
-				if( stage_stat[k][l+1][_KOMA_TYPE] != 0 ){ tmp++ ; }
-				if( stage_stat[k+1][l][_KOMA_TYPE] != 0 ){ tmp++ ; }
-				if( stage_stat[k+1][l+1][_KOMA_TYPE] != 0 ){ tmp++ ; }
+	if( g上級モード == 1 ){
+		for( gループK = 0; gループK < 3; gループK++ ){
+			for( gループL = 0; gループL < 3; gループL++ ){
+				g一時値1 = 0 ;
+				if( g盤面状態マップ[gループK][gループL][_KOMA_TYPE] != 0 ){ g一時値1++ ; }
+				if( g盤面状態マップ[gループK][gループL+1][_KOMA_TYPE] != 0 ){ g一時値1++ ; }
+				if( g盤面状態マップ[gループK+1][gループL][_KOMA_TYPE] != 0 ){ g一時値1++ ; }
+				if( g盤面状態マップ[gループK+1][gループL+1][_KOMA_TYPE] != 0 ){ g一時値1++ ; }
 
-				if( tmp >= 3 ){
-					reach = 1 ;
+				if( g一時値1 >= 3 ){
+					gリーチ状態 = 1 ;
 				}
 			}
 		}
 	}
 
 }
-eventMoveButtonA()
+void 移動ボタンAイベント()
 {
-	putKoma( x/8, y/8, selBW==0?0xAA:0x55, (unsigned char*)koma_list[0][0][ChooseKoma] ) ;
+	駒配置( g座標X/8, g座標Y/8, g駒色選択==0?0xAA:0x55, (unsigned char*)k駒スプライトリスト[0][0][g選択駒番号] ) ;
 	/*
-	put_update_debug(1,10, 1, itoa(x_index, &strbuf[0], 10 ));
-	put_update_debug(4,10, 1, itoa(y_index, &strbuf[0], 10 ));
+	デバッグ表示更新(1,10, 1, itoa(g座標インデックスX, &g文字列バッファ[0], 10 ));
+	デバッグ表示更新(4,10, 1, itoa(g座標インデックスY, &g文字列バッファ[0], 10 ));
 	*/
-	stage_stat[x_index][y_index][_KOMA_TYPE] = selBW==0 ? koma_type[1+ChooseKoma] : koma_type[1+ChooseKoma+8] ;
-	stage_stat[x_index][y_index][_CHOOSE_KOMA] = ChooseKoma ;
-	stage_stat[x_index][y_index][_SEL_BW] = selBW ;
+	g盤面状態マップ[g座標インデックスX][g座標インデックスY][_KOMA_TYPE] = g駒色選択==0 ? k駒属性マスク[1+g選択駒番号] : k駒属性マスク[1+g選択駒番号+8] ;
+	g盤面状態マップ[g座標インデックスX][g座標インデックスY][_CHOOSE_KOMA] = g選択駒番号 ;
+	g盤面状態マップ[g座標インデックスX][g座標インデックスY][_SEL_BW] = g駒色選択 ;
 
 	oam_clear() ;
-	//pal_spr((char*)bg_palettes[bgpl]);//set background palette from an array
+	//pal_spr((char*)k背景パレット配列[g背景パレット番号]);//set background palette from an array
 	
-	//putStageKomaColor( x/8, y/8, selBW==0?0xAA:0x55 ) ;
+	//盤面駒色設定( g座標X/8, g座標Y/8, g駒色選択==0?0xAA:0x55 ) ;
 	
-	//putStageColor( set_posx, set_posy ) ;
+	//putStageColor( g設定座標X, g設定座標Y ) ;
 	sfx_play(4,1);
 	
-	//initBar() ;
-	printMsg(0) ;
+	//バー初期化() ;
+	メッセージ表示(0) ;
 
-	checkReach() ;
-	if( reach == 1 && game_music != 3 ){
-		game_music = 3 ;
+	リーチ判定() ;
+	if( gリーチ状態 == 1 && gゲーム音楽モード != 3 ){
+		gゲーム音楽モード = 3 ;
 		music_stop() ;
-		//bgFlash(8) ;
+		//背景フラッシュ(8) ;
 		delay(30) ;
-		music_play(game_music) ;
+		music_play(gゲーム音楽モード) ;
 	}
 
 }
-void autoSetXY()
+void 座標自動設定()
 {
 	unsigned char k2 ;
 	unsigned char l2 ;
 	unsigned char lastX ;
 	unsigned char lastY ;
-	m = 0 ;
-	n = 0 ;
-	dbgcnt = 0 ;
+	gループM = 0 ;
+	gループN = 0 ;
+	gデバッグカウンタ = 0 ;
 	for( k2=0; k2<4; k2++){
-		o = rand_box1[k2] ;
+		gループO = g乱数ボックス1[k2] ;
 		for( l2=0; l2<4; l2++){
-			if( frame&2 ){
-				blinkEnemyKoma(0) ;
+			if( gフレームカウンタ&2 ){
+				敵駒点滅(0) ;
 				//pal_spr_bright(0);
 			}else{
-				blinkEnemyKoma(1) ;
+				敵駒点滅(1) ;
 				//pal_spr_bright(4);
 			}
-			frame++ ;
+			gフレームカウンタ++ ;
 
-			p = rand_box2[l2] ;
+			gループP = g乱数ボックス2[l2] ;
 
-			x = (o*32)-(p*32)+115+16 ;
-			y = (p*16)+(o*16)+101-16 ;
+			g座標X = (gループO*32)-(gループP*32)+115+16 ;
+			g座標Y = (gループP*16)+(gループO*16)+101-16 ;
 			
 			// 仮保存(全クアルトチェック後に返す奴).
-			//put_update_debug(1,10, 1, itoa(x, &strbuf[0], 10 ));
-			//put_update_debug(4,10, 1, itoa(y, &strbuf[0], 10 ));
-			if( checkPutPos(x/8, y/8) == 1 ){
+			//デバッグ表示更新(1,10, 1, itoa(g座標X, &g文字列バッファ[0], 10 ));
+			//デバッグ表示更新(4,10, 1, itoa(g座標Y, &g文字列バッファ[0], 10 ));
+			if( 配置判定(g座標X/8, g座標Y/8) == 1 ){
 				continue ;
 			}
-			lastX = x ;
-			lastY = y ;
+			lastX = g座標X ;
+			lastY = g座標Y ;
 
-			if( isVsCPU == 1 && whichTurn==0 && preQuartoCheck(o, p) == 1 ){
+			if( g対CPUフラグ == 1 && g現在手番==0 && 事前クアルト確認(gループO, gループP) == 1 ){
 				//pal_spr_bright(4);
-				blinkEnemyKoma(1) ;
+				敵駒点滅(1) ;
 				return ;
 //				continue ; 
 			}
 
 			// 次渡して負ける場所かのチェック
-			preSetStage(o,p) ;
-			if( isVsCPU == 1 && whichTurn==0 && procAutoChoose(1) == 1 ){
-				preSetStageReset(o,p) ;
+			盤面仮設定(gループO,gループP) ;
+			if( g対CPUフラグ == 1 && g現在手番==0 && 自動選択処理(1) == 1 ){
+				盤面仮解除(gループO,gループP) ;
 				continue ;
 			}
-			preSetStageReset(o,p) ;
-			dbgcnt = 1 ;
+			盤面仮解除(gループO,gループP) ;
+			gデバッグカウンタ = 1 ;
 
-			m = x ;
-			n = y ;
+			gループM = g座標X ;
+			gループN = g座標Y ;
 
 			//break ;
 			continue ;
 
 			//return ;
 		}
-		//if( dbgcnt == 1 ){break ;}
+		//if( gデバッグカウンタ == 1 ){break ;}
 	}
 	// 仮保存の座標を戻す.
-	if( m == 0 && n == 0 ){
-		x = lastX ;
-		y = lastY ;
+	if( gループM == 0 && gループN == 0 ){
+		g座標X = lastX ;
+		g座標Y = lastY ;
 	}else{
-		x = m ;
-		y = n ;
+		g座標X = gループM ;
+		g座標Y = gループN ;
 	}
-	checkPutPos(x/8, y/8) ;
+	配置判定(g座標X/8, g座標Y/8) ;
 	//pal_spr_bright(4);
-	blinkEnemyKoma(1) ;
+	敵駒点滅(1) ;
 }
 
-void procMoveKoma(void)
+void 駒移動処理(void)
 {
 	
-	for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+	for( ; gパッド入力&PAD_A ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 		//delay(1) ;
 	}
 
-//	timer = setCount ;
-	//printTimer() ;
-	//timer = timerSetCount ;
-	autoChoose=0;
+//	gタイマー値 = setCount ;
+	//タイマー表示() ;
+	//gタイマー値 = gタイマー設定回数 ;
+	g自動選択フラグ=0;
 	while(1)
 	{
-		timerSet() ;
+		タイマー設定() ;
 
 		//delay(1) ;
-		//isPadNull() ;
-		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
-		if( isVsCPU != 0 && whichTurn==0 ){
-			pad=0  ;
-			autoChoose = 1 ;
+		//パッド無入力() ;
+		gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ;
+		if( g対CPUフラグ != 0 && g現在手番==0 ){
+			gパッド入力=0  ;
+			g自動選択フラグ = 1 ;
 		} ;
 
-		if(pad&PAD_LEFT){
-			if( x > 4 ){
-				x-= pad&PAD_B ? 4 : 2 ;
+		if(gパッド入力&PAD_LEFT){
+			if( g座標X > 4 ){
+				g座標X-= gパッド入力&PAD_B ? 4 : 2 ;
 			}
 		}
-		if(pad&PAD_RIGHT){
-			if( x < 232){
-				x+= pad&PAD_B ? 4 : 2 ;
+		if(gパッド入力&PAD_RIGHT){
+			if( g座標X < 232){
+				g座標X+= gパッド入力&PAD_B ? 4 : 2 ;
 			}
 		}
-		if(pad&PAD_UP){
-			if( y > 4 ){
-				y-= pad&PAD_B ? 2 : 1 ;
+		if(gパッド入力&PAD_UP){
+			if( g座標Y > 4 ){
+				g座標Y-= gパッド入力&PAD_B ? 2 : 1 ;
 			}
 		}
 
-		if(pad&PAD_DOWN){
-			if( y < 212){
-				y+= pad&PAD_B ? 2 : 1 ;
+		if(gパッド入力&PAD_DOWN){
+			if( g座標Y < 212){
+				g座標Y+= gパッド入力&PAD_B ? 2 : 1 ;
 			}
 		}
-		if(pad&PAD_A){
-			if( checkPutPos(x/8, y/8) == 1 ){
+		if(gパッド入力&PAD_A){
+			if( 配置判定(g座標X/8, g座標Y/8) == 1 ){
 				sfx_play(3,0);
 				
-				for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+				for( ; gパッド入力&PAD_A ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 					//ppu_wait_nmi();
-					//frame++ ;
+					//gフレームカウンタ++ ;
 					//delay(1) ;
 				}
 			}else{
-				eventMoveButtonA();
+				移動ボタンAイベント();
 
-				if( checkIsFin() == 1 ){
-					if( checkQuarto() == 1 ){
-						quarto = 1 ;
+				if( 終了チェック() == 1 ){
+					if( クアルト判定() == 1 ){
+						gクアルト状態 = 1 ;
 						return ;
 					}else{
-						loseAnime() ;
+						敗北アニメ() ;
 					}
 				}
 
@@ -2430,82 +2430,82 @@ void procMoveKoma(void)
 			}
 			
 		}
-		if(pad&PAD_SELECT){
-			cycleNextColor() ;
-			for( ; pad&PAD_SELECT ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+		if(gパッド入力&PAD_SELECT){
+			次色サイクル() ;
+			for( ; gパッド入力&PAD_SELECT ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 				//delay(1) ;
 			}
 
 			/*
 			oam_clear() ;
-			printCursor() ;
+			カーソル描画() ;
 
-			koma_exist[selBW][ChooseKoma] = 1 ;
-			putStockKoma((ChooseKoma*4),selBW==0?0:26, selBW==0?0xAA:0x55, (unsigned char*)koma_list[0][0][ChooseKoma]) ;
-			whichTurn = whichTurn == 0? 1:0 ;
-			timer = timerSetCount ;
+			g駒存在配列[g駒色選択][g選択駒番号] = 1 ;
+			ストック駒配置((g選択駒番号*4),g駒色選択==0?0:26, g駒色選択==0?0xAA:0x55, (unsigned char*)k駒スプライトリスト[0][0][g選択駒番号]) ;
+			g現在手番 = g現在手番 == 0? 1:0 ;
+			gタイマー値 = gタイマー設定回数 ;
 
 			sfx_play(6,0);
 			
-			//initBar();
-			printMsg(0) ;
+			//バー初期化();
+			メッセージ表示(0) ;
 
 			return ;
 			*/
 		}
 
-		if(pad&PAD_START){
-			procSayQuarto() ;
+		if(gパッド入力&PAD_START){
+			クアルト宣言処理() ;
 
-			if( checkQuarto() == 1 ){
-				quarto = 1 ;
+			if( クアルト判定() == 1 ){
+				gクアルト状態 = 1 ;
 				return ;
 			}else{
 				sfx_play(3,1);
-				music_play(game_music) ;
-				err[whichTurn]++ ;
-				if( err[whichTurn] == 3 ){
-					loseAnime() ;
+				music_play(gゲーム音楽モード) ;
+				gエラーフラグ[g現在手番]++ ;
+				if( gエラーフラグ[g現在手番] == 3 ){
+					敗北アニメ() ;
 				}
 			}
-			printLife() ;
-			printMsg(1) ;
-			for( ; pad&PAD_START ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+			ライフ表示() ;
+			メッセージ表示(1) ;
+			for( ; gパッド入力&PAD_START ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 				//delay(1) ;
 			}
 			continue ;
 		}
-		if( autoChoose==1){
-			bak_selBW = selBW;
-			bak_ChooseKoma = ChooseKoma;
-			bak_whichTurn = whichTurn ;
+		if( g自動選択フラグ==1){
+			g駒色退避 = g駒色選択;
+			g選択駒退避 = g選択駒番号;
+			g手番退避 = g現在手番 ;
 			// 自動コマ配置.
-			if( isVsCPU == 1 && whichTurn==0 && checkQuarto() == 1 ){
-				procSayQuarto() ;
-				quarto = 1 ;
+			if( g対CPUフラグ == 1 && g現在手番==0 && クアルト判定() == 1 ){
+				クアルト宣言処理() ;
+				gクアルト状態 = 1 ;
 				return ;
 			}
 
-			tmp_x = x;
-			tmp_y = y ;
+			g仮座標X = g座標X;
+			g仮座標Y = g座標Y ;
 
 			// CPU戦の場合ここでクアルトを狙う.
-			printTimerInit() ;
+			タイマー表示初期化() ;
 
-			seedRandBox() ;
-			autoSetXY();
-			if( checkIsFin() == 1 ){
+			乱数ボックス初期化() ;
+			座標自動設定();
+			if( 終了チェック() == 1 ){
 				//while(1){continue;}
-				loseAnime() ;
+				敗北アニメ() ;
 				return ;
 			}
 			oam_clear() ;
-			moveKoma( tmp_x, tmp_y, x-9, y-12, (unsigned char*)koma_list[0][selBW==0?1:0][ChooseKoma] ) ;
+			駒移動演出( g仮座標X, g仮座標Y, g座標X-9, g座標Y-12, (unsigned char*)k駒スプライトリスト[0][g駒色選択==0?1:0][g選択駒番号] ) ;
 
-			eventMoveButtonA() ;
-			if( isVsCPU == 1 && whichTurn==0 && checkQuarto() == 1 ){
-				procSayQuarto() ;
-				quarto = 1 ;
+			移動ボタンAイベント() ;
+			if( g対CPUフラグ == 1 && g現在手番==0 && クアルト判定() == 1 ){
+				クアルト宣言処理() ;
+				gクアルト状態 = 1 ;
 				return ;
 			}
 
@@ -2513,283 +2513,283 @@ void procMoveKoma(void)
 			
 		}
 		
-		ppu_wait_nmi();	// wait for next TV frame
-		frame++;
+		ppu_wait_nmi();	// wait for next TV gフレームカウンタ
+		gフレームカウンタ++;
 
 		oam_clear() ;
-		spr = 0 ;
-		if( checkPutPos(x/8, y/8) != 1 ){
-			spr = oam_meta_spr( set_posx*8+8, set_posy*8+(frame%8)+10, spr, selBW==0?meta_pos1: meta_pos2 ) ;
+		gスプライトID = 0 ;
+		if( 配置判定(g座標X/8, g座標Y/8) != 1 ){
+			gスプライトID = oam_meta_spr( g設定座標X*8+8, g設定座標Y*8+(gフレームカウンタ%8)+10, gスプライトID, g駒色選択==0?kメタ位置1: kメタ位置2 ) ;
 		}
-		spr = oam_meta_spr( x, y, spr, koma_list[koma_exist[selBW][ChooseKoma]][selBW==0?1:0][ChooseKoma] ) ;
+		gスプライトID = oam_meta_spr( g座標X, g座標Y, gスプライトID, k駒スプライトリスト[g駒存在配列[g駒色選択][g選択駒番号]][g駒色選択==0?1:0][g選択駒番号] ) ;
 			
 	}
 }
-void procCheckQuarto(){
-	if( quarto != 0 ){
+void クアルト判定処理(){
+	if( gクアルト状態 != 0 ){
 		music_stop() ;
-		initLife() ;
-		initMsg() ;
-		printTimerInit() ;
+		ライフ初期化() ;
+		メッセージ初期化() ;
+		タイマー表示初期化() ;
 
 		oam_clear() ;
 		//delay(40) ;
-		bgFlash(8) ;
+		背景フラッシュ(8) ;
 		delay(40) ;
 		music_play(0) ;
 
-		//initBar();
-		//printMsg(2) ;
+		//バー初期化();
+		//メッセージ表示(2) ;
 
-		tmp = rand8() ;
-		tmp2 = rand8() ;
-		tmp3 = rand8() ;
-		tmp4 = rand8() ;
+		g一時値1 = rand8() ;
+		g一時値2 = rand8() ;
+		g一時値3 = rand8() ;
+		g一時値4 = rand8() ;
 		while(1){
-			//x-=4 ;
-			spr = 0 ;
-			//spr = oam_meta_spr( x + tmp, 20, spr, meta_quarto) ;
-			//spr = oam_meta_spr( x + tmp2, 40, spr, meta_quarto) ;
-			//spr = oam_meta_spr( x + tmp3, 180, spr, meta_quarto) ;
-			//spr = oam_meta_spr( x + tmp3, 200, spr, meta_quarto) ;
-			//spr = oam_meta_spr( x + tmp2, 100, spr, whichTurn!=0?meta_p1win:meta_p2win) ;
-			//spr = oam_meta_spr( x + tmp4, 140, spr, whichTurn!=0?meta_p1win:meta_p2win) ;
-			for( i = 0; i < 4; i++ ){
-				k = (quarto_line[i][0]*32)-(quarto_line[i][1]*32)+115+14 ;
-				l = (quarto_line[i][1]*16)+(quarto_line[i][0]*16)+101-32 ;
-				spr = oam_meta_spr( k, l+frame%5, spr, meta_pos2) ;
+			//g座標X-=4 ;
+			gスプライトID = 0 ;
+			//gスプライトID = oam_meta_spr( g座標X + g一時値1, 20, gスプライトID, kメタクアルト) ;
+			//gスプライトID = oam_meta_spr( g座標X + g一時値2, 40, gスプライトID, kメタクアルト) ;
+			//gスプライトID = oam_meta_spr( g座標X + g一時値3, 180, gスプライトID, kメタクアルト) ;
+			//gスプライトID = oam_meta_spr( g座標X + g一時値3, 200, gスプライトID, kメタクアルト) ;
+			//gスプライトID = oam_meta_spr( g座標X + g一時値2, 100, gスプライトID, g現在手番!=0?kメタ先手勝利:kメタ後手勝利) ;
+			//gスプライトID = oam_meta_spr( g座標X + g一時値4, 140, gスプライトID, g現在手番!=0?kメタ先手勝利:kメタ後手勝利) ;
+			for( gループI = 0; gループI < 4; gループI++ ){
+				gループK = (gクアルトライン[gループI][0]*32)-(gクアルトライン[gループI][1]*32)+115+14 ;
+				gループL = (gクアルトライン[gループI][1]*16)+(gクアルトライン[gループI][0]*16)+101-32 ;
+				gスプライトID = oam_meta_spr( gループK, gループL+gフレームカウンタ%5, gスプライトID, kメタ位置2) ;
 			}
 
-			if( frame & 2 ){
-				spr = oam_meta_spr( whichTurn!=0?10:190 ,80, spr, whichTurn!=0?meta_p1win:meta_p2win);
+			if( gフレームカウンタ & 2 ){
+				gスプライトID = oam_meta_spr( g現在手番!=0?10:190 ,80, gスプライトID, g現在手番!=0?kメタ先手勝利:kメタ後手勝利);
 			}else{ 
-				oam_hide_rest(spr) ; 
+				oam_hide_rest(gスプライトID) ; 
 			}
 
-			cycleSprColor() ;
+			スプライト色サイクル() ;
 			//delay(2);
 
-			animeKomaTurn(4) ;
-			frame++ ;
+			駒回転アニメ(4) ;
+			gフレームカウンタ++ ;
 
-			pad=pad_poll(0);
-			if( pad&PAD_START || pad&PAD_A ){
+			gパッド入力=pad_poll(0);
+			if( gパッド入力&PAD_START || gパッド入力&PAD_A ){
 				oam_clear() ;
 
-				for( i=0 ; i< 5; i++ ){
-					animeKomaTurn(4) ;
-					frame++ ;
+				for( gループI=0 ; gループI< 5; gループI++ ){
+					駒回転アニメ(4) ;
+					gフレームカウンタ++ ;
 				}
 				music_play(2) ;
-				for( i=0 ; i< 10; i++ ){
-					animeKomaTurn(2) ;
-					frame++ ;
+				for( gループI=0 ; gループI< 10; gループI++ ){
+					駒回転アニメ(2) ;
+					gフレームカウンタ++ ;
 				}
-				for( i=0 ; i< 25; i++ ){
-					animeKomaTurn(1) ;
-					scroll(0,i*10) ;
-					frame++ ;
+				for( gループI=0 ; gループI< 25; gループI++ ){
+					駒回転アニメ(1) ;
+					scroll(0,gループI*10) ;
+					gフレームカウンタ++ ;
 				}
 				music_stop() ;
-				animeKomaTurnOff() ;
-				reset() ;
+				駒回転停止() ;
+				リセット処理() ;
 			}
 			continue ;
 		}
 	}
 }
-void initVal(){
-	//update_init() ;
+void 変数初期化(){
+	//更新初期化() ;
 	//set initial coords
-	autoChoose = 0 ;
-	p1only=1;
-	isAdvanced=0 ;
-	isVsCPU=1;
-	timerSetCount = 60 ;
-	quarto = 0 ;
-	ChooseKoma = 0;
-	whichTurn = 1;
-	selBW = 0;
-	koma_pos[0]=3;
-	koma_pos[1]=1;
+	g自動選択フラグ = 0 ;
+	g一人プレイ=1;
+	g上級モード=0 ;
+	g対CPUフラグ=1;
+	gタイマー設定回数 = 60 ;
+	gクアルト状態 = 0 ;
+	g選択駒番号 = 0;
+	g現在手番 = 1;
+	g駒色選択 = 0;
+	g駒配置スロット[0]=3;
+	g駒配置スロット[1]=1;
 
-	i=0;
-	j=0;
-	k=0;
-	l=0;
-	m=0;
-	n=0;
-	o=0;
-	p=0;
+	gループI=0;
+	gループJ=0;
+	gループK=0;
+	gループL=0;
+	gループM=0;
+	gループN=0;
+	gループO=0;
+	gループP=0;
 
-	x=0;
-	y=0;
-	tmp_x=0;
-	tmp_y=0;
+	g座標X=0;
+	g座標Y=0;
+	g仮座標X=0;
+	g仮座標Y=0;
 
-	x_index=0;
-	y_index=0;
+	g座標インデックスX=0;
+	g座標インデックスY=0;
 
-	set_posh=0;
-	set_posl=0;
+	g設定アドレス上位=0;
+	g設定アドレス下位=0;
 
-	pad=0;
-	spr=0;
+	gパッド入力=0;
+	gスプライトID=0;
 
-	calc=0;
+	g計算値=0;
 
-	koma_x[0] = 72 ;
-	koma_y[0] = 122 ;
-	koma_x[1] = 152 ;
-	koma_y[1] = 122 ;
+	g駒位置X[0] = 72 ;
+	g駒位置Y[0] = 122 ;
+	g駒位置X[1] = 152 ;
+	g駒位置Y[1] = 122 ;
 
-	timer = 0 ;
+	gタイマー値 = 0 ;
 
-	game_music = 1; // 1:game1, 3:game2
-	reach = 0 ;
+	gゲーム音楽モード = 1; // 1:game1, 3:game2
+	gリーチ状態 = 0 ;
 
 	//init other vars
 	
-	tmp = 0 ;	//collision flag
-	tmp2 = 0 ;
-	tmp3 = 0 ;
-	tmp4 = 0 ;
-	frame = 0 ;	//frame counter
+	g一時値1 = 0 ;	//collision flag
+	g一時値2 = 0 ;
+	g一時値3 = 0 ;
+	g一時値4 = 0 ;
+	gフレームカウンタ = 0 ;	//gフレームカウンタ counter
 
-	for( i=0; i < 40; i++ ){
-		attr_stat[i] = 0x55 ;
+	for( gループI=0; gループI < 40; gループI++ ){
+		g属性状態配列[gループI] = 0x55 ;
 	}
-	err[0]=0;
-	err[1]=0;
+	gエラーフラグ[0]=0;
+	gエラーフラグ[1]=0;
 
-//	memfill(attr_stat, 0x55, 40 ) ;
+//	memfill(g属性状態配列, 0x55, 40 ) ;
 }
 
 // ========================================================================================
 // ========================================================================================
-void reset(void)
+void リセット処理(void)
 {
 	scroll(0,0);
-	initVal() ;
+	変数初期化() ;
 
 	oam_clear() ;
 	ppu_off() ;
 	vram_adr(NAMETABLE_A);//set VRAM address
 	vram_unrle((unsigned char*)menu);
-	pal_bg((char*)bg_palettes[bgpl]);
+	pal_bg((char*)k背景パレット配列[g背景パレット番号]);
 	ppu_on_all();//enable rendering
 
 	// MODE SELECT.
-	put_update_debug(16,17, 3, "   ");
-	put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
-	put_update_debug(16,19, 8, "NORMAL  ");
+	デバッグ表示更新(16,17, 3, "   ");
+	デバッグ表示更新(16,17, 3, itoa(gタイマー設定回数, &g文字列バッファ[0], 10 ));
+	デバッグ表示更新(16,19, 8, "NORMAL  ");
 
 	while(1){
-		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
-		if(pad&PAD_UP && p1only == 0){
-			p1only = 1 ;
-			isVsCPU = 1 ;
+		gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ;
+		if(gパッド入力&PAD_UP && g一人プレイ == 0){
+			g一人プレイ = 1 ;
+			g対CPUフラグ = 1 ;
 			sfx_play(2,0);
 		}
 
-		if(pad&PAD_DOWN && p1only == 1){
-			p1only = 0 ;
-			isVsCPU = 0 ;
+		if(gパッド入力&PAD_DOWN && g一人プレイ == 1){
+			g一人プレイ = 0 ;
+			g対CPUフラグ = 0 ;
 			sfx_play(2,0);
 		}
-		if(pad&PAD_A){
+		if(gパッド入力&PAD_A){
 			sfx_play(5,0);
-			for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+			for( ; gパッド入力&PAD_A ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 				//delay(1) ;
 			}
 			break ;
 		}
-		spr = 0 ;
-		spr = oam_meta_spr( 70, 63+(p1only==1?0:1*16), spr, meta_right_cursor) ;
-		frame++ ;
+		gスプライトID = 0 ;
+		gスプライトID = oam_meta_spr( 70, 63+(g一人プレイ==1?0:1*16), gスプライトID, kメタ右カーソル) ;
+		gフレームカウンタ++ ;
 	}
-	seedRandBox() ;
+	乱数ボックス初期化() ;
 /*
-	put_update_debug(1,50, 1, itoa(rand_box1[0], &strbuf[0], 10 ));
-	put_update_debug(3,50, 1, itoa(rand_box1[1], &strbuf[0], 10 ));
-	put_update_debug(5,50, 1, itoa(rand_box1[2], &strbuf[0], 10 ));
-	put_update_debug(7,50, 1, itoa(rand_box1[3], &strbuf[0], 10 ));
-	put_update_debug(1,51, 1, itoa(rand_box2[0], &strbuf[0], 10 ));
-	put_update_debug(3,51, 1, itoa(rand_box2[1], &strbuf[0], 10 ));
-	put_update_debug(5,51, 1, itoa(rand_box2[2], &strbuf[0], 10 ));
-	put_update_debug(7,51, 1, itoa(rand_box2[3], &strbuf[0], 10 ));
+	デバッグ表示更新(1,50, 1, itoa(g乱数ボックス1[0], &g文字列バッファ[0], 10 ));
+	デバッグ表示更新(3,50, 1, itoa(g乱数ボックス1[1], &g文字列バッファ[0], 10 ));
+	デバッグ表示更新(5,50, 1, itoa(g乱数ボックス1[2], &g文字列バッファ[0], 10 ));
+	デバッグ表示更新(7,50, 1, itoa(g乱数ボックス1[3], &g文字列バッファ[0], 10 ));
+	デバッグ表示更新(1,51, 1, itoa(g乱数ボックス2[0], &g文字列バッファ[0], 10 ));
+	デバッグ表示更新(3,51, 1, itoa(g乱数ボックス2[1], &g文字列バッファ[0], 10 ));
+	デバッグ表示更新(5,51, 1, itoa(g乱数ボックス2[2], &g文字列バッファ[0], 10 ));
+	デバッグ表示更新(7,51, 1, itoa(g乱数ボックス2[3], &g文字列バッファ[0], 10 ));
 */	
 	// TIMER設定.
-	spr = 0 ;
-	spr = oam_meta_spr( 70, 134, spr, meta_right_cursor) ;
+	gスプライトID = 0 ;
+	gスプライトID = oam_meta_spr( 70, 134, gスプライトID, kメタ右カーソル) ;
 	while(1){
-		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
-		if(pad&PAD_UP&& timerSetCount<=200){
-			timerSetCount+= pad&PAD_B?10:1 ;
+		gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ;
+		if(gパッド入力&PAD_UP&& gタイマー設定回数<=200){
+			gタイマー設定回数+= gパッド入力&PAD_B?10:1 ;
 
-			if( timerSetCount < 3 ){ timerSetCount=3 ;} ;
+			if( gタイマー設定回数 < 3 ){ gタイマー設定回数=3 ;} ;
 
-			put_update_debug(16,17, 3, "   ");
-			put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
+			デバッグ表示更新(16,17, 3, "   ");
+			デバッグ表示更新(16,17, 3, itoa(gタイマー設定回数, &g文字列バッファ[0], 10 ));
 			sfx_play(2,0);
 			delay(2) ;
 		}
 
-		if(pad&PAD_DOWN&&timerSetCount>3){
-			tmp = pad&PAD_B?10:1;
-			if( timerSetCount <= tmp ){ 
-				timerSetCount = 3 ;
+		if(gパッド入力&PAD_DOWN&&gタイマー設定回数>3){
+			g一時値1 = gパッド入力&PAD_B?10:1;
+			if( gタイマー設定回数 <= g一時値1 ){ 
+				gタイマー設定回数 = 3 ;
 			}else{
-				timerSetCount-= tmp ;
+				gタイマー設定回数-= g一時値1 ;
 			}
-			put_update_debug(16,17, 3, "   ");
-			put_update_debug(16,17, 3, itoa(timerSetCount, &strbuf[0], 10 ));
+			デバッグ表示更新(16,17, 3, "   ");
+			デバッグ表示更新(16,17, 3, itoa(gタイマー設定回数, &g文字列バッファ[0], 10 ));
 			sfx_play(2,0);
 			delay(2) ;
 		}
-		if(pad&PAD_RIGHT && timerSetCount!=0){
-			timerSetCount = 0 ;
-			put_update_debug(16,17, 3, "OFF");
+		if(gパッド入力&PAD_RIGHT && gタイマー設定回数!=0){
+			gタイマー設定回数 = 0 ;
+			デバッグ表示更新(16,17, 3, "OFF");
 			sfx_play(2,0);
 			delay(2) ;
 		}
-		if(pad&PAD_A){
+		if(gパッド入力&PAD_A){
 			sfx_play(5,0);
-			for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+			for( ; gパッド入力&PAD_A ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 				//delay(1) ;
 			}
 			break ;
 		}
 	}
-	timer=timerSetCount;
+	gタイマー値=gタイマー設定回数;
 
 	// RULE選択.
-	spr = 0 ;
-	spr = oam_meta_spr( 70, 151, spr, meta_right_cursor) ;
+	gスプライトID = 0 ;
+	gスプライトID = oam_meta_spr( 70, 151, gスプライトID, kメタ右カーソル) ;
 	while(1){
-		pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ;
-		if(pad&PAD_UP){
-			isAdvanced = 0 ;
-			put_update_debug(16,19, 8, "NOMAL   ");
+		gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ;
+		if(gパッド入力&PAD_UP){
+			g上級モード = 0 ;
+			デバッグ表示更新(16,19, 8, "NOMAL   ");
 			sfx_play(2,0);
 			delay(2) ;
-			for( ; pad&PAD_UP ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+			for( ; gパッド入力&PAD_UP ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 				//delay(1) ;
 			}
 		}
 
-		if(pad&PAD_DOWN){
-			isAdvanced = 1 ;
-			put_update_debug(16,19, 8, "ADVANCED");
+		if(gパッド入力&PAD_DOWN){
+			g上級モード = 1 ;
+			デバッグ表示更新(16,19, 8, "ADVANCED");
 			sfx_play(2,0);
 			delay(2) ;
-			for( ; pad&PAD_DOWN ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+			for( ; gパッド入力&PAD_DOWN ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 				//delay(1) ;
 			}
 		}
-		if(pad&PAD_A){
+		if(gパッド入力&PAD_A){
 			sfx_play(5,0);
-			for( ; pad&PAD_A ;pad=pad_poll((whichTurn!=0 || p1only==1)?0:1) ){
+			for( ; gパッド入力&PAD_A ;gパッド入力=pad_poll((g現在手番!=0 || g一人プレイ==1)?0:1) ){
 				//delay(1) ;
 			}
 			break ;
@@ -2797,8 +2797,8 @@ void reset(void)
 	}
 	
 	oam_clear() ;
-	pal_spr((char*)bg_palettes[bgpl]);//set background palette from an array
-	pal_bg((char*)bg_palettes[bgpl]);//set background palette from an array
+	pal_spr((char*)k背景パレット配列[g背景パレット番号]);//set background palette from an array
+	pal_bg((char*)k背景パレット配列[g背景パレット番号]);//set background palette from an array
 
 	ppu_off() ;
 	vram_adr(NAMETABLE_A);//set VRAM address
@@ -2817,96 +2817,96 @@ void reset(void)
 	vram_adr(NAMETABLE_A);//set VRAM address
 	vram_unrle((unsigned char*)test2_init);
 
-	stageAnime(0) ;
+	盤面アニメ(0) ;
 	ppu_on_all();//enable rendering
 	delay(1) ;
 
-	stageAnime(1) ;
+	盤面アニメ(1) ;
 //	sfx_play(3,0);
 	oam_clear() ;
 */
 	
 
 	delay(15) ;
-	for( x = 0; x < 8; x++ ){
+	for( g座標X = 0; g座標X < 8; g座標X++ ){
 		sfx_play(2,0);
 		// P1
-		putStockKoma(x*4,2,0xAA, (unsigned char*)koma_list[0][0][x]) ;
+		ストック駒配置(g座標X*4,2,0xAA, (unsigned char*)k駒スプライトリスト[0][0][g座標X]) ;
 
 	}
-	for( x = 0; x < 8; x++ ){
+	for( g座標X = 0; g座標X < 8; g座標X++ ){
 		sfx_play(2,1);
 		// P2
-		putStockKoma(28-(x*4),6,0x55, (unsigned char*)koma_list[0][1][7-x]) ;
+		ストック駒配置(28-(g座標X*4),6,0x55, (unsigned char*)k駒スプライトリスト[0][1][7-g座標X]) ;
 
 	}
-	update_init() ;
-	for( tmp=0; tmp < 16; tmp++ ){
-		up_stage(stage_anime_index[tmp][0], stage_anime_index[tmp][1] );
+	更新初期化() ;
+	for( g一時値1=0; g一時値1 < 16; g一時値1++ ){
+		盤面上昇(k盤面アニメ順序[g一時値1][0], k盤面アニメ順序[g一時値1][1] );
 	}
 
-	memfill( stage_stat, 0x00, 48 );
-	memfill( koma_exist, 0x01, 16 );
-	memfill( quarto_line, 0x00, 8 );
+	memfill( g盤面状態マップ, 0x00, 48 );
+	memfill( g駒存在配列, 0x01, 16 );
+	memfill( gクアルトライン, 0x00, 8 );
 
-	music_play(game_music) ;
+	music_play(gゲーム音楽モード) ;
 
 
 	//delay(10) ;
 /*
-	spr = 0 ;
-	spr = oam_meta_spr( ChooseKoma*32+8, 40+selBW*50, spr, selBW==0 ? cursor : cursor2 ) ;
+	gスプライトID = 0 ;
+	gスプライトID = oam_meta_spr( g選択駒番号*32+8, 40+g駒色選択*50, gスプライトID, g駒色選択==0 ? kカーソルスプライト : kカーソルスプライト2 ) ;
 */
 	while(1)
 	{
 		delay(10) ;
 
-		procChooseKoma() ;
-		procCheckQuarto() ;
+		駒選択処理() ;
+		クアルト判定処理() ;
 
-		procMoveKoma() ;
-		procCheckQuarto() ;
+		駒移動処理() ;
+		クアルト判定処理() ;
 	}
 }
 
 // ========================================================================================
 // ========================================================================================
-void main(void)
+void メインループ(void)
 {
-	initVal() ;
+	変数初期化() ;
 
 #ifndef debug
-	pal_spr((char*)palette2);
-	pal_bg((char*)open_palette1);//set background palette from an array
+	pal_spr((char*)k基本パレット2);
+	pal_bg((char*)kオープンパレット1);//set background palette from an array
 
 	vram_adr(NAMETABLE_A);//set VRAM address
 	vram_unrle((unsigned char*)open_name);
 	vram_adr(NAMETABLE_A);//set VRAM address
 	vram_fill(0x00, 0x0180);
-	spr = 0 ;
+	gスプライトID = 0 ;
 
 	pal_bright(0);
 	ppu_on_all();//enable rendering
 	//delay(20) ;
 
-	bgUp() ;
+	背景アップ() ;
 	delay(20) ;
-	tmp = 0 ;
+	g一時値1 = 0 ;
 
 	while(1)
 	{
-		if(frame%20==0){ move_next(); };
+		if(gフレームカウンタ%20==0){ 次処理へ移動(); };
 
-		frame++;
+		gフレームカウンタ++;
 
-		if( checkForceBreak() ){ break ; }
+		if( 強制終了チェック() ){ break ; }
 
 	}
-	bgpl = 0;
+	g背景パレット番号 = 0;
 
 	// QRコード処理.
-	pad = pad_poll(0);
-	if(pad&PAD_SELECT ){
+	gパッド入力 = pad_poll(0);
+	if(gパッド入力&PAD_SELECT ){
 
 		ppu_off() ;
 		bank_bg(1);
@@ -2916,17 +2916,17 @@ void main(void)
 		ppu_on_all();//enable rendering
 
 		while(1){
-			for( ; pad&PAD_SELECT ;pad=pad_poll(0) ){
+			for( ; gパッド入力&PAD_SELECT ;gパッド入力=pad_poll(0) ){
 				delay(1) ;
 			}
 			break ;
 		}
 
 		while(1){
-			pad = pad_poll(0);
-			if(pad&PAD_SELECT ){
+			gパッド入力 = pad_poll(0);
+			if(gパッド入力&PAD_SELECT ){
 				bank_bg(0);
-				reset() ;
+				リセット処理() ;
 			}
 		}
 	}
@@ -2942,13 +2942,18 @@ void main(void)
 /*
 	//sfx_play(2,0);
 	oam_clear() ;
-	for( y = 0; y < 250; y++ ){
-		scroll(0,y) ;
-		if( frame % 10 == 0 ){ppu_wait_nmi();}
-		frame++ ;
+	for( g座標Y = 0; g座標Y < 250; g座標Y++ ){
+		scroll(0,g座標Y) ;
+		if( gフレームカウンタ % 10 == 0 ){ppu_wait_nmi();}
+		gフレームカウンタ++ ;
 	}
 */
 	while(1){
-		reset() ;
+		リセット処理() ;
 	}
 }
+void main(void)
+{
+	メインループ();
+}
+

@@ -1,0 +1,4 @@
+../libwrk/c16/strncmp.o:	common/strncmp.s
+
+common/strncmp.s:
+

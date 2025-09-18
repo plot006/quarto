@@ -1,0 +1,4 @@
+../libwrk/lynx/rmdir.o:	common/rmdir.s
+
+common/rmdir.s:
+

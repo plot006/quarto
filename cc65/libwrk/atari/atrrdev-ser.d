@@ -1,0 +1,4 @@
+../libwrk/atari/atrrdev-ser.o:	atari/ser/atrrdev.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/ser-kernel.inc C:/user/playground/github/cc65/asminc/ser-error.inc C:/user/playground/github/cc65/asminc/atari.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/atari_antic.inc C:/user/playground/github/cc65/asminc/module.mac
+
+atari/ser/atrrdev.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/ser-kernel.inc C:/user/playground/github/cc65/asminc/ser-error.inc C:/user/playground/github/cc65/asminc/atari.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/atari_antic.inc C:/user/playground/github/cc65/asminc/module.mac:
+

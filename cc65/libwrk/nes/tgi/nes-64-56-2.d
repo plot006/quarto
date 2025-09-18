@@ -1,0 +1,4 @@
+../libwrk/nes/tgi/nes-64-56-2.o:	nes/tgi/nes-64-56-2.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/tgi-kernel.inc C:/user/playground/github/cc65/asminc/tgi-error.inc C:/user/playground/github/cc65/asminc/nes.inc C:/user/playground/github/cc65/asminc/get_tv.inc C:/user/playground/github/cc65/asminc/generic.mac C:/user/playground/github/cc65/asminc/module.mac nes/tgi/../../tgi/tgidrv_line.inc
+
+nes/tgi/nes-64-56-2.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/tgi-kernel.inc C:/user/playground/github/cc65/asminc/tgi-error.inc C:/user/playground/github/cc65/asminc/nes.inc C:/user/playground/github/cc65/asminc/get_tv.inc C:/user/playground/github/cc65/asminc/generic.mac C:/user/playground/github/cc65/asminc/module.mac nes/tgi/../../tgi/tgidrv_line.inc:
+

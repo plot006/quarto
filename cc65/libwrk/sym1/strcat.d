@@ -1,0 +1,4 @@
+../libwrk/sym1/strcat.o:	common/strcat.s
+
+common/strcat.s:
+

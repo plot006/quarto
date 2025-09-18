@@ -1,0 +1,4 @@
+../libwrk/c64/cgets.o:	conio/cgets.c
+
+conio/cgets.c:
+

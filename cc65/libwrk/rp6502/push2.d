@@ -1,0 +1,4 @@
+../libwrk/rp6502/push2.o:	runtime/push2.s
+
+runtime/push2.s:
+

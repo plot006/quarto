@@ -1,0 +1,4 @@
+../libwrk/atarixl/system_check.o:	atari/system_check.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/atari.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/atari_antic.inc atari/xlmemchk.inc
+
+atari/system_check.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/atari.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/atari_antic.inc atari/xlmemchk.inc:
+

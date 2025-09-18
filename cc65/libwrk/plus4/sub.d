@@ -1,0 +1,4 @@
+../libwrk/plus4/sub.o:	runtime/sub.s
+
+runtime/sub.s:
+

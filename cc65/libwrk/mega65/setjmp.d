@@ -1,0 +1,4 @@
+../libwrk/mega65/setjmp.o:	common/setjmp.s
+
+common/setjmp.s:
+
