@@ -3,7 +3,7 @@
  common/filetype.h common/fname.h common/mmodel.h common/searchpath.h \
  common/strbuf.h common/target.h common/capability.h common/strbuf.h \
  common/cpu.h common/version.h common/xmalloc.h cl65/global.h \
- cl65/error.h
+ cl65/error.h cl65/spawn-unix.inc
 common/attrib.h:
 common/cmdline.h:
 common/attrib.h:
@@ -23,3 +23,4 @@ common/version.h:
 common/xmalloc.h:
 cl65/global.h:
 cl65/error.h:
+cl65/spawn-unix.inc:

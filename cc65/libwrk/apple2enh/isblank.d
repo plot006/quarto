@@ -1,4 +1,4 @@
-../libwrk/apple2enh/isblank.o:	common/isblank.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/apple2enh/isblank.o:	common/isblank.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/isblank.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/isblank.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

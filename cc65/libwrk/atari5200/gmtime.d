@@ -1,4 +1,0 @@
-../libwrk/atari5200/gmtime.o:	common/gmtime.s
-
-common/gmtime.s:
-

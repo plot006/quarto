@@ -1,4 +1,4 @@
-../libwrk/nes/printf.o:	common/printf.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/nes/printf.o:	common/printf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-common/printf.s C:/user/playground/github/cc65/asminc/generic.mac:
+common/printf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

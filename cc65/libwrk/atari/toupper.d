@@ -1,4 +1,4 @@
-../libwrk/atari/toupper.o:	common/toupper.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/atari/toupper.o:	common/toupper.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/toupper.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/toupper.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

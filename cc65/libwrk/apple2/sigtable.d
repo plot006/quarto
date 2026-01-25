@@ -1,4 +1,4 @@
-../libwrk/apple2/sigtable.o:	common/sigtable.s C:/user/playground/github/cc65/asminc/signal.inc
+../libwrk/apple2/sigtable.o:	common/sigtable.s /mnt/c/user/playground/github/quarto/cc65/asminc/signal.inc
 
-common/sigtable.s C:/user/playground/github/cc65/asminc/signal.inc:
+common/sigtable.s /mnt/c/user/playground/github/quarto/cc65/asminc/signal.inc:
 

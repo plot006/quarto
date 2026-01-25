@@ -1,4 +1,4 @@
-../libwrk/apple2enh/utscopy.o:	common/utscopy.s C:/user/playground/github/cc65/asminc/utsname.inc
+../libwrk/apple2enh/utscopy.o:	common/utscopy.s /mnt/c/user/playground/github/quarto/cc65/asminc/utsname.inc
 
-common/utscopy.s C:/user/playground/github/cc65/asminc/utsname.inc:
+common/utscopy.s /mnt/c/user/playground/github/quarto/cc65/asminc/utsname.inc:
 

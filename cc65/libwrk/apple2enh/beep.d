@@ -1,4 +1,4 @@
-../libwrk/apple2enh/beep.o:	apple2/beep.s C:/user/playground/github/cc65/asminc/apple2.inc
+../libwrk/apple2enh/beep.o:	apple2/beep.s /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc
 
-apple2/beep.s C:/user/playground/github/cc65/asminc/apple2.inc:
+apple2/beep.s /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc:
 

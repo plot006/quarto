@@ -1,4 +1,4 @@
-../libwrk/atari/cprintf.o:	conio/cprintf.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/atari/cprintf.o:	conio/cprintf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-conio/cprintf.s C:/user/playground/github/cc65/asminc/generic.mac:
+conio/cprintf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

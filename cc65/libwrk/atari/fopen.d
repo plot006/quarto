@@ -1,4 +1,4 @@
-../libwrk/atari/fopen.o:	common/fopen.s C:/user/playground/github/cc65/asminc/errno.inc
+../libwrk/atari/fopen.o:	common/fopen.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc
 
-common/fopen.s C:/user/playground/github/cc65/asminc/errno.inc:
+common/fopen.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc:
 

@@ -1,4 +1,4 @@
-../libwrk/atari/scanf.o:	common/scanf.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/atari/scanf.o:	common/scanf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-common/scanf.s C:/user/playground/github/cc65/asminc/generic.mac:
+common/scanf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

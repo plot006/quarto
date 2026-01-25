@@ -1,4 +1,4 @@
-../libwrk/apple2enh/mouse-kernel.o:	mouse/mouse-kernel.s C:/user/playground/github/cc65/asminc/mouse-kernel.inc
+../libwrk/apple2enh/mouse-kernel.o:	mouse/mouse-kernel.s /mnt/c/user/playground/github/quarto/cc65/asminc/mouse-kernel.inc
 
-mouse/mouse-kernel.s C:/user/playground/github/cc65/asminc/mouse-kernel.inc:
+mouse/mouse-kernel.s /mnt/c/user/playground/github/quarto/cc65/asminc/mouse-kernel.inc:
 

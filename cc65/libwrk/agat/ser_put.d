@@ -1,4 +1,4 @@
-../libwrk/agat/ser_put.o:	serial/ser_put.s C:/user/playground/github/cc65/asminc/ser-kernel.inc
+../libwrk/agat/ser_put.o:	serial/ser_put.s /mnt/c/user/playground/github/quarto/cc65/asminc/ser-kernel.inc
 
-serial/ser_put.s C:/user/playground/github/cc65/asminc/ser-kernel.inc:
+serial/ser_put.s /mnt/c/user/playground/github/quarto/cc65/asminc/ser-kernel.inc:
 

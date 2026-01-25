@@ -1,4 +1,4 @@
-../libwrk/agat/tgi_done.o:	tgi/tgi_done.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc C:/user/playground/github/cc65/asminc/tgi-error.inc
+../libwrk/agat/tgi_done.o:	tgi/tgi_done.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-error.inc
 
-tgi/tgi_done.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc C:/user/playground/github/cc65/asminc/tgi-error.inc:
+tgi/tgi_done.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-error.inc:
 

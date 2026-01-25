@@ -1,4 +1,4 @@
-../libwrk/nes/joy_unload.o:	joystick/joy_unload.s C:/user/playground/github/cc65/asminc/joy-kernel.inc C:/user/playground/github/cc65/asminc/joy-error.inc C:/user/playground/github/cc65/asminc/modload.inc
+../libwrk/nes/joy_unload.o:	joystick/joy_unload.s /mnt/c/user/playground/github/quarto/cc65/asminc/joy-kernel.inc /mnt/c/user/playground/github/quarto/cc65/asminc/joy-error.inc /mnt/c/user/playground/github/quarto/cc65/asminc/modload.inc
 
-joystick/joy_unload.s C:/user/playground/github/cc65/asminc/joy-kernel.inc C:/user/playground/github/cc65/asminc/joy-error.inc C:/user/playground/github/cc65/asminc/modload.inc:
+joystick/joy_unload.s /mnt/c/user/playground/github/quarto/cc65/asminc/joy-kernel.inc /mnt/c/user/playground/github/quarto/cc65/asminc/joy-error.inc /mnt/c/user/playground/github/quarto/cc65/asminc/modload.inc:
 

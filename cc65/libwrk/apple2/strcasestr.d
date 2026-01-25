@@ -1,4 +1,4 @@
-../libwrk/apple2/strcasestr.o:	common/strcasestr.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/apple2/strcasestr.o:	common/strcasestr.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/strcasestr.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/strcasestr.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

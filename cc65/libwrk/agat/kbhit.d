@@ -1,4 +1,4 @@
-../libwrk/agat/kbhit.o:	agat/kbhit.s C:/user/playground/github/cc65/asminc/agat.inc
+../libwrk/agat/kbhit.o:	agat/kbhit.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc
 
-agat/kbhit.s C:/user/playground/github/cc65/asminc/agat.inc:
+agat/kbhit.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc:
 

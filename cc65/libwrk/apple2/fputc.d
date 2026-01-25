@@ -1,4 +1,4 @@
-../libwrk/apple2/fputc.o:	common/fputc.s C:/user/playground/github/cc65/asminc/stdio.inc C:/user/playground/github/cc65/asminc/_file.inc
+../libwrk/apple2/fputc.o:	common/fputc.s /mnt/c/user/playground/github/quarto/cc65/asminc/stdio.inc /mnt/c/user/playground/github/quarto/cc65/asminc/_file.inc
 
-common/fputc.s C:/user/playground/github/cc65/asminc/stdio.inc C:/user/playground/github/cc65/asminc/_file.inc:
+common/fputc.s /mnt/c/user/playground/github/quarto/cc65/asminc/stdio.inc /mnt/c/user/playground/github/quarto/cc65/asminc/_file.inc:
 

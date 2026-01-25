@@ -1,4 +1,4 @@
-../libwrk/agat/atexit.o:	common/atexit.s C:/user/playground/github/cc65/asminc/errno.inc
+../libwrk/agat/atexit.o:	common/atexit.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc
 
-common/atexit.s C:/user/playground/github/cc65/asminc/errno.inc:
+common/atexit.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc:
 

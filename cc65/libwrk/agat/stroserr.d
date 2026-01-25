@@ -1,4 +1,4 @@
-../libwrk/agat/stroserr.o:	common/stroserr.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/agat/stroserr.o:	common/stroserr.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-common/stroserr.s C:/user/playground/github/cc65/asminc/generic.mac:
+common/stroserr.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

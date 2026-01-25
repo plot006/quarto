@@ -1,4 +1,4 @@
-../libwrk/nes/strlower.o:	common/strlower.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/nes/strlower.o:	common/strlower.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/strlower.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/strlower.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

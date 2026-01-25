@@ -1,4 +1,4 @@
-../libwrk/nes/strndup.o:	common/strndup.s C:/user/playground/github/cc65/asminc/errno.inc
+../libwrk/nes/strndup.o:	common/strndup.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc
 
-common/strndup.s C:/user/playground/github/cc65/asminc/errno.inc:
+common/strndup.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc:
 

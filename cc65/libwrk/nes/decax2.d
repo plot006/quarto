@@ -1,4 +1,4 @@
-../libwrk/nes/decax2.o:	runtime/decax2.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/nes/decax2.o:	runtime/decax2.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-runtime/decax2.s C:/user/playground/github/cc65/asminc/generic.mac:
+runtime/decax2.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

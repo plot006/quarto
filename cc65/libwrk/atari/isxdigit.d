@@ -1,4 +1,4 @@
-../libwrk/atari/isxdigit.o:	common/isxdigit.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/atari/isxdigit.o:	common/isxdigit.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/isxdigit.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/isxdigit.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

@@ -1,4 +1,4 @@
-../libwrk/atari/em_copyfrom.o:	em/em_copyfrom.s C:/user/playground/github/cc65/asminc/em-kernel.inc
+../libwrk/atari/em_copyfrom.o:	em/em_copyfrom.s /mnt/c/user/playground/github/quarto/cc65/asminc/em-kernel.inc
 
-em/em_copyfrom.s C:/user/playground/github/cc65/asminc/em-kernel.inc:
+em/em_copyfrom.s /mnt/c/user/playground/github/quarto/cc65/asminc/em-kernel.inc:
 

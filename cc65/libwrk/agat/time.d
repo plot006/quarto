@@ -1,4 +1,4 @@
-../libwrk/agat/time.o:	common/time.s C:/user/playground/github/cc65/asminc/time.inc
+../libwrk/agat/time.o:	common/time.s /mnt/c/user/playground/github/quarto/cc65/asminc/time.inc
 
-common/time.s C:/user/playground/github/cc65/asminc/time.inc:
+common/time.s /mnt/c/user/playground/github/quarto/cc65/asminc/time.inc:
 

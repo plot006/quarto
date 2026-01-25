@@ -1,4 +1,0 @@
-../libwrk/sim6502/_hextab.o:	common/_hextab.c
-
-common/_hextab.c:
-

@@ -1,4 +1,4 @@
-../libwrk/nes/tgi_settextdir.o:	tgi/tgi_settextdir.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/nes/tgi_settextdir.o:	tgi/tgi_settextdir.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_settextdir.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_settextdir.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 

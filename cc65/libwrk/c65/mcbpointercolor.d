@@ -1,4 +1,0 @@
-../libwrk/c65/mcbpointercolor.o:	cbm/mcbpointercolor.s
-
-cbm/mcbpointercolor.s:
-

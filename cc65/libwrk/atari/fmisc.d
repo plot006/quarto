@@ -1,4 +1,4 @@
-../libwrk/atari/fmisc.o:	common/fmisc.s C:/user/playground/github/cc65/asminc/_file.inc C:/user/playground/github/cc65/asminc/errno.inc
+../libwrk/atari/fmisc.o:	common/fmisc.s /mnt/c/user/playground/github/quarto/cc65/asminc/_file.inc /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc
 
-common/fmisc.s C:/user/playground/github/cc65/asminc/_file.inc C:/user/playground/github/cc65/asminc/errno.inc:
+common/fmisc.s /mnt/c/user/playground/github/quarto/cc65/asminc/_file.inc /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc:
 

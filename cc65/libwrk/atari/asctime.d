@@ -1,4 +1,4 @@
-../libwrk/atari/asctime.o:	common/asctime.s C:/user/playground/github/cc65/asminc/time.inc
+../libwrk/atari/asctime.o:	common/asctime.s /mnt/c/user/playground/github/quarto/cc65/asminc/time.inc
 
-common/asctime.s C:/user/playground/github/cc65/asminc/time.inc:
+common/asctime.s /mnt/c/user/playground/github/quarto/cc65/asminc/time.inc:
 

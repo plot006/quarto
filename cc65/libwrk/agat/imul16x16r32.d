@@ -1,4 +1,4 @@
-../libwrk/agat/imul16x16r32.o:	runtime/imul16x16r32.s C:/user/playground/github/cc65/asminc/zeropage.inc
+../libwrk/agat/imul16x16r32.o:	runtime/imul16x16r32.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc
 
-runtime/imul16x16r32.s C:/user/playground/github/cc65/asminc/zeropage.inc:
+runtime/imul16x16r32.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc:
 

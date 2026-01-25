@@ -1,4 +1,4 @@
-../libwrk/atari/memmove.o:	common/memmove.s C:/user/playground/github/cc65/asminc/generic.mac C:/user/playground/github/cc65/asminc/longbranch.mac
+../libwrk/atari/memmove.o:	common/memmove.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac /mnt/c/user/playground/github/quarto/cc65/asminc/longbranch.mac
 
-common/memmove.s C:/user/playground/github/cc65/asminc/generic.mac C:/user/playground/github/cc65/asminc/longbranch.mac:
+common/memmove.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac /mnt/c/user/playground/github/quarto/cc65/asminc/longbranch.mac:
 

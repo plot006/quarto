@@ -1,4 +1,4 @@
-../libwrk/nes/decaxy.o:	runtime/decaxy.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/nes/decaxy.o:	runtime/decaxy.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-runtime/decaxy.s C:/user/playground/github/cc65/asminc/generic.mac:
+runtime/decaxy.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

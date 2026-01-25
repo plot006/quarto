@@ -1,4 +1,4 @@
-../libwrk/nes/ser_status.o:	serial/ser_status.s C:/user/playground/github/cc65/asminc/ser-kernel.inc
+../libwrk/nes/ser_status.o:	serial/ser_status.s /mnt/c/user/playground/github/quarto/cc65/asminc/ser-kernel.inc
 
-serial/ser_status.s C:/user/playground/github/cc65/asminc/ser-kernel.inc:
+serial/ser_status.s /mnt/c/user/playground/github/quarto/cc65/asminc/ser-kernel.inc:
 

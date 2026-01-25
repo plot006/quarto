@@ -1,4 +1,4 @@
-../libwrk/agat/_heapmaxavail.o:	common/_heapmaxavail.s C:/user/playground/github/cc65/asminc/_heap.inc C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/agat/_heapmaxavail.o:	common/_heapmaxavail.s /mnt/c/user/playground/github/quarto/cc65/asminc/_heap.inc /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-common/_heapmaxavail.s C:/user/playground/github/cc65/asminc/_heap.inc C:/user/playground/github/cc65/asminc/generic.mac:
+common/_heapmaxavail.s /mnt/c/user/playground/github/quarto/cc65/asminc/_heap.inc /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

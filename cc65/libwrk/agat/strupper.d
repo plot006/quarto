@@ -1,4 +1,4 @@
-../libwrk/agat/strupper.o:	common/strupper.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/agat/strupper.o:	common/strupper.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/strupper.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/strupper.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

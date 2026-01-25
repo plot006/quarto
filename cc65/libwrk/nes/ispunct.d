@@ -1,4 +1,4 @@
-../libwrk/nes/ispunct.o:	common/ispunct.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/nes/ispunct.o:	common/ispunct.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/ispunct.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/ispunct.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

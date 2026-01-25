@@ -1,4 +1,4 @@
-../libwrk/atari/vfscanf.o:	common/vfscanf.s C:/user/playground/github/cc65/asminc/zeropage.inc common/_scanf.inc C:/user/playground/github/cc65/asminc/stdio.inc
+../libwrk/atari/vfscanf.o:	common/vfscanf.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc common/_scanf.inc /mnt/c/user/playground/github/quarto/cc65/asminc/stdio.inc
 
-common/vfscanf.s C:/user/playground/github/cc65/asminc/zeropage.inc common/_scanf.inc C:/user/playground/github/cc65/asminc/stdio.inc:
+common/vfscanf.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc common/_scanf.inc /mnt/c/user/playground/github/quarto/cc65/asminc/stdio.inc:
 

@@ -1,4 +1,4 @@
-../libwrk/nes/wherex.o:	nes/wherex.s C:/user/playground/github/cc65/asminc/nes.inc
+../libwrk/nes/wherex.o:	nes/wherex.s /mnt/c/user/playground/github/quarto/cc65/asminc/nes.inc
 
-nes/wherex.s C:/user/playground/github/cc65/asminc/nes.inc:
+nes/wherex.s /mnt/c/user/playground/github/quarto/cc65/asminc/nes.inc:
 

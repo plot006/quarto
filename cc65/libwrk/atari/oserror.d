@@ -1,4 +1,4 @@
-../libwrk/atari/oserror.o:	atari/oserror.s C:/user/playground/github/cc65/asminc/errno.inc
+../libwrk/atari/oserror.o:	atari/oserror.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc
 
-atari/oserror.s C:/user/playground/github/cc65/asminc/errno.inc:
+atari/oserror.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc:
 

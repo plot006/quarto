@@ -1,4 +1,4 @@
-../libwrk/nes/putenv.o:	common/putenv.s C:/user/playground/github/cc65/asminc/errno.inc
+../libwrk/nes/putenv.o:	common/putenv.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc
 
-common/putenv.s C:/user/playground/github/cc65/asminc/errno.inc:
+common/putenv.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc:
 

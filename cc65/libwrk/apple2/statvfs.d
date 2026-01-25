@@ -1,4 +1,4 @@
-../libwrk/apple2/statvfs.o:	apple2/statvfs.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/apple2.inc C:/user/playground/github/cc65/asminc/errno.inc apple2/mli.inc C:/user/playground/github/cc65/asminc/statvfs.inc
+../libwrk/apple2/statvfs.o:	apple2/statvfs.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc apple2/mli.inc /mnt/c/user/playground/github/quarto/cc65/asminc/statvfs.inc
 
-apple2/statvfs.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/apple2.inc C:/user/playground/github/cc65/asminc/errno.inc apple2/mli.inc C:/user/playground/github/cc65/asminc/statvfs.inc:
+apple2/statvfs.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc apple2/mli.inc /mnt/c/user/playground/github/quarto/cc65/asminc/statvfs.inc:
 

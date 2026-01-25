@@ -1,4 +1,0 @@
-../libwrk/sym1/getopt.o:	common/getopt.c
-
-common/getopt.c:
-

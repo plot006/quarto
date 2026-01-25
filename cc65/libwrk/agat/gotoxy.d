@@ -1,4 +1,4 @@
-../libwrk/agat/gotoxy.o:	agat/gotoxy.s C:/user/playground/github/cc65/asminc/agat.inc
+../libwrk/agat/gotoxy.o:	agat/gotoxy.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc
 
-agat/gotoxy.s C:/user/playground/github/cc65/asminc/agat.inc:
+agat/gotoxy.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc:
 

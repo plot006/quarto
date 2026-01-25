@@ -1,4 +1,4 @@
-../libwrk/agat/tgi_setcolor.o:	tgi/tgi_setcolor.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/agat/tgi_setcolor.o:	tgi/tgi_setcolor.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_setcolor.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_setcolor.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 

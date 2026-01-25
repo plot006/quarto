@@ -1,4 +1,4 @@
-../libwrk/agat/tgi_outcode.o:	tgi/tgi_outcode.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc C:/user/playground/github/cc65/asminc/zeropage.inc
+../libwrk/agat/tgi_outcode.o:	tgi/tgi_outcode.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc
 
-tgi/tgi_outcode.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc C:/user/playground/github/cc65/asminc/zeropage.inc:
+tgi/tgi_outcode.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc:
 

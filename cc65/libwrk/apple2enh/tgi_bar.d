@@ -1,4 +1,4 @@
-../libwrk/apple2enh/tgi_bar.o:	tgi/tgi_bar.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/apple2enh/tgi_bar.o:	tgi/tgi_bar.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_bar.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_bar.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 

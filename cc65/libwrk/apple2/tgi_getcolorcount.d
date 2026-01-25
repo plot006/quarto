@@ -1,4 +1,4 @@
-../libwrk/apple2/tgi_getcolorcount.o:	tgi/tgi_getcolorcount.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/apple2/tgi_getcolorcount.o:	tgi/tgi_getcolorcount.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_getcolorcount.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_getcolorcount.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 

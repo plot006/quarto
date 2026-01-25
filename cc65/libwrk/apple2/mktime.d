@@ -1,4 +1,4 @@
-../libwrk/apple2/mktime.o:	common/mktime.s C:/user/playground/github/cc65/asminc/time.inc
+../libwrk/apple2/mktime.o:	common/mktime.s /mnt/c/user/playground/github/quarto/cc65/asminc/time.inc
 
-common/mktime.s C:/user/playground/github/cc65/asminc/time.inc:
+common/mktime.s /mnt/c/user/playground/github/quarto/cc65/asminc/time.inc:
 

@@ -1,4 +1,4 @@
-../libwrk/nes/cpeekrevers.o:	nes/cpeekrevers.s C:/user/playground/github/cc65/asminc/nes.inc
+../libwrk/nes/cpeekrevers.o:	nes/cpeekrevers.s /mnt/c/user/playground/github/quarto/cc65/asminc/nes.inc
 
-nes/cpeekrevers.s C:/user/playground/github/cc65/asminc/nes.inc:
+nes/cpeekrevers.s /mnt/c/user/playground/github/quarto/cc65/asminc/nes.inc:
 

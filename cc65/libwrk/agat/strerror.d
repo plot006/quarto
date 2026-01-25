@@ -1,4 +1,4 @@
-../libwrk/agat/strerror.o:	common/strerror.s C:/user/playground/github/cc65/asminc/errno.inc
+../libwrk/agat/strerror.o:	common/strerror.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc
 
-common/strerror.s C:/user/playground/github/cc65/asminc/errno.inc:
+common/strerror.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc:
 

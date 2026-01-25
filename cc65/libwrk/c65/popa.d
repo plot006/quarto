@@ -1,4 +1,0 @@
-../libwrk/c65/popa.o:	runtime/popa.s
-
-runtime/popa.s:
-

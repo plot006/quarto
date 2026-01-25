@@ -1,4 +1,4 @@
-../libwrk/nes/tgi_imulround.o:	tgi/tgi_imulround.s C:/user/playground/github/cc65/asminc/zeropage.inc
+../libwrk/nes/tgi_imulround.o:	tgi/tgi_imulround.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc
 
-tgi/tgi_imulround.s C:/user/playground/github/cc65/asminc/zeropage.inc:
+tgi/tgi_imulround.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc:
 

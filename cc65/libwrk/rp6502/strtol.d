@@ -1,4 +1,0 @@
-../libwrk/rp6502/strtol.o:	common/strtol.c
-
-common/strtol.c:
-

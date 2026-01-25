@@ -1,4 +1,4 @@
-../libwrk/apple2/fgetc.o:	common/fgetc.s C:/user/playground/github/cc65/asminc/stdio.inc C:/user/playground/github/cc65/asminc/_file.inc
+../libwrk/apple2/fgetc.o:	common/fgetc.s /mnt/c/user/playground/github/quarto/cc65/asminc/stdio.inc /mnt/c/user/playground/github/quarto/cc65/asminc/_file.inc
 
-common/fgetc.s C:/user/playground/github/cc65/asminc/stdio.inc C:/user/playground/github/cc65/asminc/_file.inc:
+common/fgetc.s /mnt/c/user/playground/github/quarto/cc65/asminc/stdio.inc /mnt/c/user/playground/github/quarto/cc65/asminc/_file.inc:
 

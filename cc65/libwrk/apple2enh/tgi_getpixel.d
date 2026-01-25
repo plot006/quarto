@@ -1,4 +1,4 @@
-../libwrk/apple2enh/tgi_getpixel.o:	tgi/tgi_getpixel.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/apple2enh/tgi_getpixel.o:	tgi/tgi_getpixel.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_getpixel.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_getpixel.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 

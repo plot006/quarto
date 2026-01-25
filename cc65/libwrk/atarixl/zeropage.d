@@ -1,4 +1,4 @@
-../libwrk/atarixl/zeropage.o:	runtime/zeropage.s C:/user/playground/github/cc65/asminc/zeropage.inc
+../libwrk/atarixl/zeropage.o:	runtime/zeropage.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc
 
-runtime/zeropage.s C:/user/playground/github/cc65/asminc/zeropage.inc:
+runtime/zeropage.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc:
 

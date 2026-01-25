@@ -1,4 +1,0 @@
-../libwrk/pce/sub.o:	runtime/sub.s
-
-runtime/sub.s:
-

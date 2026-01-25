@@ -1,4 +1,4 @@
-../libwrk/agat/joy_read.o:	joystick/joy_read.s C:/user/playground/github/cc65/asminc/joy-kernel.inc
+../libwrk/agat/joy_read.o:	joystick/joy_read.s /mnt/c/user/playground/github/quarto/cc65/asminc/joy-kernel.inc
 
-joystick/joy_read.s C:/user/playground/github/cc65/asminc/joy-kernel.inc:
+joystick/joy_read.s /mnt/c/user/playground/github/quarto/cc65/asminc/joy-kernel.inc:
 

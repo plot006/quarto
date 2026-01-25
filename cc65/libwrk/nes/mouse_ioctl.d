@@ -1,4 +1,4 @@
-../libwrk/nes/mouse_ioctl.o:	mouse/mouse_ioctl.s C:/user/playground/github/cc65/asminc/mouse-kernel.inc
+../libwrk/nes/mouse_ioctl.o:	mouse/mouse_ioctl.s /mnt/c/user/playground/github/quarto/cc65/asminc/mouse-kernel.inc
 
-mouse/mouse_ioctl.s C:/user/playground/github/cc65/asminc/mouse-kernel.inc:
+mouse/mouse_ioctl.s /mnt/c/user/playground/github/quarto/cc65/asminc/mouse-kernel.inc:
 

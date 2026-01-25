@@ -1,4 +1,4 @@
-../libwrk/nes/tgi_outtext.o:	tgi/tgi_outtext.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc C:/user/playground/github/cc65/asminc/tgi-vectorfont.inc C:/user/playground/github/cc65/asminc/zeropage.inc
+../libwrk/nes/tgi_outtext.o:	tgi/tgi_outtext.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-vectorfont.inc /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc
 
-tgi/tgi_outtext.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc C:/user/playground/github/cc65/asminc/tgi-vectorfont.inc C:/user/playground/github/cc65/asminc/zeropage.inc:
+tgi/tgi_outtext.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-vectorfont.inc /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc:
 

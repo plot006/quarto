@@ -1,4 +1,4 @@
-../libwrk/nes/tgi_getcolor.o:	tgi/tgi_getcolor.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/nes/tgi_getcolor.o:	tgi/tgi_getcolor.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_getcolor.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_getcolor.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 

@@ -1,4 +1,4 @@
-../libwrk/apple2enh/dioopen.o:	apple2/dioopen.s C:/user/playground/github/cc65/asminc/errno.inc apple2/mli.inc
+../libwrk/apple2enh/dioopen.o:	apple2/dioopen.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc apple2/mli.inc
 
-apple2/dioopen.s C:/user/playground/github/cc65/asminc/errno.inc apple2/mli.inc:
+apple2/dioopen.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc apple2/mli.inc:
 

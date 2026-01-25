@@ -1,4 +1,4 @@
-../libwrk/apple2/fclose.o:	common/fclose.s C:/user/playground/github/cc65/asminc/errno.inc C:/user/playground/github/cc65/asminc/_file.inc
+../libwrk/apple2/fclose.o:	common/fclose.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc /mnt/c/user/playground/github/quarto/cc65/asminc/_file.inc
 
-common/fclose.s C:/user/playground/github/cc65/asminc/errno.inc C:/user/playground/github/cc65/asminc/_file.inc:
+common/fclose.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc /mnt/c/user/playground/github/quarto/cc65/asminc/_file.inc:
 

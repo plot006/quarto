@@ -1,4 +1,0 @@
-../libwrk/atarixl/ntohl.o:	common/ntohl.s
-
-common/ntohl.s:
-

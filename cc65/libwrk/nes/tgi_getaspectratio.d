@@ -1,4 +1,4 @@
-../libwrk/nes/tgi_getaspectratio.o:	tgi/tgi_getaspectratio.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/nes/tgi_getaspectratio.o:	tgi/tgi_getaspectratio.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_getaspectratio.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_getaspectratio.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 

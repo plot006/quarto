@@ -1,4 +1,4 @@
-../libwrk/atari/ctype.o:	atari/ctype.s C:/user/playground/github/cc65/asminc/ctypetable.inc C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/atari/ctype.o:	atari/ctype.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctypetable.inc /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-atari/ctype.s C:/user/playground/github/cc65/asminc/ctypetable.inc C:/user/playground/github/cc65/asminc/ctype.inc:
+atari/ctype.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctypetable.inc /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

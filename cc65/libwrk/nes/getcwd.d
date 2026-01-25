@@ -1,4 +1,4 @@
-../libwrk/nes/getcwd.o:	common/getcwd.s C:/user/playground/github/cc65/asminc/errno.inc
+../libwrk/nes/getcwd.o:	common/getcwd.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc
 
-common/getcwd.s C:/user/playground/github/cc65/asminc/errno.inc:
+common/getcwd.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc:
 

@@ -1,4 +1,0 @@
-../libwrk/c65/strncpy.o:	common/strncpy.s
-
-common/strncpy.s:
-

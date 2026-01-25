@@ -1,4 +1,4 @@
-../libwrk/apple2enh/get_iigs_speed.o:	apple2/get_iigs_speed.s C:/user/playground/github/cc65/asminc/apple2.inc C:/user/playground/github/cc65/asminc/accelerator.inc
+../libwrk/apple2enh/get_iigs_speed.o:	apple2/get_iigs_speed.s /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc /mnt/c/user/playground/github/quarto/cc65/asminc/accelerator.inc
 
-apple2/get_iigs_speed.s C:/user/playground/github/cc65/asminc/apple2.inc C:/user/playground/github/cc65/asminc/accelerator.inc:
+apple2/get_iigs_speed.s /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc /mnt/c/user/playground/github/quarto/cc65/asminc/accelerator.inc:
 

@@ -1,4 +1,4 @@
-../libwrk/apple2/isxdigit.o:	common/isxdigit.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/apple2/isxdigit.o:	common/isxdigit.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/isxdigit.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/isxdigit.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

@@ -1,4 +1,4 @@
-../libwrk/agat/isspace.o:	common/isspace.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/agat/isspace.o:	common/isspace.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/isspace.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/isspace.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

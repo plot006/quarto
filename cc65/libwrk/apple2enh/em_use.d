@@ -1,4 +1,4 @@
-../libwrk/apple2enh/em_use.o:	em/em_use.s C:/user/playground/github/cc65/asminc/em-kernel.inc
+../libwrk/apple2enh/em_use.o:	em/em_use.s /mnt/c/user/playground/github/quarto/cc65/asminc/em-kernel.inc
 
-em/em_use.s C:/user/playground/github/cc65/asminc/em-kernel.inc:
+em/em_use.s /mnt/c/user/playground/github/quarto/cc65/asminc/em-kernel.inc:
 

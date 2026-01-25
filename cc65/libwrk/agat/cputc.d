@@ -1,4 +1,4 @@
-../libwrk/agat/cputc.o:	agat/cputc.s C:/user/playground/github/cc65/asminc/agat.inc
+../libwrk/agat/cputc.o:	agat/cputc.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc
 
-agat/cputc.s C:/user/playground/github/cc65/asminc/agat.inc:
+agat/cputc.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc:
 

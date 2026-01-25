@@ -1,4 +1,4 @@
-../libwrk/atari/carthdr.o:	atari/carthdr.s C:/user/playground/github/cc65/asminc/atari.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/atari_antic.inc
+../libwrk/atari/carthdr.o:	atari/carthdr.s /mnt/c/user/playground/github/quarto/cc65/asminc/atari.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_gtia.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_pokey.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_antic.inc
 
-atari/carthdr.s C:/user/playground/github/cc65/asminc/atari.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/atari_antic.inc:
+atari/carthdr.s /mnt/c/user/playground/github/quarto/cc65/asminc/atari.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_gtia.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_pokey.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_antic.inc:
 

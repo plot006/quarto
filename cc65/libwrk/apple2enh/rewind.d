@@ -1,4 +1,4 @@
-../libwrk/apple2enh/rewind.o:	common/rewind.s C:/user/playground/github/cc65/asminc/stdio.inc
+../libwrk/apple2enh/rewind.o:	common/rewind.s /mnt/c/user/playground/github/quarto/cc65/asminc/stdio.inc
 
-common/rewind.s C:/user/playground/github/cc65/asminc/stdio.inc:
+common/rewind.s /mnt/c/user/playground/github/quarto/cc65/asminc/stdio.inc:
 

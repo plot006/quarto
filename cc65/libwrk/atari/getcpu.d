@@ -1,4 +1,4 @@
-../libwrk/atari/getcpu.o:	common/getcpu.s C:/user/playground/github/cc65/asminc/zeropage.inc
+../libwrk/atari/getcpu.o:	common/getcpu.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc
 
-common/getcpu.s C:/user/playground/github/cc65/asminc/zeropage.inc:
+common/getcpu.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc:
 

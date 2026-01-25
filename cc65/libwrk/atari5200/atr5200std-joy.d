@@ -1,4 +1,0 @@
-../libwrk/atari5200/atr5200std-joy.o:	atari5200/joy/atr5200std.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/joy-kernel.inc C:/user/playground/github/cc65/asminc/joy-error.inc C:/user/playground/github/cc65/asminc/atari5200.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_antic.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/module.mac
-
-atari5200/joy/atr5200std.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/joy-kernel.inc C:/user/playground/github/cc65/asminc/joy-error.inc C:/user/playground/github/cc65/asminc/atari5200.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_antic.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/module.mac:
-

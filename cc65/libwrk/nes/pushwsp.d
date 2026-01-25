@@ -1,4 +1,4 @@
-../libwrk/nes/pushwsp.o:	runtime/pushwsp.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/nes/pushwsp.o:	runtime/pushwsp.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-runtime/pushwsp.s C:/user/playground/github/cc65/asminc/generic.mac:
+runtime/pushwsp.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

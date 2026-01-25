@@ -1,4 +1,0 @@
-../libwrk/atari7800/fprintf.o:	common/fprintf.s C:/user/playground/github/cc65/asminc/generic.mac
-
-common/fprintf.s C:/user/playground/github/cc65/asminc/generic.mac:
-

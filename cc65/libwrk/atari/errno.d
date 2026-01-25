@@ -1,4 +1,4 @@
-../libwrk/atari/errno.o:	common/errno.s C:/user/playground/github/cc65/asminc/errno.inc
+../libwrk/atari/errno.o:	common/errno.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc
 
-common/errno.s C:/user/playground/github/cc65/asminc/errno.inc:
+common/errno.s /mnt/c/user/playground/github/quarto/cc65/asminc/errno.inc:
 

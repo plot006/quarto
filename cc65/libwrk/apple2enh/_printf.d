@@ -1,4 +1,4 @@
-../libwrk/apple2enh/_printf.o:	common/_printf.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/apple2enh/_printf.o:	common/_printf.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-common/_printf.s C:/user/playground/github/cc65/asminc/zeropage.inc C:/user/playground/github/cc65/asminc/generic.mac:
+common/_printf.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

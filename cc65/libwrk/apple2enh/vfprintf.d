@@ -1,4 +1,4 @@
-../libwrk/apple2enh/vfprintf.o:	common/vfprintf.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/apple2enh/vfprintf.o:	common/vfprintf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-common/vfprintf.s C:/user/playground/github/cc65/asminc/generic.mac:
+common/vfprintf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

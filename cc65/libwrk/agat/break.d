@@ -1,4 +1,4 @@
-../libwrk/agat/break.o:	agat/break.s C:/user/playground/github/cc65/asminc/agat.inc
+../libwrk/agat/break.o:	agat/break.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc
 
-agat/break.s C:/user/playground/github/cc65/asminc/agat.inc:
+agat/break.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc:
 

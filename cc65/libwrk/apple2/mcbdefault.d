@@ -1,4 +1,4 @@
-../libwrk/apple2/mcbdefault.o:	apple2/mcbdefault.s C:/user/playground/github/cc65/asminc/apple2.inc
+../libwrk/apple2/mcbdefault.o:	apple2/mcbdefault.s /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc
 
-apple2/mcbdefault.s C:/user/playground/github/cc65/asminc/apple2.inc:
+apple2/mcbdefault.s /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc:
 

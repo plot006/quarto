@@ -1,4 +1,4 @@
-../libwrk/nes/fscanf.o:	common/fscanf.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/nes/fscanf.o:	common/fscanf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-common/fscanf.s C:/user/playground/github/cc65/asminc/generic.mac:
+common/fscanf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

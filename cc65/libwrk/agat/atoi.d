@@ -1,4 +1,4 @@
-../libwrk/agat/atoi.o:	common/atoi.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/agat/atoi.o:	common/atoi.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/atoi.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/atoi.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

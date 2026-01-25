@@ -1,4 +1,4 @@
-../libwrk/apple2enh/break.o:	apple2/break.s C:/user/playground/github/cc65/asminc/apple2.inc
+../libwrk/apple2enh/break.o:	apple2/break.s /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc
 
-apple2/break.s C:/user/playground/github/cc65/asminc/apple2.inc:
+apple2/break.s /mnt/c/user/playground/github/quarto/cc65/asminc/apple2.inc:
 

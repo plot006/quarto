@@ -1,4 +1,4 @@
-../libwrk/apple2/mouse_show.o:	mouse/mouse_show.s C:/user/playground/github/cc65/asminc/mouse-kernel.inc
+../libwrk/apple2/mouse_show.o:	mouse/mouse_show.s /mnt/c/user/playground/github/quarto/cc65/asminc/mouse-kernel.inc
 
-mouse/mouse_show.s C:/user/playground/github/cc65/asminc/mouse-kernel.inc:
+mouse/mouse_show.s /mnt/c/user/playground/github/quarto/cc65/asminc/mouse-kernel.inc:
 

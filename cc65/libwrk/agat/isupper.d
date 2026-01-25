@@ -1,4 +1,4 @@
-../libwrk/agat/isupper.o:	common/isupper.s C:/user/playground/github/cc65/asminc/ctype.inc
+../libwrk/agat/isupper.o:	common/isupper.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc
 
-common/isupper.s C:/user/playground/github/cc65/asminc/ctype.inc:
+common/isupper.s /mnt/c/user/playground/github/quarto/cc65/asminc/ctype.inc:
 

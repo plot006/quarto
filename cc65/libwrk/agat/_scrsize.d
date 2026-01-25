@@ -1,4 +1,4 @@
-../libwrk/agat/_scrsize.o:	agat/_scrsize.s C:/user/playground/github/cc65/asminc/agat.inc
+../libwrk/agat/_scrsize.o:	agat/_scrsize.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc
 
-agat/_scrsize.s C:/user/playground/github/cc65/asminc/agat.inc:
+agat/_scrsize.s /mnt/c/user/playground/github/quarto/cc65/asminc/agat.inc:
 

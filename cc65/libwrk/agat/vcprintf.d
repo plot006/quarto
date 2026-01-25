@@ -1,4 +1,4 @@
-../libwrk/agat/vcprintf.o:	conio/vcprintf.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/agat/vcprintf.o:	conio/vcprintf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-conio/vcprintf.s C:/user/playground/github/cc65/asminc/generic.mac:
+conio/vcprintf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

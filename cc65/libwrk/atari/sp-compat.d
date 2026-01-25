@@ -1,4 +1,4 @@
-../libwrk/atari/sp-compat.o:	runtime/sp-compat.s C:/user/playground/github/cc65/asminc/zeropage.inc
+../libwrk/atari/sp-compat.o:	runtime/sp-compat.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc
 
-runtime/sp-compat.s C:/user/playground/github/cc65/asminc/zeropage.inc:
+runtime/sp-compat.s /mnt/c/user/playground/github/quarto/cc65/asminc/zeropage.inc:
 

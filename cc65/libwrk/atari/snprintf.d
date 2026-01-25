@@ -1,4 +1,4 @@
-../libwrk/atari/snprintf.o:	common/snprintf.s C:/user/playground/github/cc65/asminc/generic.mac
+../libwrk/atari/snprintf.o:	common/snprintf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac
 
-common/snprintf.s C:/user/playground/github/cc65/asminc/generic.mac:
+common/snprintf.s /mnt/c/user/playground/github/quarto/cc65/asminc/generic.mac:
 

@@ -1,4 +1,4 @@
-../libwrk/atari/cvline.o:	atari/cvline.s C:/user/playground/github/cc65/asminc/atari.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/atari_antic.inc
+../libwrk/atari/cvline.o:	atari/cvline.s /mnt/c/user/playground/github/quarto/cc65/asminc/atari.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_gtia.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_pokey.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_antic.inc
 
-atari/cvline.s C:/user/playground/github/cc65/asminc/atari.inc C:/user/playground/github/cc65/asminc/atari_gtia.inc C:/user/playground/github/cc65/asminc/atari_pokey.inc C:/user/playground/github/cc65/asminc/atari_antic.inc:
+atari/cvline.s /mnt/c/user/playground/github/quarto/cc65/asminc/atari.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_gtia.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_pokey.inc /mnt/c/user/playground/github/quarto/cc65/asminc/atari_antic.inc:
 

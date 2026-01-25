@@ -1,4 +1,4 @@
-../libwrk/apple2/tgi_setpixel.o:	tgi/tgi_setpixel.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/apple2/tgi_setpixel.o:	tgi/tgi_setpixel.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_setpixel.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_setpixel.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 

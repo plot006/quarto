@@ -1,4 +1,4 @@
-../libwrk/nes/gotoxy.o:	nes/gotoxy.s C:/user/playground/github/cc65/asminc/nes.inc
+../libwrk/nes/gotoxy.o:	nes/gotoxy.s /mnt/c/user/playground/github/quarto/cc65/asminc/nes.inc
 
-nes/gotoxy.s C:/user/playground/github/cc65/asminc/nes.inc:
+nes/gotoxy.s /mnt/c/user/playground/github/quarto/cc65/asminc/nes.inc:
 

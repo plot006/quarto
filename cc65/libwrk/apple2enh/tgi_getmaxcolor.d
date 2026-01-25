@@ -1,4 +1,4 @@
-../libwrk/apple2enh/tgi_getmaxcolor.o:	tgi/tgi_getmaxcolor.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/apple2enh/tgi_getmaxcolor.o:	tgi/tgi_getmaxcolor.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_getmaxcolor.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_getmaxcolor.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 

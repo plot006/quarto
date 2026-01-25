@@ -1,4 +1,4 @@
-../libwrk/apple2enh/tgi_setpalette.o:	tgi/tgi_setpalette.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc
+../libwrk/apple2enh/tgi_setpalette.o:	tgi/tgi_setpalette.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc
 
-tgi/tgi_setpalette.s C:/user/playground/github/cc65/asminc/tgi-kernel.inc:
+tgi/tgi_setpalette.s /mnt/c/user/playground/github/quarto/cc65/asminc/tgi-kernel.inc:
 
