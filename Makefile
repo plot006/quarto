@@ -6,6 +6,7 @@ CA := $(CC65_DIR)/bin/ca65
 LD := $(CC65_DIR)/bin/ld65
 
 TARGET_PLATFORM := nes
+SRC_DIR := src
 
 TARGETS += quarto.nes
 
@@ -15,7 +16,7 @@ EMULATOR ?= mesen/mesen
 EXAMPLES := $(TARGETS:..nes=)
 OBJECTS := $(TARGETS:.nes=.o)
 ASSEMBLY_SOURCES := $(TARGETS:.nes=.s)
-C_SOURCES := $(TARGETS:.nes=.c)
+C_SOURCES := $(addprefix $(SRC_DIR)/,$(TARGETS:.nes=.c))
 
 .PHONY: all
 
@@ -42,8 +43,8 @@ clean:
 	@rm -fv $(ASSEMBLY_SOURCES)
 	@rm -fv lib/crt0.o
 
-%.s: %.c
-	$(CC) -g -Oi $< --target $(TARGET_PLATFORM) -I$(CC65_DIR)/include/ --add-source
+%.s: $(SRC_DIR)/%.c
+	$(CC) -g -Oi $< --target $(TARGET_PLATFORM) -I. -I$(CC65_DIR)/include/ --add-source
 
 %.o: %.s
 	$(CA) $< -g
