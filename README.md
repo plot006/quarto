@@ -10,14 +10,6 @@ This is a NES game compiled with cc65.It was created using neslib, a great libra
 
 You can play on the **[demo page](https://plot006.github.io/quarto-web/)** on your web browser.
 
-### Build
-
-Please make by executing the following commands in MSYS2.
-
-```cmd
-make clean quarto
-```
-
 ## How to play
 
 Basically the same as QUARTO [rules](https://www.ultraboardgames.com/quarto/game-rules.php).

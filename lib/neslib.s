@@ -372,24 +372,24 @@ _oam_spr:
 	tax
 
 	ldy #0		;four popa calls replacement
-	lda (sp),y
+	lda (c_sp),y
 	iny
 	sta OAM_BUF+2,x
-	lda (sp),y
+	lda (c_sp),y
 	iny
 	sta OAM_BUF+1,x
-	lda (sp),y
+	lda (c_sp),y
 	iny
 	sta OAM_BUF+0,x
-	lda (sp),y
+	lda (c_sp),y
 	sta OAM_BUF+3,x
 
-	lda <sp
+	lda <c_sp
 	clc
 	adc #4
-	sta <sp
+	sta <c_sp
 	bcc @1
-	inc <sp+1
+	inc <c_sp+1
 
 @1:
 
@@ -408,13 +408,13 @@ _oam_meta_spr:
 	stx <PTR+1
 
 	ldy #2		;three popa calls replacement, performed in reversed order
-	lda (sp),y
+	lda (c_sp),y
 	dey
 	sta <SCRX
-	lda (sp),y
+	lda (c_sp),y
 	dey
 	sta <SCRY
-	lda (sp),y
+	lda (c_sp),y
 	tax
 
 @1:
@@ -445,11 +445,11 @@ _oam_meta_spr:
 
 @2:
 
-	lda <sp
+	lda <c_sp
 	adc #2			;carry is always set here, so it adds 3
-	sta <sp
+	sta <c_sp
 	bcc @3
-	inc <sp+1
+	inc <c_sp+1
 
 @3:
 

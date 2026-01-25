@@ -9,7 +9,9 @@
 #include "resource/jeesus.h"
 
 #include <stdlib.h>
-static unsigned char g文字列バッファ[16];
+
+#include "quarto_data.h"
+#include "quarto_state.h"
 
 //#define debug
 #ifdef debug
@@ -17,852 +19,11 @@ static unsigned char g文字列バッファ[16];
 
 void リセット処理(void) ;
 
-//variables
-
-//static unsigned char bank;
-
-static unsigned char gクアルト状態;
-//static unsigned char checking;
-
-static unsigned char gループI;
-static unsigned char gループJ;
-
-static unsigned char gループK;
-static unsigned char gループL;
-static unsigned char gループM;
-static unsigned char gループN;
-
-static unsigned char gループO;
-static unsigned char gループP;
-
-
-static unsigned char g座標X;
-static unsigned char g座標Y;
-static unsigned char g仮座標X;
-static unsigned char g仮座標Y;
-
-static unsigned char g座標インデックスX;
-static unsigned char g座標インデックスY;
-
-static unsigned char gタイマー値;
-static unsigned char gタイマー設定回数;
-
-static unsigned char g設定アドレス上位;
-static unsigned char g設定アドレス下位;
-static unsigned char g現在手番,g手番退避;
-static unsigned char g駒色選択,g駒色退避;
-
-static unsigned char gパッド入力,gスプライトID;
-
-static unsigned char g計算値;
-static unsigned char g一時値1;
-static unsigned char g一時値2;
-static unsigned char g一時値3;
-static unsigned char g一時値4;
-static unsigned char gフレームカウンタ;
-static unsigned char g駒フレーム;
-static unsigned char gアニメ格子[4][4]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
-static unsigned char g属性黒;
-static unsigned char g属性白;
-static unsigned char g属性高;
-static unsigned char g属性低;
-static unsigned char g属性四角;
-static unsigned char g属性丸;
-static unsigned char g属性平面;
-static unsigned char g属性穴;
-static unsigned char gエラーフラグ[2] ;
-
-static unsigned char g設定座標X;
-static unsigned char g設定座標Y;
-
-//static unsigned char moving;
-static unsigned char g一人プレイ;
-
-static unsigned char g駒配置スロット[2];
-static unsigned char g駒位置X[2];
-static unsigned char g駒位置Y[2];
-static unsigned char g選択駒番号,g選択駒退避;
-static unsigned char g駒存在配列[2][8];
-//static unsigned char tmp_line[8];
-
-static unsigned char g背景パレット番号;
-static unsigned char gゲーム音楽モード;
-static unsigned char gリーチ状態;
-static unsigned char g自動選択フラグ;
-static unsigned char g対CPUフラグ;
-static unsigned char g上級モード;
-
-static unsigned char g属性状態配列[40];
-static unsigned char g属性更新バッファ[8][3];
-
-static unsigned char g乱数ボックス1[4] ;
-static unsigned char g乱数ボックス2[4] ;
-static unsigned char g乱数ボックス3[2] ;
-static unsigned char g乱数ボックス4[8] ;
-
-
-const unsigned char k属性座標テーブル[4][4][4] ={
-	0xCB,	0xCC,	0xD3,	0xD4,
-	0xD2,	0xD3,	0xD2,	0xD3,
-	0xD1,	0xD2,	0xD9,	0xDA,
-	0xD8,	0xD9,	0xD8,	0xD9,
-
-	0xD4,	0xD5,	0xD4,	0xD5,
-	0xD3,	0xD4,	0xDB,	0xDC,
-	0xDA,	0xDB,	0xDA,	0xDB,
-	0xD9,	0xDA,	0xE1,	0xE2,
-
-	0xD5,	0xD6,	0xDD,	0xDE,
-	0xDC,	0xDD,	0xDC,	0xDD,
-	0xDB,	0xDC,	0xE3,	0xE4,
-	0xE2,	0xE3,	0xE2,	0xE3,
-
-	0xDE,	0xDF,	0xDE,	0xDF,
-	0xDD,	0xDE,	0xE5,	0xE6,
-	0xE4,	0xE5,	0xE4,	0xE5,
-	0xE3,	0xE4,	0xEB,	0xEC
-
-};
-
-const unsigned char k盤面アニメ順序[16][2] = {
-	0,0,
-	0,1,
-	0,2,
-	0,3,
-	1,3,
-	2,3,
-	3,3,
-	3,2,
-	3,1,
-	3,0,
-	2,0,
-	1,0,
-	1,1,
-	1,2,
-	2,2,
-	2,1,
-};
-
-//two players coords
-
-/*
-static unsigned char g猫座標X[2];
-static unsigned char g猫座標Y[2];
-static unsigned char g終端値配列[2];
-static unsigned char gヒット状態[2];
-*/
-
-//static unsigned char g座標インデックスX[2];
-//static unsigned char g座標インデックスY[2];
-//static unsigned char chr_index[2];
-//static unsigned char dk_x_r_index;
-//static unsigned char dk_x_l_index;
-//static unsigned char dk_y_u_index;
-//static unsigned char dk_chr_index1;
-static unsigned char g盤面状態マップ[4][4][3];
 #define _KOMA_TYPE		0
 #define _CHOOSE_KOMA	1
 #define _SEL_BW			2
 
-static unsigned char gクアルトライン[4][2];
-
-
-static unsigned char g更新リスト[6+8+8+1];
-static unsigned char g更新駒データ[(3+3)*4+1];
-static unsigned char g更新駒カラー[3+1+1];
-
-static unsigned char g更新デバッグバッファ[3+16+1];
-static unsigned char gデバッグカウンタ;
-
-
-//first player metasprite, data structure explained in neslib.h
-const unsigned char k空白メッセージ[]= "              " ;
-
 #define stage_y_offset 0x80
-const unsigned char k盤面座標テーブル[4][4][6]={
-	0x01,	0x0e,	0x01,	0x2E,	0x01,	0x4E,
-	0x01,	0x4A,	0x01,	0x6A,	0x01,	0x8A,
-	0x01,	0x86,	0x01,	0xA6,	0x01,	0xC6,
-	0x01,	0xC2,	0x01,	0xE2,	0x02,	0x02,
-	0x01,	0x52,	0x01,	0x72,	0x01,	0x92,
-	0x01,	0x8E,	0x01,	0xAE,	0x01,	0xCE,
-	0x01,	0xCA,	0x01,	0xEA,	0x02,	0x0A,
-	0x02,	0x06,	0x02,	0x26,	0x02,	0x46,
-	0x01,	0x96,	0x01,	0xB6,	0x01,	0xD6,
-	0x01,	0xD2,	0x01,	0xF2,	0x02,	0x12,
-	0x02,	0x0E,	0x02,	0x2E,	0x02,	0x4E,
-	0x02,	0x4A,	0x02,	0x6A,	0x02,	0x8A,
-	0x01,	0xDA,	0x01,	0xFA,	0x02,	0x1A,
-	0x02,	0x16,	0x02,	0x36,	0x02,	0x56,
-	0x02,	0x52,	0x02,	0x72,	0x02,	0x92,
-	0x02,	0x8E,	0x02,	0xAE,	0x02,	0xCE
-};
-
-//const unsigned char kスプライトパレット1[16]={ 0x0f,0x00,0x0f,0x0f,0x0f,0x0c,0x30,0x31,0x0f,0x0c,0x30,0x37,0x0f,0x0c,0x0f,0x0f };
-
-
-const unsigned char kオープンパレット1[16]={ 0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a };
-const unsigned char kオープンパレット2[16]={ 0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31 };
-const unsigned char kオープンパレット3[16]={ 0x0f,0x0c,0x2c,0x3c,0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35 };
-const unsigned char kオープンパレット4[16]={ 0x0f,0x0a,0x3a,0x3a,0x0f,0x0c,0x30,0x31,0x0f,0x05,0x25,0x35,0x0f,0x0c,0x2c,0x3c };
-
-const unsigned char k基本パレット1[16]={ 0x0f,0x00,0x0f,0x0f,0x0f,0x0c,0x30,0x31,0x0f,0x0c,0x30,0x37,0x0f,0x0c,0x0f,0x0f };
-const unsigned char k基本パレット2[16]={ 0x0f,0x0c,0x3c,0x0f,0x0f,0x0f,0x30,0x15,0x0f,0x0f,0x30,0x1c,0x0f,0x05,0x35,0x0f };
-//const unsigned char k基本パレット2[16]={ 0x0f,0x1c,0x3c,0x0f,0x0f,0x0f,0x30,0x05,0x0f,0x0f,0x30,0x0c,0x0f,0x15,0x35,0x0f };
-const unsigned char k基本パレット3[16]={ 0x0c,0x0c,0x0c,0x0c,0x0c,0x00,0x30,0x30,0x0c,0x10,0x30,0x0f,0x0c,0x0c,0x0c,0x0c };
-const unsigned char k基本パレット4[16]={ 0x0b,0x0b,0x0b,0x0b,0x0b,0x26,0x30,0x07,0x0b,0x17,0x30,0x37,0x0b,0x0b,0x0b,0x0b };
-const unsigned char* k背景パレット配列[]={
-	k基本パレット1,
-	k基本パレット2,
-	k基本パレット3,
-	k基本パレット4
-};
-
-
-const unsigned char k基本パレット5[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x0f,0x0f,0x0f,0x21,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f };
-const unsigned char k基本パレット6[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x0f,0x24,0x0f,0x21,0x0f,0x21,0x0f,0x0f,0x0f,0x0f };
-const unsigned char k基本パレット7[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x30,0x24,0x0f,0x21,0x30,0x21,0x0f,0x0f,0x0f,0x0f };
-const unsigned char k基本パレット8[16]={ 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x24,0x24,0x0f,0x0f,0x21,0x21,0x0f,0x0f,0x0f,0x0f };
-const unsigned char* k背景パレット代替[]={
-	k基本パレット5,
-	k基本パレット6,
-	k基本パレット7,
-	k基本パレット8
-};
-
-const unsigned char kジーザスパレット[16]={ 0x0f,0x05,0x30,0x26,0x0f,0x05,0x30,0x36,0x0f,0x16,0x30,0x36,0x0f,0x26,0x30,0x30 };
-
-/*
-const unsigned char kメタバー1[]={
-	0xDD,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,
-	0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDE,0xDF
-};
-const unsigned char kメタバー2[]={
-	0xED,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,
-	0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEF
-};
-*/
-/*
-const unsigned char kメタマスク[]={
-	0,	0,	0x42,	0,
-	8,	0,	0x42,	0,
-	128
-};
-const unsigned char kメタマスクロング[]={
-	0,	0,	0x42,	0,
-	8,	0,	0x42,	0,
-	16,	0,	0x42,	0,
-	24,	0,	0x42,	0,
-	0,	8,	0x42,	0,
-	8,	8,	0x42,	0,
-	16,	8,	0x42,	0,
-	24,	8,	0x42,	0,
-	128
-};
-*/
-
-const unsigned char kメタクアルト[]={
-	8*0,	0,	'Q'-0x20,	1,
-	8*1,	0,	'U'-0x20,	1,
-	8*2,	0,	'A'-0x20,	1,
-	8*3,	0,	'R'-0x20,	1,
-	8*4,	0,	'T'-0x20,	1,
-	8*5,	0,	'O'-0x20,	1,
-	8*6,	0,	'!'-0x20,	1,
-	128
-};
-
-const unsigned char kメタ先手勝利[]={
-	8*0,	0,	'P'-0x20,	1,
-	8*1,	0,	'1'-0x20,	1,
-	8*2,	0,	' '-0x20,	1,
-	8*3,	0,	'W'-0x20,	1,
-	8*4,	0,	'I'-0x20,	1,
-	8*5,	0,	'N'-0x20,	1,
-	8*6,	0,	'!'-0x20,	1,
-	128
-};
-const unsigned char kメタ後手勝利[]={
-	8*0,	0,	'P'-0x20,	1,
-	8*1,	0,	'2'-0x20,	1,
-	8*2,	0,	' '-0x20,	1,
-	8*3,	0,	'W'-0x20,	1,
-	8*4,	0,	'I'-0x20,	1,
-	8*5,	0,	'N'-0x20,	1,
-	8*6,	0,	'!'-0x20,	1,
-	128
-};
-const unsigned char kメタ右カーソル[]={
-	0,	0,	0x1E,	1,
-	128
-};
-
-const unsigned char kメタ位置1[]={
-	0,	0,	0xCF,	1,
-	128
-};
-const unsigned char kメタ位置2[]={
-	0,	0,	0xCF,	2,
-	128
-};
-
-const unsigned char kメタ位置1逆[]={
-	0,	0,	0xCF,	0x81,
-	128
-};
-const unsigned char kメタ位置2逆[]={
-	0,	0,	0xCF,	0x82,
-	128
-};
-/*
-const unsigned char kカーソルスプライト[]={
-	0,	0,	0x44,	1,
-	128
-};
-const unsigned char kカーソルスプライト2[]={
-	0,	0,	0x44,	0x81,
-	128
-};
-*/
-const unsigned char k先手駒1[]={
-	0,	0,	0x80,	1,
-	0,	8,	0x90,	1,
-	0,	16,	0xA0,	1,
-	0,	24,	0xB0,	1,
-	8,	0,	0x81,	1,
-	8,	8,	0x91,	1,
-	8,	16,	0xA1,	1,
-	8,	24,	0xB1,	1,
-	16,	0,	0x82,	1,
-	16,	8,	0x92,	1,
-	16,	16,	0xA2,	1,
-	16,	24,	0xB2,	1,
-	128
-};
-const unsigned char k先手駒2[]={
-	0,	0,	0x86,	1,
-	0,	8,	0x90,	1,
-	0,	16,	0xA0,	1,
-	0,	24,	0xB0,	1,
-	8,	0,	0x87,	1,
-	8,	8,	0x91,	1,
-	8,	16,	0xA1,	1,
-	8,	24,	0xB1,	1,
-	16,	0,	0x88,	1,
-	16,	8,	0x92,	1,
-	16,	16,	0xA2,	1,
-	16,	24,	0xB2,	1,
-	128
-};
-const unsigned char k先手駒3[]={
-	0,	0,	0x83,	1,
-	0,	8,	0x93,	1,
-	0,	16,	0xA3,	1,
-	0,	24,	0xB3,	1,
-	8,	0,	0x84,	1,
-	8,	8,	0x94,	1,
-	8,	16,	0xA4,	1,
-	8,	24,	0xB4,	1,
-	16,	0,	0x85,	1,
-	16,	8,	0x95,	1,
-	16,	16,	0xA5,	1,
-	16,	24,	0xB5,	1,
-	128
-};
-const unsigned char k先手駒4[]={
-	0,	0,	0x89,	1,
-	0,	8,	0x93,	1,
-	0,	16,	0xA3,	1,
-	0,	24,	0xB3,	1,
-	8,	0,	0x8A,	1,
-	8,	8,	0x94,	1,
-	8,	16,	0xA4,	1,
-	8,	24,	0xB4,	1,
-	16,	0,	0x8B,	1,
-	16,	8,	0x95,	1,
-	16,	16,	0xA5,	1,
-	16,	24,	0xB5,	1,
-	128
-};
-const unsigned char k先手駒5[]={
-	0,	0,	0x00,	1,
-	0,	8,	0x80,	1,
-	0,	16,	0x90,	1,
-	0,	24,	0xB0,	1,
-	8,	0,	0x00,	1,
-	8,	8,	0x81,	1,
-	8,	16,	0x91,	1,
-	8,	24,	0xB1,	1,
-	16,	0,	0x00,	1,
-	16,	8,	0x82,	1,
-	16,	16,	0x92,	1,
-	16,	24,	0xB2,	1,
-	128
-};
-const unsigned char k先手駒6[]={
-	0,	0,	0x00,	1,
-	0,	8,	0x86,	1,
-	0,	16,	0x90,	1,
-	0,	24,	0xB0,	1,
-	8,	0,	0x00,	1,
-	8,	8,	0x87,	1,
-	8,	16,	0x91,	1,
-	8,	24,	0xB1,	1,
-	16,	0,	0x00,	1,
-	16,	8,	0x88,	1,
-	16,	16,	0x92,	1,
-	16,	24,	0xB2,	1,
-	128
-};
-const unsigned char k先手駒7[]={
-	0,	0,	0x00,	1,
-	0,	8,	0x83,	1,
-	0,	16,	0x93,	1,
-	0,	24,	0xB3,	1,
-	8,	0,	0x00,	1,
-	8,	8,	0x84,	1,
-	8,	16,	0x94,	1,
-	8,	24,	0xB4,	1,
-	16,	0,	0x00,	1,
-	16,	8,	0x85,	1,
-	16,	16,	0x95,	1,
-	16,	24,	0xB5,	1,
-	128
-};
-const unsigned char k先手駒8[]={
-	0,	0,	0x00,	1,
-	0,	8,	0x89,	1,
-	0,	16,	0x93,	1,
-	0,	24,	0xB3,	1,
-	8,	0,	0x00,	1,
-	8,	8,	0x8A,	1,
-	8,	16,	0x94,	1,
-	8,	24,	0xB4,	1,
-	16,	0,	0x00,	1,
-	16,	8,	0x8B,	1,
-	16,	16,	0x95,	1,
-	16,	24,	0xB5,	1,
-	128
-};
-
-const unsigned char k後手駒1[]={
-	0,	0,	0x80,	2,
-	0,	8,	0x90,	2,
-	0,	16,	0xA0,	2,
-	0,	24,	0xB0,	2,
-	8,	0,	0x81,	2,
-	8,	8,	0x91,	2,
-	8,	16,	0xA1,	2,
-	8,	24,	0xB1,	2,
-	16,	0,	0x82,	2,
-	16,	8,	0x92,	2,
-	16,	16,	0xA2,	2,
-	16,	24,	0xB2,	2,
-	128
-};
-const unsigned char k後手駒2[]={
-	0,	0,	0x86,	2,
-	0,	8,	0x90,	2,
-	0,	16,	0xA0,	2,
-	0,	24,	0xB0,	2,
-	8,	0,	0x87,	2,
-	8,	8,	0x91,	2,
-	8,	16,	0xA1,	2,
-	8,	24,	0xB1,	2,
-	16,	0,	0x88,	2,
-	16,	8,	0x92,	2,
-	16,	16,	0xA2,	2,
-	16,	24,	0xB2,	2,
-	128
-};
-const unsigned char k後手駒3[]={
-	0,	0,	0x83,	2,
-	0,	8,	0x93,	2,
-	0,	16,	0xA3,	2,
-	0,	24,	0xB3,	2,
-	8,	0,	0x84,	2,
-	8,	8,	0x94,	2,
-	8,	16,	0xA4,	2,
-	8,	24,	0xB4,	2,
-	16,	0,	0x85,	2,
-	16,	8,	0x95,	2,
-	16,	16,	0xA5,	2,
-	16,	24,	0xB5,	2,
-	128
-};
-const unsigned char k後手駒4[]={
-	0,	0,	0x89,	2,
-	0,	8,	0x93,	2,
-	0,	16,	0xA3,	2,
-	0,	24,	0xB3,	2,
-	8,	0,	0x8A,	2,
-	8,	8,	0x94,	2,
-	8,	16,	0xA4,	2,
-	8,	24,	0xB4,	2,
-	16,	0,	0x8B,	2,
-	16,	8,	0x95,	2,
-	16,	16,	0xA5,	2,
-	16,	24,	0xB5,	2,
-	128
-};
-const unsigned char k後手駒5[]={
-	0,	0,	0x00,	2,
-	0,	8,	0x80,	2,
-	0,	16,	0x90,	2,
-	0,	24,	0xB0,	2,
-	8,	0,	0x00,	2,
-	8,	8,	0x81,	2,
-	8,	16,	0x91,	2,
-	8,	24,	0xB1,	2,
-	16,	0,	0x00,	2,
-	16,	8,	0x82,	2,
-	16,	16,	0x92,	2,
-	16,	24,	0xB2,	2,
-	128
-};
-const unsigned char k後手駒6[]={
-	0,	0,	0x00,	2,
-	0,	8,	0x86,	2,
-	0,	16,	0x90,	2,
-	0,	24,	0xB0,	2,
-	8,	0,	0x00,	2,
-	8,	8,	0x87,	2,
-	8,	16,	0x91,	2,
-	8,	24,	0xB1,	2,
-	16,	0,	0x00,	2,
-	16,	8,	0x88,	2,
-	16,	16,	0x92,	2,
-	16,	24,	0xB2,	2,
-	128
-};
-const unsigned char k後手駒7[]={
-	0,	0,	0x00,	2,
-	0,	8,	0x83,	2,
-	0,	16,	0x93,	2,
-	0,	24,	0xB3,	2,
-	8,	0,	0x00,	2,
-	8,	8,	0x84,	2,
-	8,	16,	0x94,	2,
-	8,	24,	0xB4,	2,
-	16,	0,	0x00,	2,
-	16,	8,	0x85,	2,
-	16,	16,	0x95,	2,
-	16,	24,	0xB5,	2,
-	128
-};
-const unsigned char k後手駒8[]={
-	0,	0,	0x00,	2,
-	0,	8,	0x89,	2,
-	0,	16,	0x93,	2,
-	0,	24,	0xB3,	2,
-	8,	0,	0x00,	2,
-	8,	8,	0x8A,	2,
-	8,	16,	0x94,	2,
-	8,	24,	0xB4,	2,
-	16,	0,	0x00,	2,
-	16,	8,	0x8B,	2,
-	16,	16,	0x95,	2,
-	16,	24,	0xB5,	2,
-	128
-};
-const unsigned char k非表示先手駒1[]={
-	0,	0,	0x80,	0,
-	0,	8,	0x90,	0,
-	0,	16,	0xA0,	0,
-	0,	24,	0xB0,	0,
-	8,	0,	0x81,	0,
-	8,	8,	0x91,	0,
-	8,	16,	0xA1,	0,
-	8,	24,	0xB1,	0,
-	16,	0,	0x82,	0,
-	16,	8,	0x92,	0,
-	16,	16,	0xA2,	0,
-	16,	24,	0xB2,	0,
-	128
-};
-const unsigned char k非表示先手駒2[]={
-	0,	0,	0x86,	0,
-	0,	8,	0x90,	0,
-	0,	16,	0xA0,	0,
-	0,	24,	0xB0,	0,
-	8,	0,	0x87,	0,
-	8,	8,	0x91,	0,
-	8,	16,	0xA1,	0,
-	8,	24,	0xB1,	0,
-	16,	0,	0x88,	0,
-	16,	8,	0x92,	0,
-	16,	16,	0xA2,	0,
-	16,	24,	0xB2,	0,
-	128
-};
-const unsigned char k非表示先手駒3[]={
-	0,	0,	0x83,	0,
-	0,	8,	0x93,	0,
-	0,	16,	0xA3,	0,
-	0,	24,	0xB3,	0,
-	8,	0,	0x84,	0,
-	8,	8,	0x94,	0,
-	8,	16,	0xA4,	0,
-	8,	24,	0xB4,	0,
-	16,	0,	0x85,	0,
-	16,	8,	0x95,	0,
-	16,	16,	0xA5,	0,
-	16,	24,	0xB5,	0,
-	128
-};
-const unsigned char k非表示先手駒4[]={
-	0,	0,	0x89,	0,
-	0,	8,	0x93,	0,
-	0,	16,	0xA3,	0,
-	0,	24,	0xB3,	0,
-	8,	0,	0x8A,	0,
-	8,	8,	0x94,	0,
-	8,	16,	0xA4,	0,
-	8,	24,	0xB4,	0,
-	16,	0,	0x8B,	0,
-	16,	8,	0x95,	0,
-	16,	16,	0xA5,	0,
-	16,	24,	0xB5,	0,
-	128
-};
-const unsigned char k非表示先手駒5[]={
-	0,	0,	0x00,	0,
-	0,	8,	0x80,	0,
-	0,	16,	0x90,	0,
-	0,	24,	0xB0,	0,
-	8,	0,	0x00,	0,
-	8,	8,	0x81,	0,
-	8,	16,	0x91,	0,
-	8,	24,	0xB1,	0,
-	16,	0,	0x00,	0,
-	16,	8,	0x82,	0,
-	16,	16,	0x92,	0,
-	16,	24,	0xB2,	0,
-	128
-};
-const unsigned char k非表示先手駒6[]={
-	0,	0,	0x00,	0,
-	0,	8,	0x86,	0,
-	0,	16,	0x90,	0,
-	0,	24,	0xB0,	0,
-	8,	0,	0x00,	0,
-	8,	8,	0x87,	0,
-	8,	16,	0x91,	0,
-	8,	24,	0xB1,	0,
-	16,	0,	0x00,	0,
-	16,	8,	0x88,	0,
-	16,	16,	0x92,	0,
-	16,	24,	0xB2,	0,
-	128
-};
-const unsigned char k非表示先手駒7[]={
-	0,	0,	0x00,	0,
-	0,	8,	0x83,	0,
-	0,	16,	0x93,	0,
-	0,	24,	0xB3,	0,
-	8,	0,	0x00,	0,
-	8,	8,	0x84,	0,
-	8,	16,	0x94,	0,
-	8,	24,	0xB4,	0,
-	16,	0,	0x00,	0,
-	16,	8,	0x85,	0,
-	16,	16,	0x95,	0,
-	16,	24,	0xB5,	0,
-	128
-};
-const unsigned char k非表示先手駒8[]={
-	0,	0,	0x00,	0,
-	0,	8,	0x89,	0,
-	0,	16,	0x93,	0,
-	0,	24,	0xB3,	0,
-	8,	0,	0x00,	0,
-	8,	8,	0x8A,	0,
-	8,	16,	0x94,	0,
-	8,	24,	0xB4,	0,
-	16,	0,	0x00,	0,
-	16,	8,	0x8B,	0,
-	16,	16,	0x95,	0,
-	16,	24,	0xB5,	0,
-	128
-};
-/*
-const unsigned char k非表示後手駒1[]={
-	0,	0,	0x80,	0,
-	0,	8,	0x90,	0,
-	0,	16,	0xA0,	0,
-	0,	24,	0xB0,	0,
-	8,	0,	0x81,	3,
-	8,	8,	0x91,	3,
-	8,	16,	0xA1,	3,
-	8,	24,	0xB1,	3,
-	16,	0,	0x82,	3,
-	16,	8,	0x92,	3,
-	16,	16,	0xA2,	3,
-	16,	24,	0xB2,	3,
-	128
-};
-const unsigned char k非表示後手駒2[]={
-	0,	0,	0x86,	3,
-	0,	8,	0x90,	3,
-	0,	16,	0xA0,	3,
-	0,	24,	0xB0,	3,
-	8,	0,	0x87,	3,
-	8,	8,	0x91,	3,
-	8,	16,	0xA1,	3,
-	8,	24,	0xB1,	3,
-	16,	0,	0x88,	3,
-	16,	8,	0x92,	3,
-	16,	16,	0xA2,	3,
-	16,	24,	0xB2,	3,
-	128
-};
-const unsigned char k非表示後手駒3[]={
-	0,	0,	0x83,	3,
-	0,	8,	0x93,	3,
-	0,	16,	0xA3,	3,
-	0,	24,	0xB3,	3,
-	8,	0,	0x84,	3,
-	8,	8,	0x94,	3,
-	8,	16,	0xA4,	3,
-	8,	24,	0xB4,	3,
-	16,	0,	0x85,	3,
-	16,	8,	0x95,	3,
-	16,	16,	0xA5,	3,
-	16,	24,	0xB5,	3,
-	128
-};
-const unsigned char k非表示後手駒4[]={
-	0,	0,	0x89,	3,
-	0,	8,	0x93,	3,
-	0,	16,	0xA3,	3,
-	0,	24,	0xB3,	3,
-	8,	0,	0x8A,	3,
-	8,	8,	0x94,	3,
-	8,	16,	0xA4,	3,
-	8,	24,	0xB4,	3,
-	16,	0,	0x8B,	3,
-	16,	8,	0x95,	3,
-	16,	16,	0xA5,	3,
-	16,	24,	0xB5,	3,
-	128
-};
-const unsigned char k非表示後手駒5[]={
-	0,	0,	0x00,	3,
-	0,	8,	0x80,	3,
-	0,	16,	0x90,	3,
-	0,	24,	0xB0,	3,
-	8,	0,	0x00,	3,
-	8,	8,	0x81,	3,
-	8,	16,	0x91,	3,
-	8,	24,	0xB1,	3,
-	16,	0,	0x00,	3,
-	16,	8,	0x82,	3,
-	16,	16,	0x92,	3,
-	16,	24,	0xB2,	3,
-	128
-};
-const unsigned char k非表示後手駒6[]={
-	0,	0,	0x00,	3,
-	0,	8,	0x86,	3,
-	0,	16,	0x90,	3,
-	0,	24,	0xB0,	3,
-	8,	0,	0x00,	3,
-	8,	8,	0x87,	3,
-	8,	16,	0x91,	3,
-	8,	24,	0xB1,	3,
-	16,	0,	0x00,	3,
-	16,	8,	0x88,	3,
-	16,	16,	0x92,	3,
-	16,	24,	0xB2,	3,
-	128
-};
-const unsigned char k非表示後手駒7[]={
-	0,	0,	0x00,	3,
-	0,	8,	0x83,	3,
-	0,	16,	0x93,	3,
-	0,	24,	0xB3,	3,
-	8,	0,	0x00,	3,
-	8,	8,	0x84,	3,
-	8,	16,	0x94,	3,
-	8,	24,	0xB4,	3,
-	16,	0,	0x00,	3,
-	16,	8,	0x85,	3,
-	16,	16,	0x95,	3,
-	16,	24,	0xB5,	3,
-	128
-};
-const unsigned char k非表示後手駒8[]={
-	0,	0,	0x00,	3,
-	0,	8,	0x89,	3,
-	0,	16,	0x93,	3,
-	0,	24,	0xB3,	3,
-	8,	0,	0x00,	3,
-	8,	8,	0x8A,	3,
-	8,	16,	0x94,	3,
-	8,	24,	0xB4,	3,
-	16,	0,	0x00,	3,
-	16,	8,	0x8B,	3,
-	16,	16,	0x95,	3,
-	16,	24,	0xB5,	3,
-	128
-};
-*/
-const unsigned char k駒属性マスク[] ={ 
-	0b00000000,
-	0b11110000,
-	0b11100001,
-	0b11010010,
-	0b11000011,
-	0b10110100,
-	0b10100101,
-	0b10010110,
-	0b10000111,
-	0b01111000,
-	0b01101001,
-	0b01011010,
-	0b01001011,
-	0b00111100,
-	0b00101101,
-	0b00011110,
-	0b00001111
-};
-const unsigned char* k駒スプライトリスト[1][2][8]={
-	k先手駒1,
-	k先手駒2,
-	k先手駒3,
-	k先手駒4,
-	k先手駒5,
-	k先手駒6,
-	k先手駒7,
-	k先手駒8,
-	k後手駒1,
-	k後手駒2,
-	k後手駒3,
-	k後手駒4,
-	k後手駒5,
-	k後手駒6,
-	k後手駒7,
-	k後手駒8
-/*
-	k非表示先手駒1,
-	k非表示先手駒2,
-	k非表示先手駒3,
-	k非表示先手駒4,
-	k非表示先手駒5,
-	k非表示先手駒6,
-	k非表示先手駒7,
-	k非表示先手駒8,
-	k非表示後手駒1,
-	k非表示後手駒2,
-	k非表示後手駒3,
-	k非表示後手駒4,
-	k非表示後手駒5,
-	k非表示後手駒6,
-	k非表示後手駒7,
-	k非表示後手駒8
-*/
-};
 
 void 乱数ボックス初期化()
 {
@@ -1098,22 +259,22 @@ void 次色サイクル(void)
 	g背景パレット番号 = g背景パレット番号 > 3 ? 0 : g背景パレット番号 ;
 	//デバッグ表示更新(NTADR_A(1,24), 5, itoa(g背景パレット番号, &g文字列バッファ[0], 10 ));
 
-	pal_spr((char*)k背景パレット配列[g背景パレット番号]);
-	pal_bg((char*)k背景パレット配列[g背景パレット番号]);
+	pal_spr(k背景パレット配列[g背景パレット番号]);
+	pal_bg(k背景パレット配列[g背景パレット番号]);
 }
 void 色サイクル(void)
 {
-	if(gフレームカウンタ%4==0){ pal_bg((char*)kオープンパレット4);}
-	if(gフレームカウンタ%4==1){ pal_bg((char*)kオープンパレット3);}
-	if(gフレームカウンタ%4==2){ pal_bg((char*)kオープンパレット2);}
-	if(gフレームカウンタ%4==3){ pal_bg((char*)kオープンパレット1);}
+	if(gフレームカウンタ%4==0){ pal_bg(kオープンパレット4);}
+	if(gフレームカウンタ%4==1){ pal_bg(kオープンパレット3);}
+	if(gフレームカウンタ%4==2){ pal_bg(kオープンパレット2);}
+	if(gフレームカウンタ%4==3){ pal_bg(kオープンパレット1);}
 }
 void スプライト色サイクル(void)
 {
-	if(gフレームカウンタ%4==0){ pal_spr((char*)kオープンパレット4);}
-	if(gフレームカウンタ%4==1){ pal_spr((char*)kオープンパレット3);}
-	if(gフレームカウンタ%4==2){ pal_spr((char*)kオープンパレット2);}
-	if(gフレームカウンタ%4==3){ pal_spr((char*)kオープンパレット1);}
+	if(gフレームカウンタ%4==0){ pal_spr(kオープンパレット4);}
+	if(gフレームカウンタ%4==1){ pal_spr(kオープンパレット3);}
+	if(gフレームカウンタ%4==2){ pal_spr(kオープンパレット2);}
+	if(gフレームカウンタ%4==3){ pal_spr(kオープンパレット1);}
 }
 unsigned char 強制終了チェック(void)
 {
@@ -1754,33 +915,33 @@ void 盤面外描画()
 void 駒回転停止()
 {
 	bank_bg(0);
-	pal_bg((char*)k背景パレット配列[g背景パレット番号]);
-	pal_spr((char*)k背景パレット配列[g背景パレット番号]);
+	pal_bg(k背景パレット配列[g背景パレット番号]);
+	pal_spr(k背景パレット配列[g背景パレット番号]);
 
 }
 void 駒回転アニメ(unsigned char argスピード)
 {
 //	checking = 1 ;
-//	pal_bg((char*)k背景パレット代替[0]);
+//	pal_bg(k背景パレット代替[0]);
 //	盤面外描画();
 
 //	for( gループI = 0; gループI < 5; gループI++){
 	
 	if( gフレームカウンタ % 4 == 0 ){
 		bank_bg(0);
-		pal_bg((char*)k背景パレット代替[0]);
+		pal_bg(k背景パレット代替[0]);
 	}
 	if( gフレームカウンタ % 4 == 1 ){
 		bank_bg(1);
-		pal_bg((char*)k背景パレット代替[1]);
+		pal_bg(k背景パレット代替[1]);
 		//delay(1) ;
 	}
 	if( gフレームカウンタ % 4 == 2 ){
-		pal_bg((char*)k背景パレット代替[2]);
+		pal_bg(k背景パレット代替[2]);
 		//delay(2) ;
 	}
 	if( gフレームカウンタ % 4 == 3 ){
-		pal_bg((char*)k背景パレット代替[3]);
+		pal_bg(k背景パレット代替[3]);
 		//delay(1) ;
 	}
 	delay(argスピード) ;
@@ -1793,8 +954,8 @@ void メッセージ初期化()
 {
 	//バー初期化() ;
 	//タイマー表示初期化() ;
-	デバッグ表示更新(1,28, 14, (const char*)k空白メッセージ );
-	デバッグ表示更新(17,28, 14, (const char*)k空白メッセージ );
+	デバッグ表示更新(1,28, 14, k空白メッセージ );
+	デバッグ表示更新(17,28, 14, k空白メッセージ );
 }
 void メッセージ表示(unsigned char argアクション)
 {
@@ -1816,8 +977,8 @@ void メッセージ表示(unsigned char argアクション)
 	}
 /*
 	else if( argアクション == 2 ){
-		デバッグ表示更新(1,24, 14, g現在手番!=0?"P1:WIN!       ":(const char*)k空白メッセージ );
-		デバッグ表示更新(1,5, 14, g現在手番==0?"P2:WIN!       ":(const char*)k空白メッセージ );
+		デバッグ表示更新(1,24, 14, g現在手番!=0?"P1:WIN!       ":k空白メッセージ );
+		デバッグ表示更新(1,5, 14, g現在手番==0?"P2:WIN!       ":k空白メッセージ );
 	}
 */
 
@@ -2014,7 +1175,7 @@ void 選択ボタンAイベント(void)
 	ストック駒配置((g選択駒番号*4),g駒色選択==0?2:6, g駒色選択==0?0x00:0xFF,  (unsigned char*)k駒スプライトリスト[0][0][g選択駒番号]) ;
 
 	oam_clear() ;
-	//pal_spr((char*)k背景パレット配列[g背景パレット番号]);//set background palette from an array
+	//pal_spr(k背景パレット配列[g背景パレット番号]);//set background palette from an array
 
 	//gスプライトID = 0 ;
 	g座標X = g選択駒番号*32 ;
@@ -2254,6 +1415,7 @@ unsigned char リーチ判定()
 		}
 	}
 
+	return gリーチ状態;
 }
 void 移動ボタンAイベント()
 {
@@ -2267,7 +1429,7 @@ void 移動ボタンAイベント()
 	g盤面状態マップ[g座標インデックスX][g座標インデックスY][_SEL_BW] = g駒色選択 ;
 
 	oam_clear() ;
-	//pal_spr((char*)k背景パレット配列[g背景パレット番号]);//set background palette from an array
+	//pal_spr(k背景パレット配列[g背景パレット番号]);//set background palette from an array
 	
 	//盤面駒色設定( g座標X/8, g座標Y/8, g駒色選択==0?0xAA:0x55 ) ;
 	
@@ -2676,7 +1838,7 @@ void リセット処理(void)
 	ppu_off() ;
 	vram_adr(NAMETABLE_A);//set VRAM address
 	vram_unrle((unsigned char*)menu);
-	pal_bg((char*)k背景パレット配列[g背景パレット番号]);
+	pal_bg(k背景パレット配列[g背景パレット番号]);
 	ppu_on_all();//enable rendering
 
 	// MODE SELECT.
@@ -2797,8 +1959,8 @@ void リセット処理(void)
 	}
 	
 	oam_clear() ;
-	pal_spr((char*)k背景パレット配列[g背景パレット番号]);//set background palette from an array
-	pal_bg((char*)k背景パレット配列[g背景パレット番号]);//set background palette from an array
+	pal_spr(k背景パレット配列[g背景パレット番号]);//set background palette from an array
+	pal_bg(k背景パレット配列[g背景パレット番号]);//set background palette from an array
 
 	ppu_off() ;
 	vram_adr(NAMETABLE_A);//set VRAM address
@@ -2876,8 +2038,8 @@ void メインループ(void)
 	変数初期化() ;
 
 #ifndef debug
-	pal_spr((char*)k基本パレット2);
-	pal_bg((char*)kオープンパレット1);//set background palette from an array
+	pal_spr(k基本パレット2);
+	pal_bg(kオープンパレット1);//set background palette from an array
 
 	vram_adr(NAMETABLE_A);//set VRAM address
 	vram_unrle((unsigned char*)open_name);
@@ -2956,4 +2118,3 @@ void main(void)
 {
 	メインループ();
 }
-

@@ -13,10 +13,12 @@ TARGETS += quarto.nes
 # Change as needed.
 EMULATOR ?= mesen/mesen
 
-EXAMPLES := $(TARGETS:..nes=)
-OBJECTS := $(TARGETS:.nes=.o)
-ASSEMBLY_SOURCES := $(TARGETS:.nes=.s)
-C_SOURCES := $(addprefix $(SRC_DIR)/,$(TARGETS:.nes=.c))
+EXAMPLES := $(TARGETS:.nes=)
+C_SOURCES := $(wildcard $(SRC_DIR)/*.c)
+ASSEMBLY_SOURCES := $(C_SOURCES:.c=.s)
+OBJECTS := $(C_SOURCES:.c=.o)
+CRT0_OBJ := lib/crt0.o
+CRT0_SRC := lib/crt0.s
 
 .PHONY: all
 
@@ -34,22 +36,25 @@ all: $(CC) $(TARGETS)
 $(CC):
 	cd $(CC65_DIR) && $(MAKE)
 
-%: %.nes
+$(EXAMPLES): %: %.nes
 	$(EMULATOR) $<
 
 clean:
 	@rm -fv $(TARGETS)
 	@rm -fv $(OBJECTS)
 	@rm -fv $(ASSEMBLY_SOURCES)
-	@rm -fv lib/crt0.o
+	@rm -fv $(CRT0_OBJ)
 
-%.s: $(SRC_DIR)/%.c
-	$(CC) -g -Oi $< --target $(TARGET_PLATFORM) -I. -I$(CC65_DIR)/include/ --add-source
+$(SRC_DIR)/%.s: $(SRC_DIR)/%.c
+	$(CC) -g -Oi $< --target $(TARGET_PLATFORM) -I. -I$(CC65_DIR)/include/ --add-source -o $@
 
-%.o: %.s
-	$(CA) $< -g
+$(SRC_DIR)/%.o: $(SRC_DIR)/%.s
+	$(CA) $< -g -o $@
 
-%.nes: %.o lib/crt0.o
+$(CRT0_OBJ): $(CRT0_SRC) lib/neslib.s lib/famitone2.s
+	$(CA) $< -g -I$(CC65_DIR)/asminc -o $@
+
+%.nes: $(OBJECTS) $(CRT0_OBJ)
 	$(LD) --dbgfile $(@F:.nes=.dbg) -C quarto.cfg -o $@ $^ $(TARGET_PLATFORM).lib
 
 
