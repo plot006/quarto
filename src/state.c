@@ -1,4 +1,4 @@
-#include "quarto_state.h"
+#include "state.h"
 
 char g文字列バッファ[16];
 

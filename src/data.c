@@ -1,4 +1,4 @@
-#include "quarto_data.h"
+#include "data.h"
 
 const unsigned char k属性座標テーブル[4][4][4] ={
 	0xCB,	0xCC,	0xD3,	0xD4,
