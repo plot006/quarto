@@ -7,6 +7,54 @@
 #include "state.h"
 #include "ui.h"
 
+static unsigned char s敗北チェックキャッシュ有効 = 0;
+static unsigned char s敗北チェックキャッシュ駒色 = 0;
+static unsigned char s敗北チェックキャッシュ駒番号 = 0;
+static unsigned char s敗北チェックキャッシュ結果 = 0;
+static unsigned char s敗北チェックキャッシュフレーム増分 = 0;
+static unsigned char s敗北チェック盤面[4][4][3];
+
+static unsigned char 敗北チェック盤面一致(void)
+{
+	unsigned char x;
+	unsigned char y;
+	unsigned char z;
+
+	for( x=0; x<4; x++ ){
+		for( y=0; y<4; y++ ){
+			for( z=0; z<3; z++ ){
+				if( s敗北チェック盤面[x][y][z] != g盤面状態マップ[x][y][z] ){
+					return 0 ;
+				}
+			}
+		}
+	}
+	return 1 ;
+}
+
+static void 敗北チェック盤面保存(void)
+{
+	unsigned char x;
+	unsigned char y;
+	unsigned char z;
+
+	for( x=0; x<4; x++ ){
+		for( y=0; y<4; y++ ){
+			for( z=0; z<3; z++ ){
+				s敗北チェック盤面[x][y][z] = g盤面状態マップ[x][y][z] ;
+			}
+		}
+	}
+}
+
+static void CPU敵駒点滅(unsigned char argアクション)
+{
+	if( gCPU思考中 != 0 ){
+		return ;
+	}
+	敵駒点滅(argアクション) ;
+}
+
 void 乱数ボックス初期化(void)
 {
 	memfill( g乱数ボックス1, 9, 4 );
@@ -56,30 +104,52 @@ void 乱数ボックス初期化(void)
 
 unsigned char 敗北チェック(void)
 {
+	unsigned char frame_delta = 0 ;
+	unsigned char result = 0 ;
+
+	if( s敗北チェックキャッシュ有効 != 0 &&
+		s敗北チェックキャッシュ駒色 == g駒色選択 &&
+		s敗北チェックキャッシュ駒番号 == g選択駒番号 &&
+		敗北チェック盤面一致() != 0 ){
+		gフレームカウンタ += s敗北チェックキャッシュフレーム増分 ;
+		return s敗北チェックキャッシュ結果 ;
+	}
+
 	for( gループK = 0; gループK < 4; gループK++ ){
 		for( gループL = 0; gループL < 4; gループL++ ){
 			if( g盤面状態マップ[gループK][gループL][_KOMA_TYPE] == 0 ){
 				if( g対CPUフラグ == 1 && g現在手番==0 ){
 					if( gフレームカウンタ&2 ){
 						//pal_spr_bright(0);
-						敵駒点滅(0) ;
+						CPU敵駒点滅(0) ;
 					}else{
 						//pal_spr_bright(4);
-						敵駒点滅(1) ;
+						CPU敵駒点滅(1) ;
 					}
 				}
 				gフレームカウンタ++ ;
+				frame_delta++ ;
 				if( 事前クアルト確認( gループK, gループL ) == 1 ){
 					//pal_spr_bright(4);
-					敵駒点滅(1) ;
-					return 1 ;
+					CPU敵駒点滅(1) ;
+					result = 1 ;
+					goto cache_store ;
 				}
 			}
 		}
 	}
 	//pal_spr_bright(4);
-	敵駒点滅(1) ;
-	return 0 ;
+	CPU敵駒点滅(1) ;
+	result = 0 ;
+
+cache_store:
+	s敗北チェックキャッシュ有効 = 1 ;
+	s敗北チェックキャッシュ駒色 = g駒色選択 ;
+	s敗北チェックキャッシュ駒番号 = g選択駒番号 ;
+	s敗北チェックキャッシュ結果 = result ;
+	s敗北チェックキャッシュフレーム増分 = frame_delta ;
+	敗北チェック盤面保存() ;
+	return result ;
 }
 
 unsigned char 自動選択処理( unsigned char argチェックOnly )
@@ -133,10 +203,10 @@ void 座標自動設定(void)
 		gループO = g乱数ボックス1[k2] ;
 		for( l2=0; l2<4; l2++){
 			if( gフレームカウンタ&2 ){
-				敵駒点滅(0) ;
+				CPU敵駒点滅(0) ;
 				//pal_spr_bright(0);
 			}else{
-				敵駒点滅(1) ;
+				CPU敵駒点滅(1) ;
 				//pal_spr_bright(4);
 			}
 			gフレームカウンタ++ ;
@@ -157,7 +227,7 @@ void 座標自動設定(void)
 
 			if( g対CPUフラグ == 1 && g現在手番==0 && 事前クアルト確認(gループO, gループP) == 1 ){
 				//pal_spr_bright(4);
-				敵駒点滅(1) ;
+				CPU敵駒点滅(1) ;
 				return ;
 //				continue ; 
 			}
@@ -191,5 +261,5 @@ void 座標自動設定(void)
 	}
 	配置判定(g座標X/8, g座標Y/8) ;
 	//pal_spr_bright(4);
-	敵駒点滅(1) ;
+	CPU敵駒点滅(1) ;
 }

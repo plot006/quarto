@@ -69,6 +69,7 @@ unsigned char g背景パレット番号;
 unsigned char gゲーム音楽モード;
 unsigned char gリーチ状態;
 unsigned char g自動選択フラグ;
+unsigned char gCPU思考中;
 unsigned char g対CPUフラグ;
 unsigned char g上級モード;
 

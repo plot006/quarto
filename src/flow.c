@@ -73,6 +73,7 @@ static void 変数初期化(void){
 
 	gゲーム音楽モード = 1; // 1:game1, 3:game2
 	gリーチ状態 = 0 ;
+	gCPU思考中 = 0 ;
 
 	//init other vars
 	

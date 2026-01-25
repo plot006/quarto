@@ -70,6 +70,7 @@ extern unsigned char g背景パレット番号;
 extern unsigned char gゲーム音楽モード;
 extern unsigned char gリーチ状態;
 extern unsigned char g自動選択フラグ;
+extern unsigned char gCPU思考中;
 extern unsigned char g対CPUフラグ;
 extern unsigned char g上級モード;
 
